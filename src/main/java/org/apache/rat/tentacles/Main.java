@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.tools.legal;
+package org.apache.rat.tentacles;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -688,7 +688,7 @@ public class Main {
 
         private final Set<License> otherLicenses = new HashSet<License>();
         private final Set<Notice> otherNotices = new HashSet<Notice>();
-        private Map<URI,URI> others;
+        private Map<URI, URI> others;
 
         public Archive(File file) {
             this.uri = repository.toURI().relativize(file.toURI());
