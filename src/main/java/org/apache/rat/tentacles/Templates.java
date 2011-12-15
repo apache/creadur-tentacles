@@ -165,7 +165,7 @@ public final class Templates {
         }
 
         public File write(File file) throws IOException {
-            IOUtil.writeString(file, apply());
+            IO.writeString(file, apply());
             return file;
         }
     }

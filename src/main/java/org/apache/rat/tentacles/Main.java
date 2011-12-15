@@ -99,7 +99,7 @@ public class Main {
 
         this.filter = System.getProperty("filter", "org/apache/openejb");
         final URL style = this.getClass().getClassLoader().getResource("legal/style.css");
-        IOUtil.copy(style.openStream(), new File(local, "style.css"));
+        IO.copy(style.openStream(), new File(local, "style.css"));
 
         licenses("asl-2.0");
         licenses("cpl-1.0");
@@ -118,7 +118,7 @@ public class Main {
 
     private void licenses(String s) throws IOException {
         URL aslURL = this.getClass().getClassLoader().getResource("licenses/" + s + ".txt");
-        licenses.put(s, IOUtil.slurp(aslURL).trim());
+        licenses.put(s, IO.slurp(aslURL).trim());
     }
 
     public static void main(String[] args) throws Exception {
@@ -129,7 +129,7 @@ public class Main {
 
         prepare();
 
-        final List<File> jars = collect(repository, new FileFilter() {
+        final List<File> jars = Files.collect(repository, new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isFile();
@@ -166,9 +166,9 @@ public class Main {
         Map<License, License> licenses = new HashMap<License, License>();
 
         for (Archive archive : archives) {
-            List<File> files = collect(contents(archive.getFile()), new LicenseFilter());
+            List<File> files = Files.collect(contents(archive.getFile()), new LicenseFilter());
             for (File file : files) {
-                final License license = new License(IOUtil.slurp(file));
+                final License license = new License(IO.slurp(file));
 
                 License existing = licenses.get(license);
                 if (existing == null) {
@@ -211,11 +211,11 @@ public class Main {
         final Set<License> undeclared = new HashSet<License>(archive.getLicenses());
 
         final File contents = contents(archive.getFile());
-        final List<File> files = collect(contents, new Filters(new DeclaredFilter(contents), new LicenseFilter()));
+        final List<File> files = Files.collect(contents, new Filters(new DeclaredFilter(contents), new LicenseFilter()));
 
         for (File file : files) {
 
-            final License license = new License(IOUtil.slurp(file));
+            final License license = new License(IO.slurp(file));
 
             undeclared.remove(license);
 
@@ -245,11 +245,11 @@ public class Main {
             final Set<Notice> undeclared = new HashSet<Notice>(archive.getNotices());
 
             final File contents = contents(archive.getFile());
-            final List<File> files = collect(contents, new Filters(new DeclaredFilter(contents), new NoticeFilter()));
+            final List<File> files = Files.collect(contents, new Filters(new DeclaredFilter(contents), new NoticeFilter()));
 
             for (File file : files) {
 
-                final Notice notice = new Notice(IOUtil.slurp(file));
+                final Notice notice = new Notice(IO.slurp(file));
 
                 undeclared.remove(notice);
             }
@@ -281,9 +281,9 @@ public class Main {
         Map<Notice, Notice> notices = new HashMap<Notice, Notice>();
 
         for (Archive archive : archives) {
-            List<File> files = collect(contents(archive.getFile()), new NoticeFilter());
+            List<File> files = Files.collect(contents(archive.getFile()), new NoticeFilter());
             for (File file : files) {
-                final Notice notice = new Notice(IOUtil.slurp(file));
+                final Notice notice = new Notice(IO.slurp(file));
 
                 Notice existing = notices.get(notice);
                 if (existing == null) {
@@ -316,7 +316,7 @@ public class Main {
 
 
     private List<URI> allNoticeFiles() {
-        List<File> legal = collect(content, new LegalFilter());
+        List<File> legal = Files.collect(content, new LegalFilter());
         for (File file : legal) {
             log.info("Legal " + file);
         }
@@ -342,7 +342,7 @@ public class Main {
             }
         } else if (staging.toString().startsWith("file:")) {
             File file = new File(staging);
-            List<File> collect = collect(file, new FileFilter() {
+            List<File> collect = Files.collect(file, new FileFilter() {
                 @Override
                 public boolean accept(File pathname) {
                     String path = pathname.getAbsolutePath();
@@ -364,7 +364,7 @@ public class Main {
         log.info("Unpack " + archive);
 
         try {
-            final ZipInputStream zip = IOUtil.unzip(archive);
+            final ZipInputStream zip = IO.unzip(archive);
 
             final File contents = contents(archive);
 
@@ -383,14 +383,14 @@ public class Main {
 
                     // Open the output file
 
-                    IOUtil.copy(zip, fileEntry);
+                    IO.copy(zip, fileEntry);
 
                     if (fileEntry.getName().endsWith(".jar")) {
                         unpack(fileEntry);
                     }
                 }
             } finally {
-                IOUtil.close(zip);
+                IO.close(zip);
             }
         } catch (IOException e) {
             log.error("Not a zip " + archive);
@@ -520,18 +520,6 @@ public class Main {
 
     }
 
-    public List<File> collect(File dir, FileFilter filter) {
-        final List<File> accepted = new ArrayList<File>();
-        if (filter.accept(dir)) accepted.add(dir);
-
-        final File[] files = dir.listFiles();
-        if (files != null) for (File file : files) {
-            accepted.addAll(collect(file, filter));
-        }
-
-        return accepted;
-    }
-
     private File contents(File archive) {
         String path = archive.getAbsolutePath().substring(local.getAbsolutePath().length() + 1);
 
@@ -567,7 +555,7 @@ public class Main {
 
         mkparent(file);
 
-        IOUtil.copy(content, file);
+        IO.copy(content, file);
 
         return file;
     }
@@ -581,7 +569,7 @@ public class Main {
 
         mkparent(file);
 
-        IOUtil.copy(IOUtil.read(src), file);
+        IO.copy(IO.read(src), file);
 
         return file;
     }
@@ -741,7 +729,7 @@ public class Main {
 
         private Map<URI, URI> mapOther() {
             final File jarContents = contents(file);
-            final List<File> legal = collect(jarContents, new Filters(new N(new DeclaredFilter(jarContents)), new LegalFilter()));
+            final List<File> legal = Files.collect(jarContents, new Filters(new N(new DeclaredFilter(jarContents)), new LegalFilter()));
 
             Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (File file : legal) {
@@ -755,7 +743,7 @@ public class Main {
 
         private Map<URI, URI> map() {
             final File jarContents = contents(file);
-            final List<File> legal = collect(jarContents, new Filters(new DeclaredFilter(jarContents), new LegalFilter()));
+            final List<File> legal = Files.collect(jarContents, new Filters(new DeclaredFilter(jarContents), new LegalFilter()));
 
             Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (File file : legal) {

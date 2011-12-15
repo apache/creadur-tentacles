@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -40,9 +41,9 @@ import java.util.zip.ZipOutputStream;
 /**
  * @version $Rev$ $Date$
  */
-public class IOUtil {
+public class IO {
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(IOUtil.class);
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(IO.class);
 
     public static String readString(URL url) throws IOException {
         final InputStream in = url.openStream();
@@ -127,6 +128,14 @@ public class IOUtil {
         to.flush();
     }
 
+    public static void copy(byte[] from, File to) throws IOException {
+        copy(new ByteArrayInputStream(from), to);
+    }
+
+    public static void copy(byte[] from, OutputStream to) throws IOException {
+        copy(new ByteArrayInputStream(from), to);
+    }
+
     public static ZipOutputStream zip(File file) throws IOException {
         final OutputStream write = write(file);
         return new ZipOutputStream(write);
@@ -174,5 +183,12 @@ public class IOUtil {
     public static InputStream read(File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
+    }
+
+    public static byte[] read(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        copy(in, out);
+        out.close();
+        return out.toByteArray();
     }
 }
