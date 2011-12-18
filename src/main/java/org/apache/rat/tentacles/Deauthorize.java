@@ -93,6 +93,8 @@ public class Deauthorize {
 
             // You really can't trust text to be in the native line ending
             final String eol = (text.contains("\r\n")) ? "\r\n" : "\n";
+            final String startComment = eol + "/*";
+            final String endComment = "*/" + eol;
 
             InputStream in = new ByteArrayInputStream(text.getBytes());
 
@@ -100,15 +102,15 @@ public class Deauthorize {
             in = new ExcludeFilterInputStream(in, " * @author", eol);
 
             // Clean "empty" comments
-            final String begin = eol + "/*";
-            final String end = "*/" + eol;
-            in = new DelimitedTokenReplacementInputStream(in, begin, end, new StringTokenHandler() {
+            in = new DelimitedTokenReplacementInputStream(in, startComment, endComment, new StringTokenHandler() {
                 @Override
-                public String handleToken(String s) throws IOException {
+                public String handleToken(String commentBlock) throws IOException {
 
-                    if (s.replaceAll("[\\s*]", "").length() == 0) return eol;
+                    // Yank if empty
+                    if (commentBlock.replaceAll("[\\s*]", "").length() == 0) return eol;
 
-                    return begin + s + end;
+                    // Keep otherwise
+                    return startComment + commentBlock + endComment;
                 }
             });
 
