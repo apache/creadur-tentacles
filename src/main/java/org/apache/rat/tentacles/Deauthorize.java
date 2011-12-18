@@ -34,6 +34,14 @@ import java.util.List;
  */
 public class Deauthorize {
 
+    /**
+     * All input must be valid directories.
+     *
+     * Invalid input is logged to System.err and skipped
+     *
+     * @param args a list of directories to scan and fix
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         if (args.length == 0) throw new IllegalArgumentException("At least one directory must be specified");
@@ -59,6 +67,23 @@ public class Deauthorize {
         }
     }
 
+    /**
+     * Iterate over all the java files in the given directory
+     *
+     * Read in the file so we can guess the line ending -- if we didn't need to do that we could just stream.
+     * Run the content through Swizzle Stream and filter out any author tags as well as any comment blocks
+     * that wind up (or already were) empty as a result.
+     *
+     * If that had any effect on the contents of the file, write it back out.
+     *
+     * Should skip any files that are not readable or writable.
+     *
+     * Will log an error on System.err for any files that were updated and were not writable.  Files that are
+     * not writable and don't need updating are simply ignored.
+     *
+     * @param dir
+     * @throws IOException
+     */
     private static void deauthorize(File dir) throws IOException {
         for (File file : Files.collect(dir, ".*\\.java")) {
 
@@ -87,7 +112,7 @@ public class Deauthorize {
                 }
             });
 
-            byte[] content = IO.read(in);
+            final byte[] content = IO.read(in);
 
             if (content.length != file.length()) {
 
@@ -99,7 +124,7 @@ public class Deauthorize {
     }
 
     private static boolean not(boolean b, String message, Object... details) {
-        b=!b;
+        b = !b;
         if (b) {
             System.err.printf(message, details);
             System.err.println();
