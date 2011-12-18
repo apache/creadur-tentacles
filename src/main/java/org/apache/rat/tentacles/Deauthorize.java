@@ -99,8 +99,11 @@ public class Deauthorize {
     }
 
     private static boolean not(boolean b, String message, Object... details) {
-        System.err.printf(message, details);
-        System.err.println();
+        b=!b;
+        if (b) {
+            System.err.printf(message, details);
+            System.err.println();
+        }
         return b;
     }
 }
