@@ -16,21 +16,14 @@
  */
 package org.apache.rat.tentacles;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.codehaus.swizzle.stream.StreamLexer;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,7 +55,6 @@ public class Main {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Main.class);
 
 
-    private final DefaultHttpClient client;
     private final File local;
     private final URI staging;
     private final File repository;
@@ -69,10 +62,10 @@ public class Main {
     private Reports reports;
     private Map<String, String> licenses = new HashMap<String, String>();
     private String filter;
+    private final NexusClient client = new NexusClient();
 
 
     public Main(String... args) throws Exception {
-        client = new DefaultHttpClient();
 
         this.staging = getURI(args[0]);
 
@@ -84,13 +77,13 @@ public class Main {
             this.local = new File(name);
         }
 
-        mkdirs(local);
+        Files.mkdirs(local);
 
         this.repository = new File(local, "repo");
         this.content = new File(local, "content");
 
-        mkdirs(repository);
-        mkdirs(content);
+        Files.mkdirs(repository);
+        Files.mkdirs(content);
 
         log.info("Repo: " + staging);
         log.info("Local: " + local);
@@ -142,7 +135,7 @@ public class Main {
             archives.add(archive);
         }
 
-        Templates.template("archives.vm")
+        Templates.template("legal/archives.vm")
                 .add("archives", archives)
                 .add("reports", reports)
                 .write(new File(local, "archives.html"));
@@ -156,7 +149,7 @@ public class Main {
     private void reportLicenses(List<Archive> archives) throws IOException {
         initLicenses(archives);
 
-        Templates.template("licenses.vm")
+        Templates.template("legal/licenses.vm")
                 .add("licenses", getLicenses(archives))
                 .add("reports", reports)
                 .write(new File(local, "licenses.html"));
@@ -199,7 +192,7 @@ public class Main {
         }
         for (Archive archive : archives) {
 
-            Templates.template("archive-licenses.vm")
+            Templates.template("legal/archive-licenses.vm")
                     .add("archive", archive)
                     .add("reports", reports)
                     .write(new File(local, reports.licenses(archive)));
@@ -270,7 +263,7 @@ public class Main {
             }
 
 
-            Templates.template("archive-notices.vm")
+            Templates.template("legal/archive-notices.vm")
                     .add("archive", archive)
                     .add("reports", reports)
                     .write(new File(local, reports.notices(archive)));
@@ -297,7 +290,7 @@ public class Main {
             }
         }
 
-        Templates.template("notices.vm")
+        Templates.template("legal/notices.vm")
                 .add("notices", notices.values())
                 .add("reports", reports)
                 .write(new File(local, "notices.html"));
@@ -335,9 +328,10 @@ public class Main {
         final Set<File> files = new HashSet<File>();
 
         if (staging.toString().startsWith("http")) {
-            final Set<URI> resources = crawl(staging);
+            final Set<URI> resources = client.crawl(staging);
 
             for (URI uri : resources) {
+                if (!uri.getPath().matches(".*(war|jar|zip)")) continue;
                 files.add(download(uri));
             }
         } else if (staging.toString().startsWith("file:")) {
@@ -379,7 +373,7 @@ public class Main {
 
                     final File fileEntry = new File(contents, path);
 
-                    mkparent(fileEntry);
+                    Files.mkparent(fileEntry);
 
                     // Open the output file
 
@@ -527,7 +521,7 @@ public class Main {
         if (path.startsWith("content/")) path = path.substring("content/".length());
 
         final File contents = new File(content, path + ".contents");
-        mkdirs(contents);
+        Files.mkdirs(contents);
         return contents;
     }
 
@@ -535,29 +529,7 @@ public class Main {
 
         final File file = getFile(uri);
 
-        if (file.exists()) {
-
-            long length = getConentLength(uri);
-
-            if (file.length() == length) {
-                log.info("Exists " + uri);
-                return file;
-            } else {
-                log.info("Incomplete " + uri);
-            }
-        }
-
-        log.info("Download " + uri);
-
-        final HttpResponse response = get(uri);
-
-        final InputStream content = response.getEntity().getContent();
-
-        mkparent(file);
-
-        IO.copy(content, file);
-
-        return file;
+        return client.download(uri, file);
     }
 
     private File copy(File src) throws IOException {
@@ -567,7 +539,7 @@ public class Main {
 
         log.info("Copy " + uri);
 
-        mkparent(file);
+        Files.mkparent(file);
 
         IO.copy(IO.read(src), file);
 
@@ -756,93 +728,9 @@ public class Main {
         }
     }
 
-    private long getConentLength(URI uri) throws IOException {
-        HttpResponse head = head(uri);
-        Header[] headers = head.getHeaders("Content-Length");
-
-        for (Header header : headers) {
-            return new Long(header.getValue());
-        }
-
-        return -1;
-    }
-
     private File getFile(URI uri) {
         final String name = uri.toString().replace(staging.toString(), "").replaceFirst("^/", "");
         return new File(repository, name);
-    }
-
-    private void mkparent(File file) {
-        mkdirs(file.getParentFile());
-    }
-
-    private void mkdirs(File file) {
-
-        if (!file.exists()) {
-
-            assert file.mkdirs() : "mkdirs " + file;
-
-            return;
-        }
-
-        assert file.isDirectory() : "not a directory" + file;
-    }
-
-    private HttpResponse get(URI uri) throws IOException {
-        final HttpGet request = new HttpGet(uri);
-        request.setHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
-        return client.execute(request);
-    }
-
-    private HttpResponse head(URI uri) throws IOException {
-        final HttpHead request = new HttpHead(uri);
-        request.setHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
-        return client.execute(request);
-    }
-
-    private Set<URI> crawl(URI index) throws IOException {
-        log.info("Crawl " + index);
-        final Set<URI> resources = new LinkedHashSet<URI>();
-
-        final HttpResponse response = get(index);
-
-        final InputStream content = response.getEntity().getContent();
-        final StreamLexer lexer = new StreamLexer(content);
-
-        final Set<URI> crawl = new LinkedHashSet<URI>();
-
-        //<a href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
-        while (lexer.readAndMark("<a ", "/a>")) {
-
-            try {
-                final String link = lexer.peek("href=\"", "\"");
-                final String name = lexer.peek(">", "<");
-
-                final URI uri = index.resolve(link);
-
-                if (name.equals("../")) continue;
-                if (link.equals("../")) continue;
-
-                if (name.endsWith("/")) {
-                    crawl.add(uri);
-                    continue;
-                }
-
-                if (!isValidArchive(uri.getPath())) continue;
-
-                resources.add(uri);
-
-            } finally {
-                lexer.unmark();
-            }
-        }
-
-        content.close();
-
-        for (URI uri : crawl) {
-            resources.addAll(crawl(uri));
-        }
-        return resources;
     }
 
     private boolean isValidArchive(String path) {

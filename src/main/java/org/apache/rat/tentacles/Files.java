@@ -77,4 +77,20 @@ public class Files {
         if (file.exists()) return;
         if (!file.mkdirs()) throw new RuntimeException("Cannot mkdir: " + file.getAbsolutePath());
     }
+
+    public static void mkparent(File file) {
+        mkdirs(file.getParentFile());
+    }
+
+    public static void mkdirs(File file) {
+
+        if (!file.exists()) {
+
+            assert file.mkdirs() : "mkdirs " + file;
+
+            return;
+        }
+
+        assert file.isDirectory() : "not a directory" + file;
+    }
 }
