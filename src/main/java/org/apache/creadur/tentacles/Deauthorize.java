@@ -16,16 +16,16 @@
  */
 package org.apache.creadur.tentacles;
 
-import org.codehaus.swizzle.stream.DelimitedTokenReplacementInputStream;
-import org.codehaus.swizzle.stream.ExcludeFilterInputStream;
-import org.codehaus.swizzle.stream.StringTokenHandler;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.codehaus.swizzle.stream.DelimitedTokenReplacementInputStream;
+import org.codehaus.swizzle.stream.ExcludeFilterInputStream;
+import org.codehaus.swizzle.stream.StringTokenHandler;
 
 /**
  * Little utility that will yank the author comments from java files.

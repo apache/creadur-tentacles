@@ -16,10 +16,6 @@
  */
 package org.apache.creadur.tentacles;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.log.CommonsLogLogChute;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,6 +25,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
 public final class Templates {
 

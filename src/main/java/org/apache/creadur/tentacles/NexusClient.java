@@ -16,19 +16,19 @@
  */
 package org.apache.creadur.tentacles;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.codehaus.swizzle.stream.StreamLexer;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.swizzle.stream.StreamLexer;
 
 public class NexusClient {
 
