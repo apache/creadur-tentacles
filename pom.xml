@@ -67,7 +67,9 @@
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
-      <version>1.6.2-SNAPSHOT</version>
+      <!-- Upgrade when 1.6.2 is released -->
+      <!--version>1.6.2-SNAPSHOT</version-->
+      <version>1.6.1</version>
     </dependency>
 
     <dependency>
