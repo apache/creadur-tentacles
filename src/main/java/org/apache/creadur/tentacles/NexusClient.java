@@ -1,4 +1,4 @@
-package org.apache.rat.tentacles;
+package org.apache.creadur.tentacles;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;

@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.rat.tentacles;
+package org.apache.creadur.tentacles;
 
 import org.codehaus.swizzle.stream.DelimitedTokenReplacementInputStream;
 import org.codehaus.swizzle.stream.ExcludeFilterInputStream;

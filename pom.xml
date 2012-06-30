@@ -105,7 +105,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.apache.rat.tentacles.Main</mainClass>
+              <mainClass>org.apache.creadur.tentacles.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
