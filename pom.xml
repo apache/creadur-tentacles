@@ -24,10 +24,10 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>10</version>
+    <version>11</version>
   </parent>
 
-  <groupId>org.apache.tentacles</groupId>
+  <groupId>org.apache.creadur.tentacles</groupId>
   <artifactId>apache-tentacles</artifactId>
   <packaging>jar</packaging>
   <version>0.1-SNAPSHOT</version>
@@ -99,7 +99,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
+          <appendAssemblyId>true</appendAssemblyId>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
