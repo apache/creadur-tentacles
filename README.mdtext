@@ -3,7 +3,7 @@
 The tool will download all the archives from a staging repo, unpack
 them and create a little report of what is there.
 
-    java -ea -jar apache-rat-tentacles-0.1-SNAPSHOT.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
+    java -ea -jar apache-tentacles-0.1-SNAPSHOT.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
 
 Assertions must be enabled.
 
