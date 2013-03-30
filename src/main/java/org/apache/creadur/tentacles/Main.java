@@ -128,12 +128,7 @@ public class Main {
         prepare();
 
         final List<File> jars =
-                this.fileSystem.collect(this.repository, new FileFilter() {
-                    @Override
-                    public boolean accept(final File pathname) {
-                        return pathname.isFile();
-                    }
-                });
+                this.fileSystem.collect(this.repository, new FilesOnlyFilter());
 
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
@@ -598,108 +593,6 @@ public class Main {
         return file;
     }
 
-    private static class LegalFilter implements FileFilter {
-
-        private static final NoticeFilter notice = new NoticeFilter();
-        private static final LicenseFilter license = new LicenseFilter();
-
-        @Override
-        public boolean accept(final File pathname) {
-            return notice.accept(pathname) || license.accept(pathname);
-        }
-    }
-
-    private static class NoticeFilter implements FileFilter {
-        @Override
-        public boolean accept(final File pathname) {
-            final String name = pathname.getName().toLowerCase();
-
-            if (name.equals("notice")) {
-                return true;
-            }
-            if (name.equals("notice.txt")) {
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    private static class LicenseFilter implements FileFilter {
-        @Override
-        public boolean accept(final File pathname) {
-            final String name = pathname.getName().toLowerCase();
-
-            if (name.equals("license")) {
-                return true;
-            }
-            if (name.equals("license.txt")) {
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    private static class N implements FileFilter {
-        private final FileFilter filter;
-
-        private N(final FileFilter filter) {
-            this.filter = filter;
-        }
-
-        @Override
-        public boolean accept(final File pathname) {
-            return !this.filter.accept(pathname);
-        }
-    }
-
-    private static class DeclaredFilter implements FileFilter {
-        private final File file;
-
-        private DeclaredFilter(final File file) {
-            this.file = file;
-        }
-
-        @Override
-        public boolean accept(File file) {
-            while (file != null) {
-                if (file.equals(this.file)) {
-                    break;
-                }
-
-                if (file.isDirectory() && file.getName().endsWith(".contents")) {
-                    return false;
-                }
-                file = file.getParentFile();
-            }
-
-            return true;
-        }
-    }
-
-    private static class Filters implements FileFilter {
-
-        List<FileFilter> filters = new ArrayList<FileFilter>();
-
-        private Filters(final FileFilter... filters) {
-            for (final FileFilter filter : filters) {
-                this.filters.add(filter);
-            }
-        }
-
-        @Override
-        public boolean accept(final File file) {
-            for (final FileFilter filter : this.filters) {
-                if (!filter.accept(file)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    }
-
     public class Archive {
 
         private final URI uri;
@@ -769,7 +662,7 @@ public class Main {
             final File jarContents = contents(this.file);
             final List<File> legal =
                     Main.this.fileSystem.collect(jarContents, new Filters(
-                            new N(new DeclaredFilter(jarContents)),
+                            new NotFilter(new DeclaredFilter(jarContents)),
                             new LegalFilter()));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
