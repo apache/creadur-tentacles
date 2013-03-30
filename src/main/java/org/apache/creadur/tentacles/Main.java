@@ -308,17 +308,6 @@ public class Main {
                 .write(new File(this.local, "notices.html"));
     }
 
-    public class Reports {
-        public String licenses(final Archive archive) {
-            return archive.uri.toString().replace('/', '.') + ".licenses.html";
-        }
-
-        public String notices(final Archive archive) {
-            return archive.uri.toString().replace('/', '.') + ".notices.html";
-        }
-
-    }
-
     private List<URI> allNoticeFiles() {
         final List<File> legal =
                 this.fileSystem.collect(this.content, new LegalFilter());
