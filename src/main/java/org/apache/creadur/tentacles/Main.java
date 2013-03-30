@@ -45,70 +45,64 @@ import org.apache.log4j.PatternLayout;
 public class Main {
 
     static {
-        Logger root = Logger.getRootLogger();
+        final Logger root = Logger.getRootLogger();
 
-        root.addAppender(new ConsoleAppender(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN)));
+        root.addAppender(new ConsoleAppender(new PatternLayout(
+                PatternLayout.TTCC_CONVERSION_PATTERN)));
         root.setLevel(Level.INFO);
     }
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Main.class);
-
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+            .getLogger(Main.class);
 
     private final File local;
     private final File repository;
     private final File content;
-    private Reports reports;
-    private Map<String, String> licenses = new HashMap<String, String>();
-    private String filter;
+    private final Reports reports;
+    private final Map<String, String> licenses = new HashMap<String, String>();
+    private final String filter;
     private final NexusClient client = new NexusClient();
 
     private final Configuration configuration;
 
     public Main(final String... args) throws Exception {
 
-        configuration = new Configuration(args);
+        this.configuration = new Configuration(args);
 
-        this.local = new File(rootDirectoryForLocalOutput(args));
+        this.local =
+                new File(this.configuration.getRootDirectoryForLocalOutput());
 
-        Files.mkdirs(local);
+        Files.mkdirs(this.local);
 
-        this.repository = new File(local, "repo");
-        this.content = new File(local, "content");
+        this.repository = new File(this.local, "repo");
+        this.content = new File(this.local, "content");
 
-        Files.mkdirs(repository);
-        Files.mkdirs(content);
+        Files.mkdirs(this.repository);
+        Files.mkdirs(this.content);
 
-        log.info("Repo: " + configuration.getStaging());
-        log.info("Local: " + local);
+        log.info("Repo: " + this.configuration.getStaging());
+        log.info("Local: " + this.local);
 
         this.reports = new Reports();
 
         this.filter = System.getProperty("filter", "org/apache/openejb");
-        final URL style = this.getClass().getClassLoader().getResource("legal/style.css");
-        IO.copy(style.openStream(), new File(local, "style.css"));
+        final URL style =
+                this.getClass().getClassLoader().getResource("legal/style.css");
+        IO.copy(style.openStream(), new File(this.local, "style.css"));
 
         licenses("asl-2.0");
         licenses("cpl-1.0");
         licenses("cddl-1.0");
     }
 
-    private String rootDirectoryForLocalOutput(String... args) {
-        final String rootDirectoryForLocal;
-        if (args.length > 1) {
-            rootDirectoryForLocal = args[1];
-        } else {
-            rootDirectoryForLocal = new File(this.configuration.getStaging().getPath()).getName();
-        }
-        return rootDirectoryForLocal;
+    private void licenses(final String s) throws IOException {
+        final URL aslURL =
+                this.getClass().getClassLoader()
+                        .getResource("licenses/" + s + ".txt");
+        this.licenses.put(s, IO.slurp(aslURL).trim());
     }
 
-
-    private void licenses(String s) throws IOException {
-        URL aslURL = this.getClass().getClassLoader().getResource("licenses/" + s + ".txt");
-        licenses.put(s, IO.slurp(aslURL).trim());
-    }
-
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         new Main(args).main();
     }
 
@@ -116,23 +110,23 @@ public class Main {
 
         prepare();
 
-        final List<File> jars = Files.collect(repository, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile();
-            }
-        });
+        final List<File> jars =
+                Files.collect(this.repository, new FileFilter() {
+                    @Override
+                    public boolean accept(final File pathname) {
+                        return pathname.isFile();
+                    }
+                });
 
         final List<Archive> archives = new ArrayList<Archive>();
-        for (File file : jars) {
+        for (final File file : jars) {
             final Archive archive = new Archive(file);
             archives.add(archive);
         }
 
-        Templates.template("legal/archives.vm")
-                .add("archives", archives)
-                .add("reports", reports)
-                .write(new File(local, "archives.html"));
+        Templates.template("legal/archives.vm").add("archives", archives)
+                .add("reports", this.reports)
+                .write(new File(this.local, "archives.html"));
 
         reportLicenses(archives);
         reportNotices(archives);
@@ -140,21 +134,24 @@ public class Main {
         reportDeclaredNotices(archives);
     }
 
-    private void reportLicenses(List<Archive> archives) throws IOException {
+    private void reportLicenses(final List<Archive> archives)
+            throws IOException {
         initLicenses(archives);
 
         Templates.template("legal/licenses.vm")
                 .add("licenses", getLicenses(archives))
-                .add("reports", reports)
-                .write(new File(local, "licenses.html"));
+                .add("reports", this.reports)
+                .write(new File(this.local, "licenses.html"));
     }
 
-    private void initLicenses(List<Archive> archives) throws IOException {
-        Map<License, License> licenses = new HashMap<License, License>();
+    private void initLicenses(final List<Archive> archives) throws IOException {
+        final Map<License, License> licenses = new HashMap<License, License>();
 
-        for (Archive archive : archives) {
-            List<File> files = Files.collect(contents(archive.getFile()), new LicenseFilter());
-            for (File file : files) {
+        for (final Archive archive : archives) {
+            final List<File> files =
+                    Files.collect(contents(archive.getFile()),
+                            new LicenseFilter());
+            for (final File file : files) {
                 final License license = new License(IO.slurp(file));
 
                 License existing = licenses.get(license);
@@ -170,37 +167,42 @@ public class Main {
         }
     }
 
-    private Collection<License> getLicenses(List<Archive> archives) {
-        Set<License> licenses = new LinkedHashSet<License>();
-        for (Archive archive : archives) {
+    private Collection<License> getLicenses(final List<Archive> archives) {
+        final Set<License> licenses = new LinkedHashSet<License>();
+        for (final Archive archive : archives) {
             licenses.addAll(archive.getLicenses());
         }
         return licenses;
     }
 
-    private void reportDeclaredLicenses(List<Archive> archives) throws IOException {
+    private void reportDeclaredLicenses(final List<Archive> archives)
+            throws IOException {
 
-        for (Archive archive : archives) {
+        for (final Archive archive : archives) {
 
             classifyLicenses(archive);
         }
-        for (Archive archive : archives) {
+        for (final Archive archive : archives) {
 
-            Templates.template("legal/archive-licenses.vm")
+            Templates
+                    .template("legal/archive-licenses.vm")
                     .add("archive", archive)
-                    .add("reports", reports)
-                    .write(new File(local, reports.licenses(archive)));
+                    .add("reports", this.reports)
+                    .write(new File(this.local, this.reports.licenses(archive)));
         }
 
     }
 
-    private void classifyLicenses(Archive archive) throws IOException {
-        final Set<License> undeclared = new HashSet<License>(archive.getLicenses());
+    private void classifyLicenses(final Archive archive) throws IOException {
+        final Set<License> undeclared =
+                new HashSet<License>(archive.getLicenses());
 
         final File contents = contents(archive.getFile());
-        final List<File> files = Files.collect(contents, new Filters(new DeclaredFilter(contents), new LicenseFilter()));
+        final List<File> files =
+                Files.collect(contents, new Filters(
+                        new DeclaredFilter(contents), new LicenseFilter()));
 
-        for (File file : files) {
+        for (final File file : files) {
 
             final License license = new License(IO.slurp(file));
 
@@ -210,14 +212,14 @@ public class Main {
 
         archive.getOtherLicenses().addAll(undeclared);
 
-        final Set<License> declared = new HashSet<License>(archive.getLicenses());
+        final Set<License> declared =
+                new HashSet<License>(archive.getLicenses());
         declared.removeAll(undeclared);
         archive.getDeclaredLicenses().addAll(declared);
 
+        for (final License license : undeclared) {
 
-        for (License license : undeclared) {
-
-            for (License declare : declared) {
+            for (final License declare : declared) {
                 if (license.implies(declare)) {
                     archive.getOtherLicenses().remove(license);
                 }
@@ -225,16 +227,20 @@ public class Main {
         }
     }
 
-    private void reportDeclaredNotices(List<Archive> archives) throws IOException {
+    private void reportDeclaredNotices(final List<Archive> archives)
+            throws IOException {
 
-        for (Archive archive : archives) {
+        for (final Archive archive : archives) {
 
-            final Set<Notice> undeclared = new HashSet<Notice>(archive.getNotices());
+            final Set<Notice> undeclared =
+                    new HashSet<Notice>(archive.getNotices());
 
             final File contents = contents(archive.getFile());
-            final List<File> files = Files.collect(contents, new Filters(new DeclaredFilter(contents), new NoticeFilter()));
+            final List<File> files =
+                    Files.collect(contents, new Filters(new DeclaredFilter(
+                            contents), new NoticeFilter()));
 
-            for (File file : files) {
+            for (final File file : files) {
 
                 final Notice notice = new Notice(IO.slurp(file));
 
@@ -243,33 +249,34 @@ public class Main {
 
             archive.getOtherNotices().addAll(undeclared);
 
-            final Set<Notice> declared = new HashSet<Notice>(archive.getNotices());
+            final Set<Notice> declared =
+                    new HashSet<Notice>(archive.getNotices());
             declared.removeAll(undeclared);
             archive.getDeclaredNotices().addAll(declared);
 
-            for (Notice notice : undeclared) {
+            for (final Notice notice : undeclared) {
 
-                for (Notice declare : declared) {
+                for (final Notice declare : declared) {
                     if (notice.implies(declare)) {
                         archive.getOtherLicenses().remove(notice);
                     }
                 }
             }
 
-
             Templates.template("legal/archive-notices.vm")
-                    .add("archive", archive)
-                    .add("reports", reports)
-                    .write(new File(local, reports.notices(archive)));
+                    .add("archive", archive).add("reports", this.reports)
+                    .write(new File(this.local, this.reports.notices(archive)));
         }
     }
 
-    private void reportNotices(List<Archive> archives) throws IOException {
-        Map<Notice, Notice> notices = new HashMap<Notice, Notice>();
+    private void reportNotices(final List<Archive> archives) throws IOException {
+        final Map<Notice, Notice> notices = new HashMap<Notice, Notice>();
 
-        for (Archive archive : archives) {
-            List<File> files = Files.collect(contents(archive.getFile()), new NoticeFilter());
-            for (File file : files) {
+        for (final Archive archive : archives) {
+            final List<File> files =
+                    Files.collect(contents(archive.getFile()),
+                            new NoticeFilter());
+            for (final File file : files) {
                 final Notice notice = new Notice(IO.slurp(file));
 
                 Notice existing = notices.get(notice);
@@ -284,35 +291,33 @@ public class Main {
             }
         }
 
-        Templates.template("legal/notices.vm")
-                .add("notices", notices.values())
-                .add("reports", reports)
-                .write(new File(local, "notices.html"));
+        Templates.template("legal/notices.vm").add("notices", notices.values())
+                .add("reports", this.reports)
+                .write(new File(this.local, "notices.html"));
     }
 
     public class Reports {
-        public String licenses(Archive archive) {
+        public String licenses(final Archive archive) {
             return archive.uri.toString().replace('/', '.') + ".licenses.html";
         }
 
-        public String notices(Archive archive) {
+        public String notices(final Archive archive) {
             return archive.uri.toString().replace('/', '.') + ".notices.html";
         }
 
     }
 
-
     private List<URI> allNoticeFiles() {
-        List<File> legal = Files.collect(content, new LegalFilter());
-        for (File file : legal) {
+        final List<File> legal = Files.collect(this.content, new LegalFilter());
+        for (final File file : legal) {
             log.info("Legal " + file);
         }
 
-        URI uri = local.toURI();
-        List<URI> uris = new ArrayList<URI>();
-        for (File file : legal) {
-            URI full = file.toURI();
-            URI relativize = uri.relativize(full);
+        final URI uri = this.local.toURI();
+        final List<URI> uris = new ArrayList<URI>();
+        for (final File file : legal) {
+            final URI full = file.toURI();
+            final URI relativize = uri.relativize(full);
             uris.add(relativize);
         }
         return uris;
@@ -321,34 +326,39 @@ public class Main {
     private void prepare() throws URISyntaxException, IOException {
         final Set<File> files = new HashSet<File>();
 
-        if (configuration.getStaging().toString().startsWith("http")) {
-            final Set<URI> resources = client.crawl(configuration.getStaging());
+        if (this.configuration.getStaging().toString().startsWith("http")) {
+            final Set<URI> resources =
+                    this.client.crawl(this.configuration.getStaging());
 
-            for (URI uri : resources) {
-                if (!uri.getPath().matches(".*(war|jar|zip)")) continue;
+            for (final URI uri : resources) {
+                if (!uri.getPath().matches(".*(war|jar|zip)")) {
+                    continue;
+                }
                 files.add(download(uri));
             }
-        } else if (configuration.getStaging().toString().startsWith("file:")) {
-            File file = new File(configuration.getStaging());
-            List<File> collect = Files.collect(file, new FileFilter() {
+        } else if (this.configuration.getStaging().toString()
+                .startsWith("file:")) {
+            final File file = new File(this.configuration.getStaging());
+            final List<File> collect = Files.collect(file, new FileFilter() {
                 @Override
-                public boolean accept(File pathname) {
-                    String path = pathname.getAbsolutePath();
-                    return path.matches(filter) && isValidArchive(path);
+                public boolean accept(final File pathname) {
+                    final String path = pathname.getAbsolutePath();
+                    return path.matches(Main.this.filter)
+                            && isValidArchive(path);
                 }
             });
 
-            for (File f : collect) {
+            for (final File f : collect) {
                 files.add(copy(f));
             }
         }
 
-        for (File file : files) {
+        for (final File file : files) {
             unpack(file);
         }
     }
 
-    private void unpack(File archive) throws IOException {
+    private void unpack(final File archive) throws IOException {
         log.info("Unpack " + archive);
 
         try {
@@ -361,7 +371,9 @@ public class Main {
 
                 while ((entry = zip.getNextEntry()) != null) {
 
-                    if (entry.isDirectory()) continue;
+                    if (entry.isDirectory()) {
+                        continue;
+                    }
 
                     final String path = entry.getName();
 
@@ -380,44 +392,48 @@ public class Main {
             } finally {
                 IO.close(zip);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Not a zip " + archive);
         }
     }
 
     public class License {
         private final String text;
-        private String key;
-        private Set<Archive> archives = new HashSet<Archive>();
-        private List<File> locations = new ArrayList<File>();
+        private final String key;
+        private final Set<Archive> archives = new HashSet<Archive>();
+        private final List<File> locations = new ArrayList<File>();
 
         public License(String text) {
-            key = text.replaceAll("[ \\n\\t\\r]+", "").toLowerCase().intern();
+            this.key =
+                    text.replaceAll("[ \\n\\t\\r]+", "").toLowerCase().intern();
 
-            for (Map.Entry<String, String> license : licenses.entrySet()) {
-                text = text.replace(license.getValue(), String.format("---[%s - full text]---\n\n", license.getKey()));
+            for (final Map.Entry<String, String> license : Main.this.licenses
+                    .entrySet()) {
+                text =
+                        text.replace(license.getValue(), String.format(
+                                "---[%s - full text]---\n\n", license.getKey()));
             }
             this.text = text.intern();
         }
 
         public String getText() {
-            return text;
+            return this.text;
         }
 
         public String getKey() {
-            return key;
+            return this.key;
         }
 
         public Set<Archive> getArchives() {
-            return archives;
+            return this.archives;
         }
 
-        public Set<URI> locations(Archive archive) {
-            URI contents = contents(archive.getFile()).toURI();
-            Set<URI> locations = new HashSet<URI>();
-            for (File file : this.locations) {
-                URI uri = file.toURI();
-                URI relativize = contents.relativize(uri);
+        public Set<URI> locations(final Archive archive) {
+            final URI contents = contents(archive.getFile()).toURI();
+            final Set<URI> locations = new HashSet<URI>();
+            for (final File file : this.locations) {
+                final URI uri = file.toURI();
+                final URI relativize = contents.relativize(uri);
                 if (!relativize.equals(uri)) {
                     locations.add(relativize);
                 }
@@ -427,56 +443,63 @@ public class Main {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
-            License license = (License) o;
+            final License license = (License) o;
 
-            if (!key.equals(license.key)) return false;
+            if (!this.key.equals(license.key)) {
+                return false;
+            }
 
             return true;
         }
 
         @Override
         public int hashCode() {
-            return key.hashCode();
+            return this.key.hashCode();
         }
 
-        public boolean implies(License fullLicense) {
+        public boolean implies(final License fullLicense) {
             return fullLicense.key.contains(this.key);
         }
     }
 
     public class Notice {
         private final String text;
-        private String key;
-        private Set<Archive> archives = new HashSet<Archive>();
-        private List<File> locations = new ArrayList<File>();
+        private final String key;
+        private final Set<Archive> archives = new HashSet<Archive>();
+        private final List<File> locations = new ArrayList<File>();
 
-        public Notice(String text) {
+        public Notice(final String text) {
             this.text = text.intern();
-            key = text.replaceAll("[ \\n\\t\\r]+", "").toLowerCase().intern();
+            this.key =
+                    text.replaceAll("[ \\n\\t\\r]+", "").toLowerCase().intern();
         }
 
         public String getText() {
-            return text;
+            return this.text;
         }
 
         public String getKey() {
-            return key;
+            return this.key;
         }
 
         public Set<Archive> getArchives() {
-            return archives;
+            return this.archives;
         }
 
-        public Set<URI> locations(Archive archive) {
-            URI contents = contents(archive.getFile()).toURI();
-            Set<URI> locations = new HashSet<URI>();
-            for (File file : this.locations) {
-                URI uri = file.toURI();
-                URI relativize = contents.relativize(uri);
+        public Set<URI> locations(final Archive archive) {
+            final URI contents = contents(archive.getFile()).toURI();
+            final Set<URI> locations = new HashSet<URI>();
+            for (final File file : this.locations) {
+                final URI uri = file.toURI();
+                final URI relativize = contents.relativize(uri);
                 if (!relativize.equals(uri)) {
                     locations.add(relativize);
                 }
@@ -486,47 +509,59 @@ public class Main {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
-            Notice notice = (Notice) o;
+            final Notice notice = (Notice) o;
 
-            if (!key.equals(notice.key)) return false;
+            if (!this.key.equals(notice.key)) {
+                return false;
+            }
 
             return true;
         }
 
         @Override
         public int hashCode() {
-            return key.hashCode();
+            return this.key.hashCode();
         }
 
-        public boolean implies(Notice fullLicense) {
+        public boolean implies(final Notice fullLicense) {
             return fullLicense.key.contains(this.key);
         }
 
     }
 
-    private File contents(File archive) {
-        String path = archive.getAbsolutePath().substring(local.getAbsolutePath().length() + 1);
+    private File contents(final File archive) {
+        String path =
+                archive.getAbsolutePath().substring(
+                        this.local.getAbsolutePath().length() + 1);
 
-        if (path.startsWith("repo/")) path = path.substring("repo/".length());
-        if (path.startsWith("content/")) path = path.substring("content/".length());
+        if (path.startsWith("repo/")) {
+            path = path.substring("repo/".length());
+        }
+        if (path.startsWith("content/")) {
+            path = path.substring("content/".length());
+        }
 
-        final File contents = new File(content, path + ".contents");
+        final File contents = new File(this.content, path + ".contents");
         Files.mkdirs(contents);
         return contents;
     }
 
-    private File download(URI uri) throws IOException {
+    private File download(final URI uri) throws IOException {
 
         final File file = getFile(uri);
 
-        return client.download(uri, file);
+        return this.client.download(uri, file);
     }
 
-    private File copy(File src) throws IOException {
+    private File copy(final File src) throws IOException {
         final URI uri = src.toURI();
 
         final File file = getFile(uri);
@@ -546,18 +581,22 @@ public class Main {
         private static final LicenseFilter license = new LicenseFilter();
 
         @Override
-        public boolean accept(File pathname) {
+        public boolean accept(final File pathname) {
             return notice.accept(pathname) || license.accept(pathname);
         }
     }
 
     private static class NoticeFilter implements FileFilter {
         @Override
-        public boolean accept(File pathname) {
+        public boolean accept(final File pathname) {
             final String name = pathname.getName().toLowerCase();
 
-            if (name.equals("notice")) return true;
-            if (name.equals("notice.txt")) return true;
+            if (name.equals("notice")) {
+                return true;
+            }
+            if (name.equals("notice.txt")) {
+                return true;
+            }
 
             return false;
         }
@@ -565,11 +604,15 @@ public class Main {
 
     private static class LicenseFilter implements FileFilter {
         @Override
-        public boolean accept(File pathname) {
+        public boolean accept(final File pathname) {
             final String name = pathname.getName().toLowerCase();
 
-            if (name.equals("license")) return true;
-            if (name.equals("license.txt")) return true;
+            if (name.equals("license")) {
+                return true;
+            }
+            if (name.equals("license.txt")) {
+                return true;
+            }
 
             return false;
         }
@@ -578,29 +621,33 @@ public class Main {
     private static class N implements FileFilter {
         private final FileFilter filter;
 
-        private N(FileFilter filter) {
+        private N(final FileFilter filter) {
             this.filter = filter;
         }
 
         @Override
-        public boolean accept(File pathname) {
-            return !filter.accept(pathname);
+        public boolean accept(final File pathname) {
+            return !this.filter.accept(pathname);
         }
     }
 
     private static class DeclaredFilter implements FileFilter {
         private final File file;
 
-        private DeclaredFilter(File file) {
+        private DeclaredFilter(final File file) {
             this.file = file;
         }
 
         @Override
         public boolean accept(File file) {
             while (file != null) {
-                if (file.equals(this.file)) break;
+                if (file.equals(this.file)) {
+                    break;
+                }
 
-                if (file.isDirectory() && file.getName().endsWith(".contents")) return false;
+                if (file.isDirectory() && file.getName().endsWith(".contents")) {
+                    return false;
+                }
                 file = file.getParentFile();
             }
 
@@ -612,16 +659,18 @@ public class Main {
 
         List<FileFilter> filters = new ArrayList<FileFilter>();
 
-        private Filters(FileFilter... filters) {
-            for (FileFilter filter : filters) {
+        private Filters(final FileFilter... filters) {
+            for (final FileFilter filter : filters) {
                 this.filters.add(filter);
             }
         }
 
         @Override
-        public boolean accept(File file) {
-            for (FileFilter filter : filters) {
-                if (!filter.accept(file)) return false;
+        public boolean accept(final File file) {
+            for (final FileFilter filter : this.filters) {
+                if (!filter.accept(file)) {
+                    return false;
+                }
             }
 
             return true;
@@ -644,63 +693,67 @@ public class Main {
         private final Set<Notice> otherNotices = new HashSet<Notice>();
         private Map<URI, URI> others;
 
-        public Archive(File file) {
-            this.uri = repository.toURI().relativize(file.toURI());
+        public Archive(final File file) {
+            this.uri = Main.this.repository.toURI().relativize(file.toURI());
             this.file = file;
             this.map = map();
         }
 
         public Set<License> getDeclaredLicenses() {
-            return declaredLicenses;
+            return this.declaredLicenses;
         }
 
         public Set<Notice> getDeclaredNotices() {
-            return declaredNotices;
+            return this.declaredNotices;
         }
 
         public Set<License> getOtherLicenses() {
-            return otherLicenses;
+            return this.otherLicenses;
         }
 
         public Set<Notice> getOtherNotices() {
-            return otherNotices;
+            return this.otherNotices;
         }
 
         public Set<License> getLicenses() {
-            return licenses;
+            return this.licenses;
         }
 
         public Set<Notice> getNotices() {
-            return notices;
+            return this.notices;
         }
 
         public URI getUri() {
-            return uri;
+            return this.uri;
         }
 
         public File getFile() {
-            return file;
+            return this.file;
         }
 
         public Map<URI, URI> getLegal() {
-            return map;
+            return this.map;
         }
 
         public Map<URI, URI> getOtherLegal() {
-            if (others == null) {
-                others = mapOther();
+            if (this.others == null) {
+                this.others = mapOther();
             }
-            return others;
+            return this.others;
         }
 
         private Map<URI, URI> mapOther() {
-            final File jarContents = contents(file);
-            final List<File> legal = Files.collect(jarContents, new Filters(new N(new DeclaredFilter(jarContents)), new LegalFilter()));
+            final File jarContents = contents(this.file);
+            final List<File> legal =
+                    Files.collect(jarContents,
+                            new Filters(new N(new DeclaredFilter(jarContents)),
+                                    new LegalFilter()));
 
-            Map<URI, URI> map = new LinkedHashMap<URI, URI>();
-            for (File file : legal) {
-                URI name = jarContents.toURI().relativize(file.toURI());
-                URI link = local.toURI().relativize(file.toURI());
+            final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
+            for (final File file : legal) {
+                final URI name = jarContents.toURI().relativize(file.toURI());
+                final URI link =
+                        Main.this.local.toURI().relativize(file.toURI());
 
                 map.put(name, link);
             }
@@ -708,13 +761,16 @@ public class Main {
         }
 
         private Map<URI, URI> map() {
-            final File jarContents = contents(file);
-            final List<File> legal = Files.collect(jarContents, new Filters(new DeclaredFilter(jarContents), new LegalFilter()));
+            final File jarContents = contents(this.file);
+            final List<File> legal =
+                    Files.collect(jarContents, new Filters(new DeclaredFilter(
+                            jarContents), new LegalFilter()));
 
-            Map<URI, URI> map = new LinkedHashMap<URI, URI>();
-            for (File file : legal) {
-                URI name = jarContents.toURI().relativize(file.toURI());
-                URI link = local.toURI().relativize(file.toURI());
+            final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
+            for (final File file : legal) {
+                final URI name = jarContents.toURI().relativize(file.toURI());
+                final URI link =
+                        Main.this.local.toURI().relativize(file.toURI());
 
                 map.put(name, link);
             }
@@ -722,12 +778,15 @@ public class Main {
         }
     }
 
-    private File getFile(URI uri) {
-        final String name = uri.toString().replace(configuration.getStaging().toString(), "").replaceFirst("^/", "");
-        return new File(repository, name);
+    private File getFile(final URI uri) {
+        final String name =
+                uri.toString()
+                        .replace(this.configuration.getStaging().toString(), "")
+                        .replaceFirst("^/", "");
+        return new File(this.repository, name);
     }
 
-    private boolean isValidArchive(String path) {
+    private boolean isValidArchive(final String path) {
         return path.matches(".*\\.(jar|zip|war|ear|tar.gz)");
     }
 }

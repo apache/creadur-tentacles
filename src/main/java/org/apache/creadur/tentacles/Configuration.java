@@ -24,7 +24,10 @@ import java.net.URISyntaxException;
 
 public class Configuration {
 
+    private static final int ARGUMENT_INDEX_FOR_LOCAL_ROOT_DIRECTORY = 1;
     private static final int ARGUMENT_INDEX_FOR_URI_CONFIGURATION = 0;
+    private static final int ARGUMENT_LENGTH_FOR_URI_CONFIGURATION_ONLY =
+            ARGUMENT_INDEX_FOR_URI_CONFIGURATION + 1;
 
     private static URI toURI(final String arg) throws URISyntaxException {
         final URI uri = new URI(arg);
@@ -34,15 +37,30 @@ public class Configuration {
         return uri;
     }
 
-
     private final URI staging;
+    private final String rootDirectoryForLocalOutput;
 
     public Configuration(final String... args) throws URISyntaxException {
         this.staging = toURI(args[ARGUMENT_INDEX_FOR_URI_CONFIGURATION]);
+        this.rootDirectoryForLocalOutput = rootDirectoryForLocalOutput(args);
     }
 
     public URI getStaging() {
-        return staging;
+        return this.staging;
     }
 
+    public String getRootDirectoryForLocalOutput() {
+        return this.rootDirectoryForLocalOutput;
+    }
+
+    private String rootDirectoryForLocalOutput(final String... args) {
+        final String rootDirectoryForLocal;
+        if (args.length > ARGUMENT_LENGTH_FOR_URI_CONFIGURATION_ONLY) {
+            rootDirectoryForLocal =
+                    args[ARGUMENT_INDEX_FOR_LOCAL_ROOT_DIRECTORY];
+        } else {
+            rootDirectoryForLocal = new File(this.staging.getPath()).getName();
+        }
+        return rootDirectoryForLocal;
+    }
 }
