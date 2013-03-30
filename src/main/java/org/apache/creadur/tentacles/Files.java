@@ -31,66 +31,46 @@ public class Files {
         return collect(dir, Pattern.compile(regex));
     }
 
-    public static List<File> collect(final File dir, final Pattern pattern) {
+    private static List<File> collect(final File dir, final Pattern pattern) {
         return collect(dir, new FileFilter() {
             @Override
-            public boolean accept(File file) {
+            public boolean accept(final File file) {
                 return pattern.matcher(file.getAbsolutePath()).matches();
             }
         });
     }
 
-
-    public static List<File> collect(File dir, FileFilter filter) {
+    public static List<File> collect(final File dir, final FileFilter filter) {
         final List<File> accepted = new ArrayList<File>();
-        if (filter.accept(dir)) accepted.add(dir);
+        if (filter.accept(dir)) {
+            accepted.add(dir);
+        }
 
         final File[] files = dir.listFiles();
-        if (files != null) for (File file : files) {
-            accepted.addAll(collect(file, filter));
+        if (files != null) {
+            for (final File file : files) {
+                accepted.addAll(collect(file, filter));
+            }
         }
 
         return accepted;
     }
 
-    public static void exists(File file, String s) {
-        if (!file.exists()) throw new RuntimeException(s + " does not exist: " + file.getAbsolutePath());
-    }
-
-    public static void dir(File file) {
-        if (!file.isDirectory()) throw new RuntimeException("Not a directory: " + file.getAbsolutePath());
-    }
-
-    public static void file(File file) {
-        if (!file.isFile()) throw new RuntimeException("Not a file: " + file.getAbsolutePath());
-    }
-
-    public static void writable(File file) {
-        if (!file.canWrite()) throw new RuntimeException("Not writable: " + file.getAbsolutePath());
-    }
-
-    public static void readable(File file) {
-        if (!file.canRead()) throw new RuntimeException("Not readable: " + file.getAbsolutePath());
-    }
-
-    public static void mkdir(File file) {
-        if (file.exists()) return;
-        if (!file.mkdirs()) throw new RuntimeException("Cannot mkdir: " + file.getAbsolutePath());
-    }
-
-    public static void mkparent(File file) {
+    public static void mkparent(final File file) {
         mkdirs(file.getParentFile());
     }
 
-    public static void mkdirs(File file) {
+    public static void mkdirs(final File file) {
 
         if (!file.exists()) {
 
-            assert file.mkdirs() : "mkdirs " + file;
+            final boolean success = file.mkdirs();
+            assert success : "mkdirs failed to create " + file;
 
             return;
         }
 
-        assert file.isDirectory() : "not a directory" + file;
+        final boolean isDirectory = file.isDirectory();
+        assert isDirectory : "Not a directory: " + file;
     }
 }
