@@ -55,7 +55,6 @@ public class Main {
 
 
     private final File local;
-    private final URI staging;
     private final File repository;
     private final File content;
     private Reports reports;
@@ -69,8 +68,6 @@ public class Main {
 
         configuration = new Configuration(args);
 
-        this.staging = configuration.getStaging();
-
         this.local = new File(rootDirectoryForLocalOutput(args));
 
         Files.mkdirs(local);
@@ -81,7 +78,7 @@ public class Main {
         Files.mkdirs(repository);
         Files.mkdirs(content);
 
-        log.info("Repo: " + staging);
+        log.info("Repo: " + configuration.getStaging());
         log.info("Local: " + local);
 
         this.reports = new Reports();
@@ -100,7 +97,7 @@ public class Main {
         if (args.length > 1) {
             rootDirectoryForLocal = args[1];
         } else {
-            rootDirectoryForLocal = new File(this.staging.getPath()).getName();
+            rootDirectoryForLocal = new File(this.configuration.getStaging().getPath()).getName();
         }
         return rootDirectoryForLocal;
     }
@@ -324,15 +321,15 @@ public class Main {
     private void prepare() throws URISyntaxException, IOException {
         final Set<File> files = new HashSet<File>();
 
-        if (staging.toString().startsWith("http")) {
-            final Set<URI> resources = client.crawl(staging);
+        if (configuration.getStaging().toString().startsWith("http")) {
+            final Set<URI> resources = client.crawl(configuration.getStaging());
 
             for (URI uri : resources) {
                 if (!uri.getPath().matches(".*(war|jar|zip)")) continue;
                 files.add(download(uri));
             }
-        } else if (staging.toString().startsWith("file:")) {
-            File file = new File(staging);
+        } else if (configuration.getStaging().toString().startsWith("file:")) {
+            File file = new File(configuration.getStaging());
             List<File> collect = Files.collect(file, new FileFilter() {
                 @Override
                 public boolean accept(File pathname) {
@@ -726,7 +723,7 @@ public class Main {
     }
 
     private File getFile(URI uri) {
-        final String name = uri.toString().replace(staging.toString(), "").replaceFirst("^/", "");
+        final String name = uri.toString().replace(configuration.getStaging().toString(), "").replaceFirst("^/", "");
         return new File(repository, name);
     }
 
