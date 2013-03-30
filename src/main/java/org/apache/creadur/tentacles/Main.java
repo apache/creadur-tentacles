@@ -65,6 +65,7 @@ public class Main {
     private final Configuration configuration;
     private final FileSystem fileSystem;
     private final IOSystem ioSystem;
+    private final Templates templates;
 
     public Main(final String... args) throws Exception {
         this(new Configuration(args), new FileSystem(), new IOSystem());
@@ -73,15 +74,17 @@ public class Main {
     public Main(final Configuration configuration, final FileSystem fileSystem,
             final IOSystem ioSystem) throws Exception {
         this(configuration, fileSystem, new NexusClient(fileSystem, ioSystem),
-                ioSystem);
+                ioSystem, new Templates(ioSystem));
     }
 
     public Main(final Configuration configuration, final FileSystem fileSystem,
-            final NexusClient client, final IOSystem ioSystem) throws Exception {
+            final NexusClient client, final IOSystem ioSystem,
+            final Templates templates) throws Exception {
         this.client = client;
         this.configuration = configuration;
         this.fileSystem = fileSystem;
         this.ioSystem = ioSystem;
+        this.templates = templates;
 
         this.local =
                 new File(this.configuration.getRootDirectoryForLocalOutput());
@@ -138,8 +141,8 @@ public class Main {
             archives.add(archive);
         }
 
-        Templates.template("legal/archives.vm", this.ioSystem)
-                .add("archives", archives).add("reports", this.reports)
+        this.templates.template("legal/archives.vm").add("archives", archives)
+                .add("reports", this.reports)
                 .write(new File(this.local, "archives.html"));
 
         reportLicenses(archives);
@@ -152,7 +155,7 @@ public class Main {
             throws IOException {
         initLicenses(archives);
 
-        Templates.template("legal/licenses.vm", this.ioSystem)
+        this.templates.template("legal/licenses.vm")
                 .add("licenses", getLicenses(archives))
                 .add("reports", this.reports)
                 .write(new File(this.local, "licenses.html"));
@@ -198,8 +201,8 @@ public class Main {
         }
         for (final Archive archive : archives) {
 
-            Templates
-                    .template("legal/archive-licenses.vm", this.ioSystem)
+            this.templates
+                    .template("legal/archive-licenses.vm")
                     .add("archive", archive)
                     .add("reports", this.reports)
                     .write(new File(this.local, this.reports.licenses(archive)));
@@ -277,7 +280,7 @@ public class Main {
                 }
             }
 
-            Templates.template("legal/archive-notices.vm", this.ioSystem)
+            this.templates.template("legal/archive-notices.vm")
                     .add("archive", archive).add("reports", this.reports)
                     .write(new File(this.local, this.reports.notices(archive)));
         }
@@ -305,7 +308,7 @@ public class Main {
             }
         }
 
-        Templates.template("legal/notices.vm", this.ioSystem)
+        this.templates.template("legal/notices.vm")
                 .add("notices", notices.values()).add("reports", this.reports)
                 .write(new File(this.local, "notices.html"));
     }

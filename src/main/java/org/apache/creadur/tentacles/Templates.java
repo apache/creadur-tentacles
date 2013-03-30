@@ -23,11 +23,11 @@ import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
 public final class Templates {
 
-    private static final Templates INSTANCE = new Templates();
-
+    private final IOSystem ioSystem;
     private final VelocityEngine engine;
 
-    private Templates() {
+    public Templates(final IOSystem ioSystem) {
+        this.ioSystem = ioSystem;
         final Properties properties = new Properties();
         properties.setProperty("file.resource.loader.cache", "true");
         properties.setProperty("resource.loader", "file, class");
@@ -45,11 +45,7 @@ public final class Templates {
         this.engine.init(properties);
     }
 
-    public static TemplateBuilder template(final String name, final IOSystem ioSystem) {
-        return INSTANCE.builder(name, ioSystem);
-    }
-
-    private TemplateBuilder builder(final String name, final IOSystem ioSystem) {
-        return new TemplateBuilder(name, ioSystem, this.engine);
+    public TemplateBuilder template(final String name) {
+        return new TemplateBuilder(name, this.ioSystem, this.engine);
     }
 }
