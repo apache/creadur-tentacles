@@ -68,13 +68,7 @@ public class Main {
 
         this.staging = getURI(args[0]);
 
-        String name = new File(this.staging.getPath()).getName();
-
-        if (args.length > 1) {
-            this.local = new File(args[1]);
-        } else {
-            this.local = new File(name);
-        }
+        this.local = new File(rootDirectoryForLocalOutput(args));
 
         Files.mkdirs(local);
 
@@ -96,6 +90,16 @@ public class Main {
         licenses("asl-2.0");
         licenses("cpl-1.0");
         licenses("cddl-1.0");
+    }
+
+    private String rootDirectoryForLocalOutput(String... args) {
+        final String rootDirectoryForLocal;
+        if (args.length > 1) {
+            rootDirectoryForLocal = args[1];
+        } else {
+            rootDirectoryForLocal = new File(this.staging.getPath()).getName();
+        }
+        return rootDirectoryForLocal;
     }
 
     private URI getURI(String arg) throws URISyntaxException {
