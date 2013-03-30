@@ -332,16 +332,19 @@ public class Main {
         final Set<File> files = new HashSet<File>();
 
         if (HTTP.isRepositoryFor(this.configuration)) {
-            final Set<URI> resources = this.client.crawl(this.configuration.getStagingRepositoryURI());
+            final Set<URI> resources =
+                    this.client.crawl(this.configuration
+                            .getStagingRepositoryURI());
 
             for (final URI uri : resources) {
                 if (!uri.getPath().matches(".*(war|jar|zip)")) {
                     continue;
                 }
-                files.add(download(uri));
+                files.add(this.client.download(uri, mirroredFrom(uri)));
             }
         } else if (LOCAL_FILE_SYSTEM.isRepositoryFor(this.configuration)) {
-            final File file = new File(this.configuration.getStagingRepositoryURI());
+            final File file =
+                    new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect =
                     this.fileSystem.collect(file, new FileFilter() {
                         @Override
@@ -354,7 +357,7 @@ public class Main {
                     });
 
             for (final File f : collect) {
-                files.add(copy(f));
+                files.add(copyToMirror(f));
             }
         }
 
@@ -559,17 +562,10 @@ public class Main {
         return contents;
     }
 
-    private File download(final URI uri) throws IOException {
-
-        final File file = getFile(uri);
-
-        return this.client.download(uri, file);
-    }
-
-    private File copy(final File src) throws IOException {
+    private File copyToMirror(final File src) throws IOException {
         final URI uri = src.toURI();
 
-        final File file = getFile(uri);
+        final File file = mirroredFrom(uri);
 
         log.info("Copy " + uri);
 
@@ -683,7 +679,7 @@ public class Main {
         }
     }
 
-    private File getFile(final URI uri) {
+    private File mirroredFrom(final URI uri) {
         final String name =
                 uri.toString()
                         .replace(
