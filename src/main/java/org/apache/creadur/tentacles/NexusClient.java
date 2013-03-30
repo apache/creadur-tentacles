@@ -32,18 +32,21 @@ import org.codehaus.swizzle.stream.StreamLexer;
 
 public class NexusClient {
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NexusClient.class);
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+            .getLogger(NexusClient.class);
 
     private final DefaultHttpClient client;
+    private final FileSystem fileSystem;
 
-    public NexusClient() {
+    public NexusClient(final FileSystem fileSystem) {
         this.client = new DefaultHttpClient();
+        this.fileSystem = fileSystem;
     }
 
-    public File download(URI uri, File file) throws IOException {
+    public File download(final URI uri, final File file) throws IOException {
         if (file.exists()) {
 
-            long length = getConentLength(uri);
+            final long length = getConentLength(uri);
 
             if (file.length() == length) {
                 log.info("Exists " + uri);
@@ -59,37 +62,41 @@ public class NexusClient {
 
         final InputStream content = response.getEntity().getContent();
 
-        FileSystem.mkparent(file);
+        this.fileSystem.mkparent(file);
 
         IO.copy(content, file);
 
         return file;
     }
 
-    private long getConentLength(URI uri) throws IOException {
-        HttpResponse head = head(uri);
-        Header[] headers = head.getHeaders("Content-Length");
+    private long getConentLength(final URI uri) throws IOException {
+        final HttpResponse head = head(uri);
+        final Header[] headers = head.getHeaders("Content-Length");
 
-        for (Header header : headers) {
+        for (final Header header : headers) {
             return new Long(header.getValue());
         }
 
         return -1;
     }
 
-    private HttpResponse get(URI uri) throws IOException {
+    private HttpResponse get(final URI uri) throws IOException {
         final HttpGet request = new HttpGet(uri);
-        request.setHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
-        return client.execute(request);
+        request.setHeader(
+                "User-Agent",
+                "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
+        return this.client.execute(request);
     }
 
-    private HttpResponse head(URI uri) throws IOException {
+    private HttpResponse head(final URI uri) throws IOException {
         final HttpHead request = new HttpHead(uri);
-        request.setHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
-        return client.execute(request);
+        request.setHeader(
+                "User-Agent",
+                "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
+        return this.client.execute(request);
     }
 
-    public Set<URI> crawl(URI index) throws IOException {
+    public Set<URI> crawl(final URI index) throws IOException {
         log.info("Crawl " + index);
         final Set<URI> resources = new LinkedHashSet<URI>();
 
@@ -100,7 +107,8 @@ public class NexusClient {
 
         final Set<URI> crawl = new LinkedHashSet<URI>();
 
-        //<a href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
+        // <a
+        // href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
         while (lexer.readAndMark("<a ", "/a>")) {
 
             try {
@@ -109,8 +117,12 @@ public class NexusClient {
 
                 final URI uri = index.resolve(link);
 
-                if (name.equals("../")) continue;
-                if (link.equals("../")) continue;
+                if (name.equals("../")) {
+                    continue;
+                }
+                if (link.equals("../")) {
+                    continue;
+                }
 
                 if (name.endsWith("/")) {
                     crawl.add(uri);
@@ -126,7 +138,7 @@ public class NexusClient {
 
         content.close();
 
-        for (URI uri : crawl) {
+        for (final URI uri : crawl) {
             resources.addAll(crawl(uri));
         }
 

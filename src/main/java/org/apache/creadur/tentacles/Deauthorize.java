@@ -29,65 +29,80 @@ import org.codehaus.swizzle.stream.StringTokenHandler;
 
 /**
  * Little utility that will yank the author comments from java files.
- *
+ * 
  * If the resulting comment block is effectively empty, it will be yanked too.
  */
 public class Deauthorize {
 
     /**
      * All input must be valid directories.
-     *
+     * 
      * Invalid input is logged to System.err and skipped
-     *
-     * @param args a list of directories to scan and fix
+     * 
+     * @param args
+     *            a list of directories to scan and fix
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
-        if (args.length == 0) throw new IllegalArgumentException("At least one directory must be specified");
+        if (args.length == 0) {
+            throw new IllegalArgumentException(
+                    "At least one directory must be specified");
+        }
 
         final List<File> dirs = new ArrayList<File>();
 
         // Check the input args upfront
-        for (String arg : args) {
+        for (final String arg : args) {
             final File dir = new File(arg);
 
-            if (not(dir.exists(), "Does not exist: %s", arg)) continue;
-            if (not(dir.isDirectory(), "Not a directory: %s", arg)) continue;
+            if (not(dir.exists(), "Does not exist: %s", arg)) {
+                continue;
+            }
+            if (not(dir.isDirectory(), "Not a directory: %s", arg)) {
+                continue;
+            }
 
             dirs.add(dir);
         }
 
         // Exit if we got bad input
-        if (dirs.size() != args.length) System.exit(1);
+        if (dirs.size() != args.length) {
+            System.exit(1);
+        }
 
         // Go!
-        for (File dir : dirs) {
+        for (final File dir : dirs) {
             deauthorize(dir);
         }
     }
 
     /**
      * Iterate over all the java files in the given directory
-     *
-     * Read in the file so we can guess the line ending -- if we didn't need to do that we could just stream.
-     * Run the content through Swizzle Stream and filter out any author tags as well as any comment blocks
-     * that wind up (or already were) empty as a result.
-     *
+     * 
+     * Read in the file so we can guess the line ending -- if we didn't need to
+     * do that we could just stream. Run the content through Swizzle Stream and
+     * filter out any author tags as well as any comment blocks that wind up (or
+     * already were) empty as a result.
+     * 
      * If that had any effect on the contents of the file, write it back out.
-     *
+     * 
      * Should skip any files that are not readable or writable.
-     *
-     * Will log an error on System.err for any files that were updated and were not writable.  Files that are
-     * not writable and don't need updating are simply ignored.
-     *
+     * 
+     * Will log an error on System.err for any files that were updated and were
+     * not writable. Files that are not writable and don't need updating are
+     * simply ignored.
+     * 
      * @param dir
      * @throws IOException
      */
-    private static void deauthorize(File dir) throws IOException {
-        for (File file : FileSystem.collect(dir, ".*\\.java")) {
+    private static void deauthorize(final File dir) throws IOException {
+        for (final File file : new FileSystem().collect(dir, ".*\\.java")) {
 
-            if (not(file.canRead(), "File not readable: %s", file.getAbsolutePath())) continue;
+            if (not(file.canRead(), "File not readable: %s",
+                    file.getAbsolutePath())) {
+                continue;
+            }
 
             final String text = IO.slurp(file);
 
@@ -102,30 +117,42 @@ public class Deauthorize {
             in = new ExcludeFilterInputStream(in, " * @author", eol);
 
             // Clean "empty" comments
-            in = new DelimitedTokenReplacementInputStream(in, startComment, endComment, new StringTokenHandler() {
-                @Override
-                public String handleToken(String commentBlock) throws IOException {
+            in =
+                    new DelimitedTokenReplacementInputStream(in, startComment,
+                            endComment, new StringTokenHandler() {
+                                @Override
+                                public String handleToken(
+                                        final String commentBlock)
+                                        throws IOException {
 
-                    // Yank if empty
-                    if (commentBlock.replaceAll("[\\s*]", "").length() == 0) return eol;
+                                    // Yank if empty
+                                    if (commentBlock.replaceAll("[\\s*]", "")
+                                            .length() == 0) {
+                                        return eol;
+                                    }
 
-                    // Keep otherwise
-                    return startComment + commentBlock + endComment;
-                }
-            });
+                                    // Keep otherwise
+                                    return startComment + commentBlock
+                                            + endComment;
+                                }
+                            });
 
             final byte[] content = IO.read(in);
 
             if (content.length != file.length()) {
 
-                if (not(file.canWrite(), "File not writable: %s", file.getAbsolutePath())) continue;
+                if (not(file.canWrite(), "File not writable: %s",
+                        file.getAbsolutePath())) {
+                    continue;
+                }
 
                 IO.copy(content, file);
             }
         }
     }
 
-    private static boolean not(boolean b, String message, Object... details) {
+    private static boolean not(boolean b, final String message,
+            final Object... details) {
         b = !b;
         if (b) {
             System.err.printf(message, details);

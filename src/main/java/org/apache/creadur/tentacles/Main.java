@@ -60,27 +60,36 @@ public class Main {
     private final File content;
     private final Reports reports;
     private final Map<String, String> licenses = new HashMap<String, String>();
-    private final NexusClient client = new NexusClient();
+    private final NexusClient client;
 
     private final Configuration configuration;
+    private final FileSystem fileSystem;
 
     public Main(final String... args) throws Exception {
-        this(new Configuration(args));
+        this(new Configuration(args), new FileSystem());
     }
 
-    public Main(final Configuration configuration) throws Exception {
+    public Main(final Configuration configuration, final FileSystem fileSystem)
+            throws Exception {
+        this(configuration, fileSystem, new NexusClient(fileSystem));
+    }
+
+    public Main(final Configuration configuration, final FileSystem fileSystem,
+            final NexusClient client) throws Exception {
+        this.client = client;
         this.configuration = configuration;
+        this.fileSystem = fileSystem;
 
         this.local =
                 new File(this.configuration.getRootDirectoryForLocalOutput());
 
-        FileSystem.mkdirs(this.local);
+        this.fileSystem.mkdirs(this.local);
 
         this.repository = new File(this.local, "repo");
         this.content = new File(this.local, "content");
 
-        FileSystem.mkdirs(this.repository);
-        FileSystem.mkdirs(this.content);
+        this.fileSystem.mkdirs(this.repository);
+        this.fileSystem.mkdirs(this.content);
 
         log.info("Remote repository: "
                 + this.configuration.getStagingRepositoryURI());
@@ -113,7 +122,7 @@ public class Main {
         prepare();
 
         final List<File> jars =
-                FileSystem.collect(this.repository, new FileFilter() {
+                this.fileSystem.collect(this.repository, new FileFilter() {
                     @Override
                     public boolean accept(final File pathname) {
                         return pathname.isFile();
@@ -151,7 +160,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> files =
-                    FileSystem.collect(contents(archive.getFile()),
+                    this.fileSystem.collect(contents(archive.getFile()),
                             new LicenseFilter());
             for (final File file : files) {
                 final License license = new License(IO.slurp(file));
@@ -201,7 +210,7 @@ public class Main {
 
         final File contents = contents(archive.getFile());
         final List<File> files =
-                FileSystem.collect(contents, new Filters(
+                this.fileSystem.collect(contents, new Filters(
                         new DeclaredFilter(contents), new LicenseFilter()));
 
         for (final File file : files) {
@@ -239,8 +248,8 @@ public class Main {
 
             final File contents = contents(archive.getFile());
             final List<File> files =
-                    FileSystem.collect(contents, new Filters(new DeclaredFilter(
-                            contents), new NoticeFilter()));
+                    this.fileSystem.collect(contents, new Filters(
+                            new DeclaredFilter(contents), new NoticeFilter()));
 
             for (final File file : files) {
 
@@ -276,7 +285,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> files =
-                    FileSystem.collect(contents(archive.getFile()),
+                    this.fileSystem.collect(contents(archive.getFile()),
                             new NoticeFilter());
             for (final File file : files) {
                 final Notice notice = new Notice(IO.slurp(file));
@@ -310,7 +319,8 @@ public class Main {
     }
 
     private List<URI> allNoticeFiles() {
-        final List<File> legal = FileSystem.collect(this.content, new LegalFilter());
+        final List<File> legal =
+                this.fileSystem.collect(this.content, new LegalFilter());
         for (final File file : legal) {
             log.info("Legal " + file);
         }
@@ -344,15 +354,16 @@ public class Main {
                 .startsWith("file:")) {
             final File file =
                     new File(this.configuration.getStagingRepositoryURI());
-            final List<File> collect = FileSystem.collect(file, new FileFilter() {
-                @Override
-                public boolean accept(final File pathname) {
-                    final String path = pathname.getAbsolutePath();
-                    return path.matches(Main.this.configuration
-                            .getFileRepositoryPathNameFilter())
-                            && isValidArchive(path);
-                }
-            });
+            final List<File> collect =
+                    this.fileSystem.collect(file, new FileFilter() {
+                        @Override
+                        public boolean accept(final File pathname) {
+                            final String path = pathname.getAbsolutePath();
+                            return path.matches(Main.this.configuration
+                                    .getFileRepositoryPathNameFilter())
+                                    && isValidArchive(path);
+                        }
+                    });
 
             for (final File f : collect) {
                 files.add(copy(f));
@@ -385,7 +396,7 @@ public class Main {
 
                     final File fileEntry = new File(contents, path);
 
-                    FileSystem.mkparent(fileEntry);
+                    this.fileSystem.mkparent(fileEntry);
 
                     // Open the output file
 
@@ -556,7 +567,7 @@ public class Main {
         }
 
         final File contents = new File(this.content, path + ".contents");
-        FileSystem.mkdirs(contents);
+        this.fileSystem.mkdirs(contents);
         return contents;
     }
 
@@ -574,7 +585,7 @@ public class Main {
 
         log.info("Copy " + uri);
 
-        FileSystem.mkparent(file);
+        this.fileSystem.mkparent(file);
 
         IO.copy(IO.read(src), file);
 
@@ -751,9 +762,9 @@ public class Main {
         private Map<URI, URI> mapOther() {
             final File jarContents = contents(this.file);
             final List<File> legal =
-                    FileSystem.collect(jarContents,
-                            new Filters(new N(new DeclaredFilter(jarContents)),
-                                    new LegalFilter()));
+                    Main.this.fileSystem.collect(jarContents, new Filters(
+                            new N(new DeclaredFilter(jarContents)),
+                            new LegalFilter()));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
@@ -769,8 +780,10 @@ public class Main {
         private Map<URI, URI> map() {
             final File jarContents = contents(this.file);
             final List<File> legal =
-                    FileSystem.collect(jarContents, new Filters(new DeclaredFilter(
-                            jarContents), new LegalFilter()));
+                    Main.this.fileSystem
+                            .collect(jarContents, new Filters(
+                                    new DeclaredFilter(jarContents),
+                                    new LegalFilter()));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {

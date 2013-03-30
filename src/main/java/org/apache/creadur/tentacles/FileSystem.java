@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
  */
 public class FileSystem {
 
-    public static List<File> collect(final File dir, final String regex) {
+    public List<File> collect(final File dir, final String regex) {
         return collect(dir, Pattern.compile(regex));
     }
 
-    private static List<File> collect(final File dir, final Pattern pattern) {
+    private List<File> collect(final File dir, final Pattern pattern) {
         return collect(dir, new FileFilter() {
             @Override
             public boolean accept(final File file) {
@@ -40,7 +40,7 @@ public class FileSystem {
         });
     }
 
-    public static List<File> collect(final File dir, final FileFilter filter) {
+    public List<File> collect(final File dir, final FileFilter filter) {
         final List<File> accepted = new ArrayList<File>();
         if (filter.accept(dir)) {
             accepted.add(dir);
@@ -56,11 +56,11 @@ public class FileSystem {
         return accepted;
     }
 
-    public static void mkparent(final File file) {
+    public void mkparent(final File file) {
         mkdirs(file.getParentFile());
     }
 
-    public static void mkdirs(final File file) {
+    public void mkdirs(final File file) {
 
         if (!file.exists()) {
 
