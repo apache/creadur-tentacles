@@ -16,6 +16,9 @@
  */
 package org.apache.creadur.tentacles;
 
+import static org.apache.creadur.tentacles.RepositoryType.HTTP;
+import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -328,11 +331,8 @@ public class Main {
     private void prepare() throws URISyntaxException, IOException {
         final Set<File> files = new HashSet<File>();
 
-        if (this.configuration.getStagingRepositoryURI().toString()
-                .startsWith("http")) {
-            final Set<URI> resources =
-                    this.client.crawl(this.configuration
-                            .getStagingRepositoryURI());
+        if (HTTP.isRepositoryFor(this.configuration)) {
+            final Set<URI> resources = this.client.crawl(this.configuration.getStagingRepositoryURI());
 
             for (final URI uri : resources) {
                 if (!uri.getPath().matches(".*(war|jar|zip)")) {
@@ -340,10 +340,8 @@ public class Main {
                 }
                 files.add(download(uri));
             }
-        } else if (this.configuration.getStagingRepositoryURI().toString()
-                .startsWith("file:")) {
-            final File file =
-                    new File(this.configuration.getStagingRepositoryURI());
+        } else if (LOCAL_FILE_SYSTEM.isRepositoryFor(this.configuration)) {
+            final File file = new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect =
                     this.fileSystem.collect(file, new FileFilter() {
                         @Override
