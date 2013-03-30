@@ -24,44 +24,42 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 public class TemplateBuilder {
+    private static final String LOG_TAG_NAME = TemplateBuilder.class.getName();
+
     private final VelocityEngine engine;
     private final IOSystem ioSystem;
-    private final String template;
-    private final Map<String, Object> map = new HashMap<String, Object>();
+    private final String templateName;
+    private final Map<String, Object> templateContextMap =
+            new ConcurrentHashMap<String, Object>();
 
     public TemplateBuilder(final String template, final IOSystem ioSystem,
             final VelocityEngine engine) {
-        this.template = template;
+        this.templateName = template;
         this.ioSystem = ioSystem;
         this.engine = engine;
     }
 
     public TemplateBuilder add(final String key, final Object value) {
-        this.map.put(key, value);
+        this.templateContextMap.put(key, value);
         return this;
     }
 
     public TemplateBuilder addAll(final Map<String, Object> map) {
-        this.map.putAll(map);
+        this.templateContextMap.putAll(map);
         return this;
     }
 
     public String apply() {
         final StringWriter writer = new StringWriter();
 
-        try {
-            evaluate(this.template, this.map, writer);
-        } catch (final IOException ioe) {
-            throw new RuntimeException("can't apply template "
-                    + this.template, ioe);
-        }
+        evaluate(writer);
 
         return writer.toString();
     }
@@ -71,21 +69,26 @@ public class TemplateBuilder {
         return file;
     }
 
-    private void evaluate(final String template,
-            final Map<String, Object> mapContext, final Writer writer)
-            throws IOException {
+    private void evaluate(final Writer writer) {
+        try {
+            final URL resource =
+                    Thread.currentThread().getContextClassLoader()
+                            .getResource(this.templateName);
 
-        final URL resource =
-                Thread.currentThread().getContextClassLoader()
-                        .getResource(template);
+            if (resource == null) {
+                throw new IllegalStateException(this.templateName);
+            }
+            final InputStreamReader templateReader =
+                    new InputStreamReader(resource.openStream());
 
-        if (resource == null) {
-            throw new IllegalStateException(template);
+            final VelocityContext context =
+                    new VelocityContext(this.templateContextMap);
+            this.engine.evaluate(context, writer, LOG_TAG_NAME, templateReader);
+
+        } catch (final IOException ioe) {
+            throw new RuntimeException("can't apply template "
+                    + this.templateName, ioe);
         }
-
-        final VelocityContext context = new VelocityContext(mapContext);
-        this.engine.evaluate(context, writer, Templates.class.getName(),
-                new InputStreamReader(resource.openStream()));
     }
 
 }
