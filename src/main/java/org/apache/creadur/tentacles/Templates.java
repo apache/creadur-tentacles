@@ -37,46 +37,60 @@ public final class Templates {
     private final VelocityEngine engine;
 
     private Templates() {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("file.resource.loader.cache", "true");
         properties.setProperty("resource.loader", "file, class");
-        properties.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
-        properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        properties.setProperty("runtime.log.logsystem.class", CommonsLogLogChute.class.getName());
-        properties.setProperty("runtime.log.logsystem.commons.logging.name", Templates.class.getName());
+        properties.setProperty("class.resource.loader.description",
+                "Velocity Classpath Resource Loader");
+        properties
+                .setProperty("class.resource.loader.class",
+                        "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        properties.setProperty("runtime.log.logsystem.class",
+                CommonsLogLogChute.class.getName());
+        properties.setProperty("runtime.log.logsystem.commons.logging.name",
+                Templates.class.getName());
 
-        engine = new VelocityEngine();
-        engine.init(properties);
+        this.engine = new VelocityEngine();
+        this.engine.init(properties);
     }
 
-    private void evaluate(String template, Map<String, Object> mapContext, Writer writer) throws IOException {
+    private void evaluate(final String template,
+            final Map<String, Object> mapContext, final Writer writer)
+            throws IOException {
 
-        URL resource = Thread.currentThread().getContextClassLoader().getResource(template);
+        final URL resource =
+                Thread.currentThread().getContextClassLoader()
+                        .getResource(template);
 
-        if (resource == null) throw new IllegalStateException(template);
+        if (resource == null) {
+            throw new IllegalStateException(template);
+        }
 
-        VelocityContext context = new VelocityContext(mapContext);
-        engine.evaluate(context, writer, Templates.class.getName(), new InputStreamReader(resource.openStream()));
+        final VelocityContext context = new VelocityContext(mapContext);
+        this.engine.evaluate(context, writer, Templates.class.getName(),
+                new InputStreamReader(resource.openStream()));
     }
 
-    public static Builder template(String name) {
-        return INSTANCE.new Builder(name);
+    public static Builder template(final String name, final IOSystem ioSystem) {
+        return INSTANCE.new Builder(name, ioSystem);
     }
 
     public class Builder {
+        private final IOSystem ioSystem;
         private final String template;
         private final Map<String, Object> map = new HashMap<String, Object>();
 
-        public Builder(String template) {
+        public Builder(final String template, final IOSystem ioSystem) {
             this.template = template;
+            this.ioSystem = ioSystem;
         }
 
-        public Builder add(String key, Object value) {
-            map.put(key, value);
+        public Builder add(final String key, final Object value) {
+            this.map.put(key, value);
             return this;
         }
 
-        public Builder addAll(Map<String, Object> map) {
+        public Builder addAll(final Map<String, Object> map) {
             this.map.putAll(map);
             return this;
         }
@@ -85,16 +99,17 @@ public final class Templates {
             final StringWriter writer = new StringWriter();
 
             try {
-                evaluate(template, map, writer);
-            } catch (IOException ioe) {
-                throw new RuntimeException("can't apply template " + template, ioe);
+                evaluate(this.template, this.map, writer);
+            } catch (final IOException ioe) {
+                throw new RuntimeException("can't apply template "
+                        + this.template, ioe);
             }
 
             return writer.toString();
         }
 
-        public File write(File file) throws IOException {
-            IO.writeString(file, apply());
+        public File write(final File file) throws IOException {
+            this.ioSystem.writeString(file, apply());
             return file;
         }
     }

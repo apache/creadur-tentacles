@@ -37,10 +37,12 @@ public class NexusClient {
 
     private final DefaultHttpClient client;
     private final FileSystem fileSystem;
+    private final IOSystem ioSystem;
 
-    public NexusClient(final FileSystem fileSystem) {
+    public NexusClient(final FileSystem fileSystem, final IOSystem ioSystem) {
         this.client = new DefaultHttpClient();
         this.fileSystem = fileSystem;
+        this.ioSystem = ioSystem;
     }
 
     public File download(final URI uri, final File file) throws IOException {
@@ -64,7 +66,7 @@ public class NexusClient {
 
         this.fileSystem.mkparent(file);
 
-        IO.copy(content, file);
+        this.ioSystem.copy(content, file);
 
         return file;
     }

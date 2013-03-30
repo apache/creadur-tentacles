@@ -97,6 +97,11 @@ public class Deauthorize {
      * @throws IOException
      */
     private static void deauthorize(final File dir) throws IOException {
+        deauthorize(dir, new IOSystem());
+    }
+
+    private static void deauthorize(final File dir, final IOSystem io)
+            throws IOException {
         for (final File file : new FileSystem().collect(dir, ".*\\.java")) {
 
             if (not(file.canRead(), "File not readable: %s",
@@ -104,7 +109,7 @@ public class Deauthorize {
                 continue;
             }
 
-            final String text = IO.slurp(file);
+            final String text = io.slurp(file);
 
             // You really can't trust text to be in the native line ending
             final String eol = (text.contains("\r\n")) ? "\r\n" : "\n";
@@ -137,7 +142,7 @@ public class Deauthorize {
                                 }
                             });
 
-            final byte[] content = IO.read(in);
+            final byte[] content = io.read(in);
 
             if (content.length != file.length()) {
 
@@ -146,7 +151,7 @@ public class Deauthorize {
                     continue;
                 }
 
-                IO.copy(content, file);
+                io.copy(content, file);
             }
         }
     }

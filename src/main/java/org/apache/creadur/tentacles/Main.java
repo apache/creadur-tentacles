@@ -64,21 +64,24 @@ public class Main {
 
     private final Configuration configuration;
     private final FileSystem fileSystem;
+    private final IOSystem ioSystem;
 
     public Main(final String... args) throws Exception {
-        this(new Configuration(args), new FileSystem());
-    }
-
-    public Main(final Configuration configuration, final FileSystem fileSystem)
-            throws Exception {
-        this(configuration, fileSystem, new NexusClient(fileSystem));
+        this(new Configuration(args), new FileSystem(), new IOSystem());
     }
 
     public Main(final Configuration configuration, final FileSystem fileSystem,
-            final NexusClient client) throws Exception {
+            final IOSystem ioSystem) throws Exception {
+        this(configuration, fileSystem, new NexusClient(fileSystem, ioSystem),
+                ioSystem);
+    }
+
+    public Main(final Configuration configuration, final FileSystem fileSystem,
+            final NexusClient client, final IOSystem ioSystem) throws Exception {
         this.client = client;
         this.configuration = configuration;
         this.fileSystem = fileSystem;
+        this.ioSystem = ioSystem;
 
         this.local =
                 new File(this.configuration.getRootDirectoryForLocalOutput());
@@ -99,7 +102,7 @@ public class Main {
 
         final URL style =
                 this.getClass().getClassLoader().getResource("legal/style.css");
-        IO.copy(style.openStream(), new File(this.local, "style.css"));
+        ioSystem.copy(style.openStream(), new File(this.local, "style.css"));
 
         licenses("asl-2.0");
         licenses("cpl-1.0");
@@ -110,7 +113,7 @@ public class Main {
         final URL aslURL =
                 this.getClass().getClassLoader()
                         .getResource("licenses/" + s + ".txt");
-        this.licenses.put(s, IO.slurp(aslURL).trim());
+        this.licenses.put(s, this.ioSystem.slurp(aslURL).trim());
     }
 
     public static void main(final String[] args) throws Exception {
@@ -135,8 +138,8 @@ public class Main {
             archives.add(archive);
         }
 
-        Templates.template("legal/archives.vm").add("archives", archives)
-                .add("reports", this.reports)
+        Templates.template("legal/archives.vm", this.ioSystem)
+                .add("archives", archives).add("reports", this.reports)
                 .write(new File(this.local, "archives.html"));
 
         reportLicenses(archives);
@@ -149,7 +152,7 @@ public class Main {
             throws IOException {
         initLicenses(archives);
 
-        Templates.template("legal/licenses.vm")
+        Templates.template("legal/licenses.vm", this.ioSystem)
                 .add("licenses", getLicenses(archives))
                 .add("reports", this.reports)
                 .write(new File(this.local, "licenses.html"));
@@ -163,7 +166,7 @@ public class Main {
                     this.fileSystem.collect(contents(archive.getFile()),
                             new LicenseFilter());
             for (final File file : files) {
-                final License license = new License(IO.slurp(file));
+                final License license = new License(this.ioSystem.slurp(file));
 
                 License existing = licenses.get(license);
                 if (existing == null) {
@@ -196,7 +199,7 @@ public class Main {
         for (final Archive archive : archives) {
 
             Templates
-                    .template("legal/archive-licenses.vm")
+                    .template("legal/archive-licenses.vm", this.ioSystem)
                     .add("archive", archive)
                     .add("reports", this.reports)
                     .write(new File(this.local, this.reports.licenses(archive)));
@@ -215,7 +218,7 @@ public class Main {
 
         for (final File file : files) {
 
-            final License license = new License(IO.slurp(file));
+            final License license = new License(this.ioSystem.slurp(file));
 
             undeclared.remove(license);
 
@@ -253,7 +256,7 @@ public class Main {
 
             for (final File file : files) {
 
-                final Notice notice = new Notice(IO.slurp(file));
+                final Notice notice = new Notice(this.ioSystem.slurp(file));
 
                 undeclared.remove(notice);
             }
@@ -274,7 +277,7 @@ public class Main {
                 }
             }
 
-            Templates.template("legal/archive-notices.vm")
+            Templates.template("legal/archive-notices.vm", this.ioSystem)
                     .add("archive", archive).add("reports", this.reports)
                     .write(new File(this.local, this.reports.notices(archive)));
         }
@@ -288,7 +291,7 @@ public class Main {
                     this.fileSystem.collect(contents(archive.getFile()),
                             new NoticeFilter());
             for (final File file : files) {
-                final Notice notice = new Notice(IO.slurp(file));
+                final Notice notice = new Notice(this.ioSystem.slurp(file));
 
                 Notice existing = notices.get(notice);
                 if (existing == null) {
@@ -302,8 +305,8 @@ public class Main {
             }
         }
 
-        Templates.template("legal/notices.vm").add("notices", notices.values())
-                .add("reports", this.reports)
+        Templates.template("legal/notices.vm", this.ioSystem)
+                .add("notices", notices.values()).add("reports", this.reports)
                 .write(new File(this.local, "notices.html"));
     }
 
@@ -379,7 +382,7 @@ public class Main {
         log.info("Unpack " + archive);
 
         try {
-            final ZipInputStream zip = IO.unzip(archive);
+            final ZipInputStream zip = this.ioSystem.unzip(archive);
 
             final File contents = contents(archive);
 
@@ -400,14 +403,14 @@ public class Main {
 
                     // Open the output file
 
-                    IO.copy(zip, fileEntry);
+                    this.ioSystem.copy(zip, fileEntry);
 
                     if (fileEntry.getName().endsWith(".jar")) {
                         unpack(fileEntry);
                     }
                 }
             } finally {
-                IO.close(zip);
+                this.ioSystem.close(zip);
             }
         } catch (final IOException e) {
             log.error("Not a zip " + archive);
@@ -587,7 +590,7 @@ public class Main {
 
         this.fileSystem.mkparent(file);
 
-        IO.copy(IO.read(src), file);
+        this.ioSystem.copy(this.ioSystem.read(src), file);
 
         return file;
     }

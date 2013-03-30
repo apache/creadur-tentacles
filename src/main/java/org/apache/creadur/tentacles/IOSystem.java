@@ -37,21 +37,21 @@ import java.util.zip.ZipInputStream;
 /**
  * @version $Rev$ $Date$
  */
-public class IO {
+public class IOSystem {
 
-    public static String slurp(final File file) throws IOException {
+    public String slurp(final File file) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
         return new String(out.toByteArray());
     }
 
-    public static String slurp(final URL url) throws IOException {
+    public String slurp(final URL url) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(url.openStream(), out);
         return new String(out.toByteArray());
     }
 
-    public static void writeString(final File file, final String string)
+    public void writeString(final File file, final String string)
             throws IOException {
         final FileWriter out = new FileWriter(file);
         try {
@@ -67,7 +67,7 @@ public class IO {
         }
     }
 
-    private static void copy(final File from, final OutputStream to)
+    private void copy(final File from, final OutputStream to)
             throws IOException {
         final InputStream read = read(from);
         try {
@@ -77,8 +77,7 @@ public class IO {
         }
     }
 
-    public static void copy(final InputStream from, final File to)
-            throws IOException {
+    public void copy(final InputStream from, final File to) throws IOException {
         final OutputStream write = write(to);
         try {
             copy(from, write);
@@ -87,7 +86,7 @@ public class IO {
         }
     }
 
-    private static void copy(final InputStream from, final OutputStream to)
+    private void copy(final InputStream from, final OutputStream to)
             throws IOException {
         final byte[] buffer = new byte[1024];
         int length = 0;
@@ -97,17 +96,16 @@ public class IO {
         to.flush();
     }
 
-    public static void copy(final byte[] from, final File to)
-            throws IOException {
+    public void copy(final byte[] from, final File to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
-    public static ZipInputStream unzip(final File file) throws IOException {
+    public ZipInputStream unzip(final File file) throws IOException {
         final InputStream read = read(file);
         return new ZipInputStream(read);
     }
 
-    public static void close(final Closeable closeable) throws IOException {
+    public void close(final Closeable closeable) throws IOException {
         if (closeable == null) {
             return;
         }
@@ -123,19 +121,18 @@ public class IO {
         }
     }
 
-    public static OutputStream write(final File destination)
+    public OutputStream write(final File destination)
             throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination);
         return new BufferedOutputStream(out, 32768);
     }
 
-    public static InputStream read(final File source)
-            throws FileNotFoundException {
+    public InputStream read(final File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
     }
 
-    public static byte[] read(final InputStream in) throws IOException {
+    public byte[] read(final InputStream in) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
         out.close();
