@@ -60,7 +60,6 @@ public class Main {
     private final File content;
     private final Reports reports;
     private final Map<String, String> licenses = new HashMap<String, String>();
-    private final String filter;
     private final NexusClient client = new NexusClient();
 
     private final Configuration configuration;
@@ -88,7 +87,6 @@ public class Main {
 
         this.reports = new Reports();
 
-        this.filter = System.getProperty("filter", "org/apache/openejb");
         final URL style =
                 this.getClass().getClassLoader().getResource("legal/style.css");
         IO.copy(style.openStream(), new File(this.local, "style.css"));
@@ -346,7 +344,7 @@ public class Main {
                 @Override
                 public boolean accept(final File pathname) {
                     final String path = pathname.getAbsolutePath();
-                    return path.matches(Main.this.filter)
+                    return path.matches(Main.this.configuration.getFileRepositoryPathNameFilter())
                             && isValidArchive(path);
                 }
             });

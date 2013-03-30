@@ -24,6 +24,10 @@ import java.net.URISyntaxException;
 
 public class Configuration {
 
+    private static final String DEFAULT_FILE_REPOSITORY_PATH_NAME_FILTER =
+            "org/apache/openejb";
+    private static final String SYSTEM_PROPERTY_NAME_FOR_FILE_REPOSITORY_PATH_NAME_FILTER =
+            "filter";
     private static final int ARGUMENT_INDEX_FOR_LOCAL_ROOT_DIRECTORY = 1;
     private static final int ARGUMENT_INDEX_FOR_URI_CONFIGURATION = 0;
     private static final int ARGUMENT_LENGTH_FOR_URI_CONFIGURATION_ONLY =
@@ -39,10 +43,19 @@ public class Configuration {
 
     private final URI staging;
     private final String rootDirectoryForLocalOutput;
+    private final String fileRepositoryPathNameFilter;
 
     public Configuration(final String... args) throws URISyntaxException {
         this.staging = toURI(args[ARGUMENT_INDEX_FOR_URI_CONFIGURATION]);
         this.rootDirectoryForLocalOutput = rootDirectoryForLocalOutput(args);
+        this.fileRepositoryPathNameFilter =
+                System.getProperty(
+                        SYSTEM_PROPERTY_NAME_FOR_FILE_REPOSITORY_PATH_NAME_FILTER,
+                        DEFAULT_FILE_REPOSITORY_PATH_NAME_FILTER);
+    }
+
+    public String getFileRepositoryPathNameFilter() {
+        return this.fileRepositoryPathNameFilter;
     }
 
     public URI getStaging() {
