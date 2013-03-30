@@ -20,7 +20,6 @@ import static org.apache.creadur.tentacles.RepositoryType.HTTP;
 import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -346,15 +345,10 @@ public class Main {
             final File file =
                     new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect =
-                    this.fileSystem.collect(file, new FileFilter() {
-                        @Override
-                        public boolean accept(final File pathname) {
-                            final String path = pathname.getAbsolutePath();
-                            return path.matches(Main.this.configuration
-                                    .getFileRepositoryPathNameFilter())
-                                    && isValidArchive(path);
-                        }
-                    });
+                    this.fileSystem.collect(
+                            file,
+                            new IsArchiveInPath(this.configuration
+                                    .getFileRepositoryPathNameFilter()));
 
             for (final File f : collect) {
                 files.add(copyToMirror(f));
@@ -688,7 +682,4 @@ public class Main {
         return new File(this.repository, name);
     }
 
-    private boolean isValidArchive(final String path) {
-        return path.matches(".*\\.(jar|zip|war|ear|tar.gz)");
-    }
 }
