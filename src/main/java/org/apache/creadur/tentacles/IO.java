@@ -18,7 +18,6 @@ package org.apache.creadur.tentacles;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,57 +26,33 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @version $Rev$ $Date$
  */
 public class IO {
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(IO.class);
-
-    public static String readString(URL url) throws IOException {
-        final InputStream in = url.openStream();
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            return reader.readLine();
-        } finally {
-            close(in);
-        }
-    }
-
-    public static String readString(File file) throws IOException {
-        final FileReader in = new FileReader(file);
-        try {
-            BufferedReader reader = new BufferedReader(in);
-            return reader.readLine();
-        } finally {
-            close(in);
-        }
-    }
-
-    public static String slurp(File file) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static String slurp(final File file) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
         return new String(out.toByteArray());
     }
 
-    public static String slurp(URL url) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static String slurp(final URL url) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(url.openStream(), out);
         return new String(out.toByteArray());
     }
 
-    public static void writeString(File file, String string) throws IOException {
+    public static void writeString(final File file, final String string)
+            throws IOException {
         final FileWriter out = new FileWriter(file);
         try {
             final BufferedWriter bufferedWriter = new BufferedWriter(out);
@@ -92,7 +67,8 @@ public class IO {
         }
     }
 
-    public static void copy(File from, OutputStream to) throws IOException {
+    private static void copy(final File from, final OutputStream to)
+            throws IOException {
         final InputStream read = read(from);
         try {
             copy(read, to);
@@ -101,7 +77,8 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, File to) throws IOException {
+    public static void copy(final InputStream from, final File to)
+            throws IOException {
         final OutputStream write = write(to);
         try {
             copy(from, write);
@@ -110,17 +87,9 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, File to, boolean append) throws IOException {
-        final OutputStream write = write(to, append);
-        try {
-            copy(from, write);
-        } finally {
-            close(write);
-        }
-    }
-
-    public static void copy(InputStream from, OutputStream to) throws IOException {
-        byte[] buffer = new byte[1024];
+    private static void copy(final InputStream from, final OutputStream to)
+            throws IOException {
+        final byte[] buffer = new byte[1024];
         int length = 0;
         while ((length = from.read(buffer)) != -1) {
             to.write(buffer, 0, length);
@@ -128,65 +97,46 @@ public class IO {
         to.flush();
     }
 
-    public static void copy(byte[] from, File to) throws IOException {
+    public static void copy(final byte[] from, final File to)
+            throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
-    public static void copy(byte[] from, OutputStream to) throws IOException {
-        copy(new ByteArrayInputStream(from), to);
-    }
-
-    public static ZipOutputStream zip(File file) throws IOException {
-        final OutputStream write = write(file);
-        return new ZipOutputStream(write);
-    }
-
-    public static ZipInputStream unzip(File file) throws IOException {
+    public static ZipInputStream unzip(final File file) throws IOException {
         final InputStream read = read(file);
         return new ZipInputStream(read);
     }
 
-    public static void close(Closeable closeable) throws IOException {
-        if (closeable == null) return;
+    public static void close(final Closeable closeable) throws IOException {
+        if (closeable == null) {
+            return;
+        }
         try {
             if (closeable instanceof Flushable) {
                 ((Flushable) closeable).flush();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
         }
         try {
             closeable.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
         }
     }
 
-    public static boolean delete(File file) {
-        if (file == null) return false;
-        if (!file.delete()) {
-            log.error("Delete failed " + file.getAbsolutePath());
-            return false;
-        }
-
-        return true;
-    }
-
-    public static OutputStream write(File destination) throws FileNotFoundException {
+    public static OutputStream write(final File destination)
+            throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination);
         return new BufferedOutputStream(out, 32768);
     }
 
-    public static OutputStream write(File destination, boolean append) throws FileNotFoundException {
-        final OutputStream out = new FileOutputStream(destination, append);
-        return new BufferedOutputStream(out, 32768);
-    }
-
-    public static InputStream read(File source) throws FileNotFoundException {
+    public static InputStream read(final File source)
+            throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
     }
 
-    public static byte[] read(InputStream in) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static byte[] read(final InputStream in) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
         out.close();
         return out.toByteArray();
