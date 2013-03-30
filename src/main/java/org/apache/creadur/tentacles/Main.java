@@ -66,8 +66,11 @@ public class Main {
     private final Configuration configuration;
 
     public Main(final String... args) throws Exception {
+        this(new Configuration(args));
+    }
 
-        this.configuration = new Configuration(args);
+    public Main(final Configuration configuration) throws Exception {
+        this.configuration = configuration;
 
         this.local =
                 new File(this.configuration.getRootDirectoryForLocalOutput());
