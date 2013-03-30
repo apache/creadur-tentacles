@@ -25,9 +25,12 @@ public final class Templates {
 
     private final IOSystem ioSystem;
     private final VelocityEngine engine;
+    private final TentaclesResources tentaclesResources;
 
-    public Templates(final IOSystem ioSystem) {
+    public Templates(final IOSystem ioSystem,
+            final TentaclesResources tentaclesResources) {
         this.ioSystem = ioSystem;
+        this.tentaclesResources = tentaclesResources;
         final Properties properties = new Properties();
         properties.setProperty("file.resource.loader.cache", "true");
         properties.setProperty("resource.loader", "file, class");
@@ -46,6 +49,7 @@ public final class Templates {
     }
 
     public TemplateBuilder template(final String name) {
-        return new TemplateBuilder(name, this.ioSystem, this.engine);
+        return new TemplateBuilder(name, this.ioSystem, this.engine,
+                this.tentaclesResources);
     }
 }

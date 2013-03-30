@@ -20,10 +20,9 @@ package org.apache.creadur.tentacles;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,6 +32,7 @@ import org.apache.velocity.app.VelocityEngine;
 public class TemplateBuilder {
     private static final String LOG_TAG_NAME = TemplateBuilder.class.getName();
 
+    private final TentaclesResources tentaclesResources;
     private final VelocityEngine engine;
     private final IOSystem ioSystem;
     private final String templateName;
@@ -40,10 +40,12 @@ public class TemplateBuilder {
             new ConcurrentHashMap<String, Object>();
 
     public TemplateBuilder(final String template, final IOSystem ioSystem,
-            final VelocityEngine engine) {
+            final VelocityEngine engine,
+            final TentaclesResources tentaclesResources) {
         this.templateName = template;
         this.ioSystem = ioSystem;
         this.engine = engine;
+        this.tentaclesResources = tentaclesResources;
     }
 
     public TemplateBuilder add(final String key, final Object value) {
@@ -71,15 +73,8 @@ public class TemplateBuilder {
 
     private void evaluate(final Writer writer) {
         try {
-            final URL resource =
-                    Thread.currentThread().getContextClassLoader()
-                            .getResource(this.templateName);
-
-            if (resource == null) {
-                throw new IllegalStateException(this.templateName);
-            }
-            final InputStreamReader templateReader =
-                    new InputStreamReader(resource.openStream());
+            final Reader templateReader =
+                    this.tentaclesResources.read(this.templateName);
 
             final VelocityContext context =
                     new VelocityContext(this.templateContextMap);

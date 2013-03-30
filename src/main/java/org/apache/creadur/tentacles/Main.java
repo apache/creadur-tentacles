@@ -74,7 +74,7 @@ public class Main {
     public Main(final Configuration configuration, final FileSystem fileSystem,
             final IOSystem ioSystem) throws Exception {
         this(configuration, fileSystem, new NexusClient(fileSystem, ioSystem),
-                ioSystem, new Templates(ioSystem));
+                ioSystem, new Templates(ioSystem, new TentaclesResources()));
     }
 
     public Main(final Configuration configuration, final FileSystem fileSystem,
