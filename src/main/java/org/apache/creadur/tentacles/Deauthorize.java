@@ -85,7 +85,7 @@ public class Deauthorize {
      * @throws IOException
      */
     private static void deauthorize(File dir) throws IOException {
-        for (File file : Files.collect(dir, ".*\\.java")) {
+        for (File file : FileSystem.collect(dir, ".*\\.java")) {
 
             if (not(file.canRead(), "File not readable: %s", file.getAbsolutePath())) continue;
 

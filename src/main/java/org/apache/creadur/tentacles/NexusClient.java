@@ -59,7 +59,7 @@ public class NexusClient {
 
         final InputStream content = response.getEntity().getContent();
 
-        Files.mkparent(file);
+        FileSystem.mkparent(file);
 
         IO.copy(content, file);
 

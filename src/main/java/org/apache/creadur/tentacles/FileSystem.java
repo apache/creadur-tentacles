@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * @version $Rev$ $Date$
  */
-public class Files {
+public class FileSystem {
 
     public static List<File> collect(final File dir, final String regex) {
         return collect(dir, Pattern.compile(regex));
