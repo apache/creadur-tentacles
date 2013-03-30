@@ -41,12 +41,12 @@ public class Configuration {
         return uri;
     }
 
-    private final URI staging;
+    private final URI stagingRepositoryURI;
     private final String rootDirectoryForLocalOutput;
     private final String fileRepositoryPathNameFilter;
 
     public Configuration(final String... args) throws URISyntaxException {
-        this.staging = toURI(args[ARGUMENT_INDEX_FOR_URI_CONFIGURATION]);
+        this.stagingRepositoryURI = toURI(args[ARGUMENT_INDEX_FOR_URI_CONFIGURATION]);
         this.rootDirectoryForLocalOutput = rootDirectoryForLocalOutput(args);
         this.fileRepositoryPathNameFilter =
                 System.getProperty(
@@ -58,8 +58,8 @@ public class Configuration {
         return this.fileRepositoryPathNameFilter;
     }
 
-    public URI getStaging() {
-        return this.staging;
+    public URI getStagingRepositoryURI() {
+        return this.stagingRepositoryURI;
     }
 
     public String getRootDirectoryForLocalOutput() {
@@ -72,7 +72,7 @@ public class Configuration {
             rootDirectoryForLocal =
                     args[ARGUMENT_INDEX_FOR_LOCAL_ROOT_DIRECTORY];
         } else {
-            rootDirectoryForLocal = new File(this.staging.getPath()).getName();
+            rootDirectoryForLocal = new File(this.stagingRepositoryURI.getPath()).getName();
         }
         return rootDirectoryForLocal;
     }

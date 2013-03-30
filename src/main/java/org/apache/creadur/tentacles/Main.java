@@ -82,8 +82,9 @@ public class Main {
         Files.mkdirs(this.repository);
         Files.mkdirs(this.content);
 
-        log.info("Repo: " + this.configuration.getStaging());
-        log.info("Local: " + this.local);
+        log.info("Remote repository: "
+                + this.configuration.getStagingRepositoryURI());
+        log.info("Local root directory: " + this.local);
 
         this.reports = new Reports();
 
@@ -327,9 +328,11 @@ public class Main {
     private void prepare() throws URISyntaxException, IOException {
         final Set<File> files = new HashSet<File>();
 
-        if (this.configuration.getStaging().toString().startsWith("http")) {
+        if (this.configuration.getStagingRepositoryURI().toString()
+                .startsWith("http")) {
             final Set<URI> resources =
-                    this.client.crawl(this.configuration.getStaging());
+                    this.client.crawl(this.configuration
+                            .getStagingRepositoryURI());
 
             for (final URI uri : resources) {
                 if (!uri.getPath().matches(".*(war|jar|zip)")) {
@@ -337,14 +340,16 @@ public class Main {
                 }
                 files.add(download(uri));
             }
-        } else if (this.configuration.getStaging().toString()
+        } else if (this.configuration.getStagingRepositoryURI().toString()
                 .startsWith("file:")) {
-            final File file = new File(this.configuration.getStaging());
+            final File file =
+                    new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect = Files.collect(file, new FileFilter() {
                 @Override
                 public boolean accept(final File pathname) {
                     final String path = pathname.getAbsolutePath();
-                    return path.matches(Main.this.configuration.getFileRepositoryPathNameFilter())
+                    return path.matches(Main.this.configuration
+                            .getFileRepositoryPathNameFilter())
                             && isValidArchive(path);
                 }
             });
@@ -782,8 +787,9 @@ public class Main {
     private File getFile(final URI uri) {
         final String name =
                 uri.toString()
-                        .replace(this.configuration.getStaging().toString(), "")
-                        .replaceFirst("^/", "");
+                        .replace(
+                                this.configuration.getStagingRepositoryURI()
+                                        .toString(), "").replaceFirst("^/", "");
         return new File(this.repository, name);
     }
 
