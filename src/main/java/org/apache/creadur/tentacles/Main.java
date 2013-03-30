@@ -63,10 +63,13 @@ public class Main {
     private String filter;
     private final NexusClient client = new NexusClient();
 
+    private final Configuration configuration;
 
-    public Main(String... args) throws Exception {
+    public Main(final String... args) throws Exception {
 
-        this.staging = getURI(args[0]);
+        configuration = new Configuration(args);
+
+        this.staging = configuration.getStaging();
 
         this.local = new File(rootDirectoryForLocalOutput(args));
 
@@ -102,15 +105,6 @@ public class Main {
         return rootDirectoryForLocal;
     }
 
-    private URI getURI(String arg) throws URISyntaxException {
-        final URI uri = new URI(arg);
-        if (arg.startsWith("file:")) {
-            File file = new File(uri);
-            file = file.getAbsoluteFile();
-            return file.toURI();
-        }
-        return uri;
-    }
 
     private void licenses(String s) throws IOException {
         URL aslURL = this.getClass().getClassLoader().getResource("licenses/" + s + ".txt");
