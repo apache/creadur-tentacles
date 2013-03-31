@@ -32,41 +32,14 @@ public class FileSystem {
         this.filters = new Filters();
     }
 
-    public FileFilter filesOnly() {
-        return this.filters.filesOnly();
+    public List<File> legalDocumentsUndeclaredIn(final File contents) {
+        return collect(contents,
+                this.filters.legalDocumentsUndeclaredIn(contents));
     }
 
-    public FileFilter licensesOnly() {
-        return this.filters.licensesOnly();
-    }
-
-    public FileFilter noticesOnly() {
-        return this.filters.noticesOnly();
-    }
-
-    public FileFilter legalOnly() {
-        return this.filters.legalOnly();
-    }
-
-    public FileFilter licensesDeclaredIn(final File contents) {
-        return this.filters.licensesDeclaredIn(contents);
-
-    }
-
-    public FileFilter noticesDeclaredIn(final File contents) {
-        return this.filters.noticesDeclaredIn(contents);
-    }
-
-    public FileFilter legalDocumentsUndeclaredIn(final File contents) {
-        return this.filters.legalDocumentsUndeclaredIn(contents);
-    }
-
-    public FileFilter archivesInPath(final String repositoryPathNameFilter) {
-        return this.filters.archivesInPath(repositoryPathNameFilter);
-    }
-
-    public FileFilter legalDocumentsDeclaredIn(final File contents) {
-        return this.filters.legalDocumentsDeclaredIn(contents);
+    public List<File> legalDocumentsDeclaredIn(final File contents) {
+        return collect(contents,
+                this.filters.legalDocumentsDeclaredIn(contents));
     }
 
     public List<File> collect(final File dir, final String regex) {
@@ -114,5 +87,30 @@ public class FileSystem {
 
         final boolean isDirectory = file.isDirectory();
         assert isDirectory : "Not a directory: " + file;
+    }
+
+    public List<File> documentsFrom(final File repository) {
+        return collect(repository, this.filters.filesOnly());
+    }
+
+    public List<File> licensesFrom(final File directory) {
+        return collect(directory, this.filters.licensesOnly());
+    }
+
+    public List<File> noticesOnly(final File directory) {
+        return collect(directory, this.filters.noticesOnly());
+    }
+
+    public List<File> licensesDeclaredIn(final File contents) {
+        return collect(contents, this.filters.licensesDeclaredIn(contents));
+    }
+
+    public List<File> noticesDeclaredIn(final File contents) {
+        return collect(contents, this.filters.noticesDeclaredIn(contents));
+    }
+
+    public List<File> archivesInPath(final File file,
+            final String fileRepositoryPathNameFilter) {
+        return collect(file, this.filters.archivesInPath(fileRepositoryPathNameFilter));
     }
 }

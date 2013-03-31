@@ -121,9 +121,7 @@ public class Main {
 
         prepare();
 
-        final List<File> jars =
-                this.fileSystem.collect(this.repository,
-                        this.fileSystem.filesOnly());
+        final List<File> jars = this.fileSystem.documentsFrom(this.repository);
 
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
@@ -156,8 +154,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> files =
-                    this.fileSystem.collect(contents(archive.getFile()),
-                            this.fileSystem.licensesOnly());
+                    this.fileSystem.licensesFrom(contents(archive.getFile()));
             for (final File file : files) {
                 final License license = new License(this.ioSystem.slurp(file));
 
@@ -205,9 +202,7 @@ public class Main {
                 new HashSet<License>(archive.getLicenses());
 
         final File contents = contents(archive.getFile());
-        final List<File> files =
-                this.fileSystem.collect(contents,
-                        this.fileSystem.licensesDeclaredIn(contents));
+        final List<File> files = this.fileSystem.licensesDeclaredIn(contents);
 
         for (final File file : files) {
 
@@ -244,8 +239,7 @@ public class Main {
 
             final File contents = contents(archive.getFile());
             final List<File> files =
-                    this.fileSystem.collect(contents,
-                            this.fileSystem.noticesDeclaredIn(contents));
+                    this.fileSystem.noticesDeclaredIn(contents);
 
             for (final File file : files) {
 
@@ -280,10 +274,9 @@ public class Main {
         final Map<Notice, Notice> notices = new HashMap<Notice, Notice>();
 
         for (final Archive archive : archives) {
-            final List<File> files =
-                    this.fileSystem.collect(contents(archive.getFile()),
-                            this.fileSystem.noticesOnly());
-            for (final File file : files) {
+            final List<File> noticeDocuments =
+                    this.fileSystem.noticesOnly(contents(archive.getFile()));
+            for (final File file : noticeDocuments) {
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
 
                 Notice existing = notices.get(notice);
@@ -301,24 +294,6 @@ public class Main {
         this.templates.template("legal/notices.vm")
                 .add("notices", notices.values()).add("reports", this.reports)
                 .write(new File(this.local, "notices.html"));
-    }
-
-    private List<URI> allNoticeFiles() {
-        final List<File> legal =
-                this.fileSystem.collect(this.content,
-                        this.fileSystem.legalOnly());
-        for (final File file : legal) {
-            log.info("Legal " + file);
-        }
-
-        final URI uri = this.local.toURI();
-        final List<URI> uris = new ArrayList<URI>();
-        for (final File file : legal) {
-            final URI full = file.toURI();
-            final URI relativize = uri.relativize(full);
-            uris.add(relativize);
-        }
-        return uris;
     }
 
     private void prepare() throws URISyntaxException, IOException {
@@ -339,9 +314,8 @@ public class Main {
             final File file =
                     new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect =
-                    this.fileSystem.collect(file, this.fileSystem
-                            .archivesInPath(this.configuration
-                                    .getFileRepositoryPathNameFilter()));
+                    this.fileSystem.archivesInPath(file, this.configuration
+                            .getFileRepositoryPathNameFilter());
 
             for (final File f : collect) {
                 files.add(copyToMirror(f));
@@ -631,9 +605,8 @@ public class Main {
         private Map<URI, URI> mapOther() {
             final File jarContents = contents(this.file);
             final List<File> legal =
-                    Main.this.fileSystem.collect(jarContents,
-                            Main.this.fileSystem
-                                    .legalDocumentsUndeclaredIn(jarContents));
+                    Main.this.fileSystem
+                            .legalDocumentsUndeclaredIn(jarContents);
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
@@ -649,9 +622,7 @@ public class Main {
         private Map<URI, URI> map() {
             final File jarContents = contents(this.file);
             final List<File> legal =
-                    Main.this.fileSystem.collect(jarContents,
-                            Main.this.fileSystem
-                                    .legalDocumentsDeclaredIn(jarContents));
+                    Main.this.fileSystem.legalDocumentsDeclaredIn(jarContents);
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
