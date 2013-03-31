@@ -287,7 +287,7 @@ public class Main {
                     existing = notice;
                 }
 
-                existing.locations.add(file);
+                existing.getLocations().add(file);
                 existing.getArchives().add(archive);
                 archive.getNotices().add(existing);
             }
@@ -446,73 +446,6 @@ public class Main {
         public boolean implies(final License fullLicense) {
             return fullLicense.key.contains(this.key);
         }
-    }
-
-    public class Notice {
-        private final String text;
-        private final String key;
-        private final Set<Archive> archives = new HashSet<Archive>();
-        private final List<File> locations = new ArrayList<File>();
-
-        public Notice(final String text) {
-            this.text = text.intern();
-            this.key =
-                    text.replaceAll("[ \\n\\t\\r]+", "").toLowerCase().intern();
-        }
-
-        public String getText() {
-            return this.text;
-        }
-
-        public String getKey() {
-            return this.key;
-        }
-
-        public Set<Archive> getArchives() {
-            return this.archives;
-        }
-
-        public Set<URI> locations(final Archive archive) {
-            final URI contents = archive.contentsURI();
-            final Set<URI> locations = new HashSet<URI>();
-            for (final File file : this.locations) {
-                final URI uri = file.toURI();
-                final URI relativize = contents.relativize(uri);
-                if (!relativize.equals(uri)) {
-                    locations.add(relativize);
-                }
-            }
-
-            return locations;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            final Notice notice = (Notice) o;
-
-            if (!this.key.equals(notice.key)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.key.hashCode();
-        }
-
-        public boolean implies(final Notice fullLicense) {
-            return fullLicense.key.contains(this.key);
-        }
-
     }
 
     private File copyToMirror(final File src) throws IOException {

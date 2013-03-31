@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.creadur.tentacles.Main.License;
-import org.apache.creadur.tentacles.Main.Notice;
 
 public class Archive {
 
