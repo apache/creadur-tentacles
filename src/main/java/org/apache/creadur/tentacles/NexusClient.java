@@ -39,10 +39,10 @@ public class NexusClient {
     private final FileSystem fileSystem;
     private final IOSystem ioSystem;
 
-    public NexusClient(final FileSystem fileSystem, final IOSystem ioSystem) {
+    public NexusClient(final Platform platform) {
         this.client = new DefaultHttpClient();
-        this.fileSystem = fileSystem;
-        this.ioSystem = ioSystem;
+        this.fileSystem = platform.getFileSystem();
+        this.ioSystem = platform.getIoSystem();
     }
 
     public File download(final URI uri, final File file) throws IOException {

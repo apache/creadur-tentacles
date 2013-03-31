@@ -27,10 +27,9 @@ public final class Templates {
     private final VelocityEngine engine;
     private final TentaclesResources tentaclesResources;
 
-    public Templates(final IOSystem ioSystem,
-            final TentaclesResources tentaclesResources) {
-        this.ioSystem = ioSystem;
-        this.tentaclesResources = tentaclesResources;
+    public Templates(final Platform platform) {
+        this.ioSystem = platform.getIoSystem();
+        this.tentaclesResources = platform.getTentaclesResources();
         final Properties properties = new Properties();
         properties.setProperty("file.resource.loader.cache", "true");
         properties.setProperty("resource.loader", "file, class");

@@ -70,22 +70,22 @@ public class Main {
     private final Templates templates;
 
     public Main(final String... args) throws Exception {
-        this(new Configuration(args), new FileSystem(), new IOSystem());
+        this(new Configuration(args), Platform.aPlatform());
     }
 
-    public Main(final Configuration configuration, final FileSystem fileSystem,
-            final IOSystem ioSystem) throws Exception {
-        this(configuration, fileSystem, new NexusClient(fileSystem, ioSystem),
-                ioSystem, new Templates(ioSystem, new TentaclesResources()));
+    public Main(final Configuration configuration, final Platform platform)
+            throws Exception {
+        this(configuration, platform, new NexusClient(platform), new Templates(
+                platform));
     }
 
-    public Main(final Configuration configuration, final FileSystem fileSystem,
-            final NexusClient client, final IOSystem ioSystem,
-            final Templates templates) throws Exception {
+    public Main(final Configuration configuration, final Platform platform,
+            final NexusClient client, final Templates templates)
+            throws Exception {
         this.client = client;
         this.configuration = configuration;
-        this.fileSystem = fileSystem;
-        this.ioSystem = ioSystem;
+        this.fileSystem = platform.getFileSystem();
+        this.ioSystem = platform.getIoSystem();
         this.templates = templates;
 
         this.local =
@@ -107,7 +107,8 @@ public class Main {
 
         final URL style =
                 this.getClass().getClassLoader().getResource("legal/style.css");
-        ioSystem.copy(style.openStream(), new File(this.local, "style.css"));
+        this.ioSystem.copy(style.openStream(),
+                new File(this.local, "style.css"));
 
         licenses("asl-2.0");
         licenses("cpl-1.0");
