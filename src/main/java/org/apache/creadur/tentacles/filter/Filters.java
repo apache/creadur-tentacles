@@ -51,25 +51,25 @@ public class Filters {
         return this.legalOnly;
     }
 
-    public FileFilter licensesIn(final File contents) {
+    public FileFilter licensesDeclaredIn(final File contents) {
         return new AndFilter(new DeclaredFilter(contents), new LicenseFilter());
 
     }
 
-    public FileFilter noticesIn(final File contents) {
+    public FileFilter noticesDeclaredIn(final File contents) {
         return new AndFilter(new DeclaredFilter(contents), new NoticeFilter());
     }
 
-    public FileFilter undeclaredLegalDocumentsIn(final File contents) {
+    public FileFilter legalDocumentsUndeclaredIn(final File contents) {
         return new AndFilter(new NotFilter(new DeclaredFilter(contents)),
                 new LegalFilter());
     }
 
-    public FileFilter declaredLegalDocumentsIn(final File contents) {
+    public FileFilter legalDocumentsDeclaredIn(final File contents) {
         return new AndFilter(new DeclaredFilter(contents), new LegalFilter());
     }
 
-    public FileFilter archiveInPath(final String repositoryPathNameFilter) {
+    public FileFilter archivesInPath(final String repositoryPathNameFilter) {
         return new IsArchiveInPathFilter(repositoryPathNameFilter);
     }
 }

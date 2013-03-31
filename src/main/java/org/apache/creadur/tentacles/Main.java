@@ -210,7 +210,7 @@ public class Main {
         final File contents = contents(archive.getFile());
         final List<File> files =
                 this.fileSystem.collect(contents,
-                        this.filters.licensesIn(contents));
+                        this.filters.licensesDeclaredIn(contents));
 
         for (final File file : files) {
 
@@ -248,7 +248,7 @@ public class Main {
             final File contents = contents(archive.getFile());
             final List<File> files =
                     this.fileSystem.collect(contents,
-                            this.filters.noticesIn(contents));
+                            this.filters.noticesDeclaredIn(contents));
 
             for (final File file : files) {
 
@@ -342,7 +342,7 @@ public class Main {
                     new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect =
                     this.fileSystem.collect(file, this.filters
-                            .archiveInPath(this.configuration
+                            .archivesInPath(this.configuration
                                     .getFileRepositoryPathNameFilter()));
 
             for (final File f : collect) {
@@ -634,7 +634,7 @@ public class Main {
             final File jarContents = contents(this.file);
             final List<File> legal =
                     Main.this.fileSystem.collect(jarContents, Main.this.filters
-                            .undeclaredLegalDocumentsIn(jarContents));
+                            .legalDocumentsUndeclaredIn(jarContents));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
@@ -651,7 +651,7 @@ public class Main {
             final File jarContents = contents(this.file);
             final List<File> legal =
                     Main.this.fileSystem.collect(jarContents, Main.this.filters
-                            .declaredLegalDocumentsIn(jarContents));
+                            .legalDocumentsDeclaredIn(jarContents));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
