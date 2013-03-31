@@ -56,7 +56,8 @@ public class Main {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
             .getLogger(Main.class);
 
-    private final File local;
+    private final File localRootDirectory;
+    private final File output;
     private final File repository;
     private final File content;
     private final Reports reports;
@@ -87,24 +88,25 @@ public class Main {
         this.tentaclesResources = platform.getTentaclesResources();
         this.templates = templates;
 
-        this.local =
+        this.localRootDirectory =
                 new File(this.configuration.getRootDirectoryForLocalOutput());
 
-        this.fileSystem.mkdirs(this.local);
+        this.fileSystem.mkdirs(this.localRootDirectory);
 
-        this.repository = new File(this.local, "repo");
-        this.content = new File(this.local, "content");
+        this.repository = new File(this.localRootDirectory, "repo");
+        this.content = new File(this.localRootDirectory, "content");
+        this.output = this.localRootDirectory;
 
         this.fileSystem.mkdirs(this.repository);
         this.fileSystem.mkdirs(this.content);
 
         log.info("Remote repository: "
                 + this.configuration.getStagingRepositoryURI());
-        log.info("Local root directory: " + this.local);
+        log.info("Local root directory: " + this.localRootDirectory);
 
         this.reports = new Reports();
 
-        this.tentaclesResources.copyTo("legal/style.css", new File(this.local,
+        this.tentaclesResources.copyTo("legal/style.css", new File(this.output,
                 "style.css"));
 
         this.licenses = loadLicensesFrom(this.tentaclesResources);
@@ -127,7 +129,8 @@ public class Main {
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
             final Archive archive =
-                    new Archive(file, this.fileSystem, this.local, repository);
+                    new Archive(file, this.fileSystem, this.localRootDirectory,
+                            repository);
             archives.add(archive);
         }
         return archives;
@@ -136,7 +139,7 @@ public class Main {
     private void reportOn(final List<Archive> archives) throws IOException {
         this.templates.template("legal/archives.vm").add("archives", archives)
                 .add("reports", this.reports)
-                .write(new File(this.local, "archives.html"));
+                .write(new File(this.output, "archives.html"));
 
         reportLicenses(archives);
         reportNotices(archives);
@@ -151,7 +154,7 @@ public class Main {
         this.templates.template("legal/licenses.vm")
                 .add("licenses", getLicenses(archives))
                 .add("reports", this.reports)
-                .write(new File(this.local, "licenses.html"));
+                .write(new File(this.output, "licenses.html"));
     }
 
     private void initLicenses(final List<Archive> archives) throws IOException {
@@ -197,7 +200,7 @@ public class Main {
                     .template("legal/archive-licenses.vm")
                     .add("archive", archive)
                     .add("reports", this.reports)
-                    .write(new File(this.local, this.reports.licenses(archive)));
+                    .write(new File(this.output, this.reports.licenses(archive)));
         }
 
     }
@@ -269,9 +272,11 @@ public class Main {
                 }
             }
 
-            this.templates.template("legal/archive-notices.vm")
-                    .add("archive", archive).add("reports", this.reports)
-                    .write(new File(this.local, this.reports.notices(archive)));
+            this.templates
+                    .template("legal/archive-notices.vm")
+                    .add("archive", archive)
+                    .add("reports", this.reports)
+                    .write(new File(this.output, this.reports.notices(archive)));
         }
     }
 
@@ -298,7 +303,7 @@ public class Main {
 
         this.templates.template("legal/notices.vm")
                 .add("notices", notices.values()).add("reports", this.reports)
-                .write(new File(this.local, "notices.html"));
+                .write(new File(this.output, "notices.html"));
     }
 
     private void unpackContents(final Set<File> files) throws IOException {
@@ -516,7 +521,7 @@ public class Main {
     private File contents(final File archive) {
         String path =
                 archive.getAbsolutePath().substring(
-                        this.local.getAbsolutePath().length() + 1);
+                        this.localRootDirectory.getAbsolutePath().length() + 1);
 
         if (path.startsWith("repo/")) {
             path = path.substring("repo/".length());
