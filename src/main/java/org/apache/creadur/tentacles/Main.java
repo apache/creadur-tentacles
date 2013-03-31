@@ -126,7 +126,8 @@ public class Main {
 
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
-            final Archive archive = new Archive(file);
+            final Archive archive =
+                    new Archive(file, this.fileSystem, this.local, repository);
             archives.add(archive);
         }
         return archives;
@@ -545,6 +546,8 @@ public class Main {
 
     public class Archive {
 
+        private final File localRootDirectory;
+        private final FileSystem fileSystem;
         private final URI uri;
         private final File file;
         private final Map<URI, URI> map;
@@ -559,8 +562,11 @@ public class Main {
         private final Set<Notice> otherNotices = new HashSet<Notice>();
         private Map<URI, URI> others;
 
-        public Archive(final File file) {
-            this.uri = Main.this.repository.toURI().relativize(file.toURI());
+        public Archive(final File file, final FileSystem fileSystem,
+                final File localRootDirectory, final File repository) {
+            this.fileSystem = fileSystem;
+            this.localRootDirectory = localRootDirectory;
+            this.uri = repository.toURI().relativize(file.toURI());
             this.file = file;
             this.map = map();
         }
@@ -611,8 +617,7 @@ public class Main {
         private Map<URI, URI> mapOther() {
             final File jarContents = contents();
             final List<File> legal =
-                    Main.this.fileSystem
-                            .legalDocumentsUndeclaredIn(jarContents);
+                    this.fileSystem.legalDocumentsUndeclaredIn(jarContents);
 
             return buildMapFrom(jarContents, legal);
         }
@@ -623,7 +628,8 @@ public class Main {
             for (final File file : legal) {
                 final URI name = jarContents.toURI().relativize(file.toURI());
                 final URI link =
-                        Main.this.local.toURI().relativize(file.toURI());
+                        this.localRootDirectory.toURI()
+                                .relativize(file.toURI());
 
                 map.put(name, link);
             }
@@ -633,7 +639,7 @@ public class Main {
         private Map<URI, URI> map() {
             final File jarContents = contents();
             final List<File> legal =
-                    Main.this.fileSystem.legalDocumentsDeclaredIn(jarContents);
+                    this.fileSystem.legalDocumentsDeclaredIn(jarContents);
 
             return buildMapFrom(jarContents, legal);
         }
