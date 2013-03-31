@@ -62,8 +62,8 @@ public class Main {
     private final File content;
     private final Reports reports;
     private final Map<String, String> licenses;
-    private final NexusClient client;
 
+    private final Platform platform;
     private final Configuration configuration;
     private final FileSystem fileSystem;
     private final IOSystem ioSystem;
@@ -76,14 +76,12 @@ public class Main {
 
     public Main(final Configuration configuration, final Platform platform)
             throws Exception {
-        this(configuration, platform, new NexusClient(platform), new Templates(
-                platform));
+        this(configuration, platform, new Templates(platform));
     }
 
     public Main(final Configuration configuration, final Platform platform,
-            final NexusClient client, final Templates templates)
-            throws Exception {
-        this.client = client;
+            final Templates templates) throws Exception {
+        this.platform = platform;
         this.configuration = configuration;
         this.fileSystem = platform.getFileSystem();
         this.ioSystem = platform.getIoSystem();
@@ -300,15 +298,15 @@ public class Main {
         final Set<File> files = new HashSet<File>();
 
         if (HTTP.isRepositoryFor(this.configuration)) {
+            final NexusClient client = new NexusClient(this.platform);
             final Set<URI> resources =
-                    this.client.crawl(this.configuration
-                            .getStagingRepositoryURI());
+                    client.crawl(this.configuration.getStagingRepositoryURI());
 
             for (final URI uri : resources) {
                 if (!uri.getPath().matches(".*(war|jar|zip)")) {
                     continue;
                 }
-                files.add(this.client.download(uri, mirroredFrom(uri)));
+                files.add(client.download(uri, mirroredFrom(uri)));
             }
         } else if (LOCAL_FILE_SYSTEM.isRepositoryFor(this.configuration)) {
             final File file =
