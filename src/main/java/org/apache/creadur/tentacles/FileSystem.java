@@ -22,10 +22,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * @version $Rev$ $Date$
- */
+import org.apache.creadur.tentacles.filter.Filters;
+
 public class FileSystem {
+
+    private final Filters filters;
+
+    public FileSystem() {
+        this.filters = new Filters();
+    }
+
+    public FileFilter filesOnly() {
+        return this.filters.filesOnly();
+    }
+
+    public FileFilter licensesOnly() {
+        return this.filters.licensesOnly();
+    }
+
+    public FileFilter noticesOnly() {
+        return this.filters.noticesOnly();
+    }
+
+    public FileFilter legalOnly() {
+        return this.filters.legalOnly();
+    }
+
+    public FileFilter licensesDeclaredIn(final File contents) {
+        return this.filters.licensesDeclaredIn(contents);
+
+    }
+
+    public FileFilter noticesDeclaredIn(final File contents) {
+        return this.filters.noticesDeclaredIn(contents);
+    }
+
+    public FileFilter legalDocumentsUndeclaredIn(final File contents) {
+        return this.filters.legalDocumentsUndeclaredIn(contents);
+    }
+
+    public FileFilter archivesInPath(final String repositoryPathNameFilter) {
+        return this.filters.archivesInPath(repositoryPathNameFilter);
+    }
+
+    public FileFilter legalDocumentsDeclaredIn(final File contents) {
+        return this.filters.legalDocumentsDeclaredIn(contents);
+    }
 
     public List<File> collect(final File dir, final String regex) {
         return collect(dir, Pattern.compile(regex));

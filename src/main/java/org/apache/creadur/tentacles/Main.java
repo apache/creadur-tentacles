@@ -36,7 +36,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.creadur.tentacles.filter.Filters;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -70,7 +69,6 @@ public class Main {
     private final IOSystem ioSystem;
     private final TentaclesResources tentaclesResources;
     private final Templates templates;
-    private final Filters filters;
 
     public Main(final String... args) throws Exception {
         this(new Configuration(args), Platform.aPlatform());
@@ -90,7 +88,6 @@ public class Main {
         this.fileSystem = platform.getFileSystem();
         this.ioSystem = platform.getIoSystem();
         this.tentaclesResources = platform.getTentaclesResources();
-        this.filters = new Filters();
         this.templates = templates;
 
         this.local =
@@ -126,7 +123,7 @@ public class Main {
 
         final List<File> jars =
                 this.fileSystem.collect(this.repository,
-                        this.filters.filesOnly());
+                        this.fileSystem.filesOnly());
 
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
@@ -160,7 +157,7 @@ public class Main {
         for (final Archive archive : archives) {
             final List<File> files =
                     this.fileSystem.collect(contents(archive.getFile()),
-                            this.filters.licensesOnly());
+                            this.fileSystem.licensesOnly());
             for (final File file : files) {
                 final License license = new License(this.ioSystem.slurp(file));
 
@@ -210,7 +207,7 @@ public class Main {
         final File contents = contents(archive.getFile());
         final List<File> files =
                 this.fileSystem.collect(contents,
-                        this.filters.licensesDeclaredIn(contents));
+                        this.fileSystem.licensesDeclaredIn(contents));
 
         for (final File file : files) {
 
@@ -248,7 +245,7 @@ public class Main {
             final File contents = contents(archive.getFile());
             final List<File> files =
                     this.fileSystem.collect(contents,
-                            this.filters.noticesDeclaredIn(contents));
+                            this.fileSystem.noticesDeclaredIn(contents));
 
             for (final File file : files) {
 
@@ -285,7 +282,7 @@ public class Main {
         for (final Archive archive : archives) {
             final List<File> files =
                     this.fileSystem.collect(contents(archive.getFile()),
-                            this.filters.noticesOnly());
+                            this.fileSystem.noticesOnly());
             for (final File file : files) {
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
 
@@ -308,7 +305,8 @@ public class Main {
 
     private List<URI> allNoticeFiles() {
         final List<File> legal =
-                this.fileSystem.collect(this.content, this.filters.legalOnly());
+                this.fileSystem.collect(this.content,
+                        this.fileSystem.legalOnly());
         for (final File file : legal) {
             log.info("Legal " + file);
         }
@@ -341,7 +339,7 @@ public class Main {
             final File file =
                     new File(this.configuration.getStagingRepositoryURI());
             final List<File> collect =
-                    this.fileSystem.collect(file, this.filters
+                    this.fileSystem.collect(file, this.fileSystem
                             .archivesInPath(this.configuration
                                     .getFileRepositoryPathNameFilter()));
 
@@ -633,8 +631,9 @@ public class Main {
         private Map<URI, URI> mapOther() {
             final File jarContents = contents(this.file);
             final List<File> legal =
-                    Main.this.fileSystem.collect(jarContents, Main.this.filters
-                            .legalDocumentsUndeclaredIn(jarContents));
+                    Main.this.fileSystem.collect(jarContents,
+                            Main.this.fileSystem
+                                    .legalDocumentsUndeclaredIn(jarContents));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
@@ -650,8 +649,9 @@ public class Main {
         private Map<URI, URI> map() {
             final File jarContents = contents(this.file);
             final List<File> legal =
-                    Main.this.fileSystem.collect(jarContents, Main.this.filters
-                            .legalDocumentsDeclaredIn(jarContents));
+                    Main.this.fileSystem.collect(jarContents,
+                            Main.this.fileSystem
+                                    .legalDocumentsDeclaredIn(jarContents));
 
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
