@@ -18,6 +18,7 @@
  */
 package org.apache.creadur.tentacles;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -25,17 +26,38 @@ import java.net.URL;
 
 public class TentaclesResources {
 
-    public Reader read(final String resourceName) throws IOException {
-        final URL resource =
-                Thread.currentThread().getContextClassLoader()
-                        .getResource(resourceName);
+    private final IOSystem ioSystem;
 
-        if (resource == null) {
-            throw new IllegalStateException(resourceName);
-        }
+    public TentaclesResources(final IOSystem ioSystem) {
+        super();
+        this.ioSystem = ioSystem;
+    }
+
+    public Reader read(final String resourceName) throws IOException {
+        final URL resourceUrl = toUrl(resourceName);
         final InputStreamReader templateReader =
-                new InputStreamReader(resource.openStream());
+                new InputStreamReader(resourceUrl.openStream());
         return templateReader;
     }
 
+    public String readText(final String resourcePath) throws IOException {
+        final String text = this.ioSystem.slurp(toUrl(resourcePath));
+        return text;
+    }
+
+    public void copyTo(final String resourcePath, final File to)
+            throws IOException {
+        this.ioSystem.copy(toUrl(resourcePath).openStream(), to);
+    }
+
+    private URL toUrl(final String resourcePath) {
+        final URL resourceUrl =
+                this.getClass().getClassLoader().getResource(resourcePath);
+        if (resourceUrl == null) {
+            throw new IllegalStateException(
+                    "Tentacles expects the classpath to contain "
+                            + resourcePath);
+        }
+        return resourceUrl;
+    }
 }

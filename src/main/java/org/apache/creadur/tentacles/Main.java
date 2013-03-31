@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,6 +66,7 @@ public class Main {
     private final Configuration configuration;
     private final FileSystem fileSystem;
     private final IOSystem ioSystem;
+    private final TentaclesResources tentaclesResources;
     private final Templates templates;
 
     public Main(final String... args) throws Exception {
@@ -86,6 +86,7 @@ public class Main {
         this.configuration = configuration;
         this.fileSystem = platform.getFileSystem();
         this.ioSystem = platform.getIoSystem();
+        this.tentaclesResources = platform.getTentaclesResources();
         this.templates = templates;
 
         this.local =
@@ -105,21 +106,17 @@ public class Main {
 
         this.reports = new Reports();
 
-        final URL style =
-                this.getClass().getClassLoader().getResource("legal/style.css");
-        this.ioSystem.copy(style.openStream(),
-                new File(this.local, "style.css"));
+        this.tentaclesResources.copyTo("legal/style.css", new File(this.local,
+                "style.css"));
 
         licenses("asl-2.0");
         licenses("cpl-1.0");
         licenses("cddl-1.0");
     }
 
-    private void licenses(final String s) throws IOException {
-        final URL aslURL =
-                this.getClass().getClassLoader()
-                        .getResource("licenses/" + s + ".txt");
-        this.licenses.put(s, this.ioSystem.slurp(aslURL).trim());
+    private void licenses(final String name) throws IOException {
+        final String path = "licenses/" + name + ".txt";
+        this.licenses.put(name, this.tentaclesResources.readText(path).trim());
     }
 
     public static void main(final String[] args) throws Exception {

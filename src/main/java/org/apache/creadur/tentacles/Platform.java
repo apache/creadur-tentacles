@@ -23,7 +23,8 @@ public class Platform {
     public static Platform aPlatform() {
         final FileSystem fileSystem = new FileSystem();
         final IOSystem ioSystem = new IOSystem();
-        final TentaclesResources tentaclesResources = new TentaclesResources();
+        final TentaclesResources tentaclesResources =
+                new TentaclesResources(ioSystem);
         return new Platform(tentaclesResources, fileSystem, ioSystem);
     }
 
