@@ -26,14 +26,14 @@ public enum LicenseType {
 
     ASL_2_0("asl-2.0"), CPL_1_0("cpl-1.0"), CDDL_1_0("cddl-1.0");
 
-    public static Map<String, String> loadLicensesFrom(
+    public static Licenses loadLicensesFrom(
             final TentaclesResources tentaclesResources) throws IOException {
         final Map<String, String> licenses =
                 new ConcurrentHashMap<String, String>();
         for (final LicenseType type : LicenseType.values()) {
             type.putTextInto(licenses, tentaclesResources);
         }
-        return licenses;
+        return new Licenses(licenses);
     }
 
     private final String resourceName;

@@ -56,7 +56,7 @@ public class Main {
             .getLogger(Main.class);
 
     private final Reports reports;
-    private final Map<String, String> licenses;
+    private final Licenses licenses;
 
     private final Layout layout;
     private final Platform platform;
@@ -154,7 +154,8 @@ public class Main {
             final List<File> files =
                     this.fileSystem.licensesFrom(archive.contentsDirectory());
             for (final File file : files) {
-                final License license = new License(this.ioSystem.slurp(file));
+                final License license =
+                        this.licenses.license(this.ioSystem.slurp(file));
 
                 License existing = licenses.get(license);
                 if (existing == null) {
@@ -205,7 +206,8 @@ public class Main {
 
         for (final File file : files) {
 
-            final License license = new License(this.ioSystem.slurp(file));
+            final License license =
+                    this.licenses.license(this.ioSystem.slurp(file));
 
             undeclared.remove(license);
 
@@ -372,79 +374,6 @@ public class Main {
             }
         } catch (final IOException e) {
             log.error("Not a zip " + archive);
-        }
-    }
-
-    public class License {
-        private final String text;
-        private final String key;
-        private final Set<Archive> archives = new HashSet<Archive>();
-        private final List<File> locations = new ArrayList<File>();
-
-        public License(String text) {
-            this.key =
-                    text.replaceAll("[ \\n\\t\\r]+", "").toLowerCase().intern();
-
-            for (final Map.Entry<String, String> license : Main.this.licenses
-                    .entrySet()) {
-                text =
-                        text.replace(license.getValue(), String.format(
-                                "---[%s - full text]---\n\n", license.getKey()));
-            }
-            this.text = text.intern();
-        }
-
-        public String getText() {
-            return this.text;
-        }
-
-        public String getKey() {
-            return this.key;
-        }
-
-        public Set<Archive> getArchives() {
-            return this.archives;
-        }
-
-        public Set<URI> locations(final Archive archive) {
-            final URI contents = archive.contentsURI();
-            final Set<URI> locations = new HashSet<URI>();
-            for (final File file : this.locations) {
-                final URI uri = file.toURI();
-                final URI relativize = contents.relativize(uri);
-                if (!relativize.equals(uri)) {
-                    locations.add(relativize);
-                }
-            }
-
-            return locations;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            final License license = (License) o;
-
-            if (!this.key.equals(license.key)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.key.hashCode();
-        }
-
-        public boolean implies(final License fullLicense) {
-            return fullLicense.key.contains(this.key);
         }
     }
 
