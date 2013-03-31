@@ -16,27 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.creadur.tentacles;
+package org.apache.creadur.tentacles.filter;
 
 import java.io.File;
 import java.io.FileFilter;
 
-final class IsArchiveInPath implements FileFilter {
+final class NotFilter implements FileFilter {
+    private final FileFilter filter;
 
-    private final String pathNameFilter;
-
-    IsArchiveInPath(final String pathNameFilter) {
-        super();
-        this.pathNameFilter = pathNameFilter;
+    NotFilter(final FileFilter filter) {
+        this.filter = filter;
     }
 
     @Override
     public boolean accept(final File pathname) {
-        final String path = pathname.getAbsolutePath();
-        return path.matches(this.pathNameFilter) && isValidArchive(path);
-    }
-
-    private boolean isValidArchive(final String path) {
-        return path.matches(".*\\.(jar|zip|war|ear|tar.gz)");
+        return !this.filter.accept(pathname);
     }
 }

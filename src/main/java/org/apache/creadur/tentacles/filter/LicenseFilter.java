@@ -16,14 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.creadur.tentacles;
+package org.apache.creadur.tentacles.filter;
 
 import java.io.File;
 import java.io.FileFilter;
 
-final class FilesOnlyFilter implements FileFilter {
+final class LicenseFilter implements FileFilter {
     @Override
     public boolean accept(final File pathname) {
-        return pathname.isFile();
+        final String name = pathname.getName().toLowerCase();
+
+        if (name.equals("license")) {
+            return true;
+        }
+        if (name.equals("license.txt")) {
+            return true;
+        }
+
+        return false;
     }
 }
