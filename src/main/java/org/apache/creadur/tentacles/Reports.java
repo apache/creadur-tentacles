@@ -18,7 +18,6 @@
  */
 package org.apache.creadur.tentacles;
 
-import org.apache.creadur.tentacles.Main.Archive;
 
 public class Reports {
     public String licenses(final Archive archive) {

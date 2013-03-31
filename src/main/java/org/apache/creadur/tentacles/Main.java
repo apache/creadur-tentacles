@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +152,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> files =
-                    this.fileSystem.licensesFrom(contents(archive));
+                    this.fileSystem.licensesFrom(archive.contentsDirectory());
             for (final File file : files) {
                 final License license = new License(this.ioSystem.slurp(file));
 
@@ -201,7 +200,7 @@ public class Main {
         final Set<License> undeclared =
                 new HashSet<License>(archive.getLicenses());
 
-        final File contents = contents(archive);
+        final File contents = archive.contentsDirectory();
         final List<File> files = this.fileSystem.licensesDeclaredIn(contents);
 
         for (final File file : files) {
@@ -237,7 +236,7 @@ public class Main {
             final Set<Notice> undeclared =
                     new HashSet<Notice>(archive.getNotices());
 
-            final File contents = contents(archive);
+            final File contents = archive.contentsDirectory();
             final List<File> files =
                     this.fileSystem.noticesDeclaredIn(contents);
 
@@ -278,7 +277,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> noticeDocuments =
-                    this.fileSystem.noticesOnly(contents(archive));
+                    this.fileSystem.noticesOnly(archive.contentsDirectory());
             for (final File file : noticeDocuments) {
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
 
@@ -342,7 +341,8 @@ public class Main {
             final ZipInputStream zip = this.ioSystem.unzip(archive);
 
             final File contents =
-                    contents(new Archive(archive, this.fileSystem, this.layout));
+                    new Archive(archive, this.fileSystem, this.layout)
+                            .contentsDirectory();
 
             try {
                 ZipEntry entry = null;
@@ -407,7 +407,7 @@ public class Main {
         }
 
         public Set<URI> locations(final Archive archive) {
-            final URI contents = contents(archive).toURI();
+            final URI contents = archive.contentsURI();
             final Set<URI> locations = new HashSet<URI>();
             for (final File file : this.locations) {
                 final URI uri = file.toURI();
@@ -473,7 +473,7 @@ public class Main {
         }
 
         public Set<URI> locations(final Archive archive) {
-            final URI contents = contents(archive).toURI();
+            final URI contents = archive.contentsURI();
             final Set<URI> locations = new HashSet<URI>();
             for (final File file : this.locations) {
                 final URI uri = file.toURI();
@@ -515,27 +515,6 @@ public class Main {
 
     }
 
-    private File contents(final Archive archive) {
-        final File archiveDocument = archive.getFile();
-        String path =
-                archiveDocument.getAbsolutePath().substring(
-                        this.layout.getLocalRootDirectory().getAbsolutePath()
-                                .length() + 1);
-
-        if (path.startsWith("repo/")) {
-            path = path.substring("repo/".length());
-        }
-        if (path.startsWith("content/")) {
-            path = path.substring("content/".length());
-        }
-
-        final File contents =
-                new File(this.layout.getContentRootDirectory(), path
-                        + ".contents");
-        this.fileSystem.mkdirs(contents);
-        return contents;
-    }
-
     private File copyToMirror(final File src) throws IOException {
         final URI uri = src.toURI();
 
@@ -548,113 +527,6 @@ public class Main {
         this.ioSystem.copy(this.ioSystem.read(src), file);
 
         return file;
-    }
-
-    public class Archive {
-
-        private final Layout layout;
-        private final FileSystem fileSystem;
-        private final URI uri;
-        private final File file;
-        private final Map<URI, URI> map;
-
-        private final Set<License> licenses = new HashSet<License>();
-        private final Set<Notice> notices = new HashSet<Notice>();
-
-        private final Set<License> declaredLicenses = new HashSet<License>();
-        private final Set<Notice> declaredNotices = new HashSet<Notice>();
-
-        private final Set<License> otherLicenses = new HashSet<License>();
-        private final Set<Notice> otherNotices = new HashSet<Notice>();
-        private Map<URI, URI> others;
-
-        public Archive(final File file, final FileSystem fileSystem,
-                final Layout layout) {
-            this.fileSystem = fileSystem;
-            this.layout = layout;
-            this.uri =
-                    layout.getRepositoryDirectory().toURI()
-                            .relativize(file.toURI());
-            this.file = file;
-            this.map = map();
-        }
-
-        public Set<License> getDeclaredLicenses() {
-            return this.declaredLicenses;
-        }
-
-        public Set<Notice> getDeclaredNotices() {
-            return this.declaredNotices;
-        }
-
-        public Set<License> getOtherLicenses() {
-            return this.otherLicenses;
-        }
-
-        public Set<Notice> getOtherNotices() {
-            return this.otherNotices;
-        }
-
-        public Set<License> getLicenses() {
-            return this.licenses;
-        }
-
-        public Set<Notice> getNotices() {
-            return this.notices;
-        }
-
-        public URI getUri() {
-            return this.uri;
-        }
-
-        public File getFile() {
-            return this.file;
-        }
-
-        public Map<URI, URI> getLegal() {
-            return this.map;
-        }
-
-        public Map<URI, URI> getOtherLegal() {
-            if (this.others == null) {
-                this.others = mapOther();
-            }
-            return this.others;
-        }
-
-        private Map<URI, URI> mapOther() {
-            final File jarContents = contents();
-            final List<File> legal =
-                    this.fileSystem.legalDocumentsUndeclaredIn(jarContents);
-
-            return buildMapFrom(jarContents, legal);
-        }
-
-        private Map<URI, URI> buildMapFrom(final File jarContents,
-                final List<File> legal) {
-            final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
-            for (final File file : legal) {
-                final URI name = jarContents.toURI().relativize(file.toURI());
-                final URI link =
-                        this.layout.getLocalRootDirectory().toURI()
-                                .relativize(file.toURI());
-
-                map.put(name, link);
-            }
-            return map;
-        }
-
-        private Map<URI, URI> map() {
-            final File jarContents = contents();
-            final List<File> legal =
-                    this.fileSystem.legalDocumentsDeclaredIn(jarContents);
-
-            return buildMapFrom(jarContents, legal);
-        }
-
-        private File contents() {
-            return Main.this.contents(this);
-        }
     }
 
     private File mirroredFrom(final URI uri) {
