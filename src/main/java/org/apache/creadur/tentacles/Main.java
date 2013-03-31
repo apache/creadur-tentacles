@@ -59,7 +59,7 @@ public class Main {
     private final File localRootDirectory;
     private final File output;
     private final File repository;
-    private final File content;
+    private final File contentRootDirectory;
     private final Reports reports;
     private final Map<String, String> licenses;
 
@@ -94,11 +94,11 @@ public class Main {
         this.fileSystem.mkdirs(this.localRootDirectory);
 
         this.repository = new File(this.localRootDirectory, "repo");
-        this.content = new File(this.localRootDirectory, "content");
+        this.contentRootDirectory = new File(this.localRootDirectory, "content");
         this.output = this.localRootDirectory;
 
         this.fileSystem.mkdirs(this.repository);
-        this.fileSystem.mkdirs(this.content);
+        this.fileSystem.mkdirs(this.contentRootDirectory);
 
         log.info("Remote repository: "
                 + this.configuration.getStagingRepositoryURI());
@@ -162,7 +162,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> files =
-                    this.fileSystem.licensesFrom(contents(archive.getFile()));
+                    this.fileSystem.licensesFrom(contents(archive));
             for (final File file : files) {
                 final License license = new License(this.ioSystem.slurp(file));
 
@@ -209,7 +209,7 @@ public class Main {
         final Set<License> undeclared =
                 new HashSet<License>(archive.getLicenses());
 
-        final File contents = contents(archive.getFile());
+        final File contents = contents(archive);
         final List<File> files = this.fileSystem.licensesDeclaredIn(contents);
 
         for (final File file : files) {
@@ -245,7 +245,7 @@ public class Main {
             final Set<Notice> undeclared =
                     new HashSet<Notice>(archive.getNotices());
 
-            final File contents = contents(archive.getFile());
+            final File contents = contents(archive);
             final List<File> files =
                     this.fileSystem.noticesDeclaredIn(contents);
 
@@ -285,7 +285,7 @@ public class Main {
 
         for (final Archive archive : archives) {
             final List<File> noticeDocuments =
-                    this.fileSystem.noticesOnly(contents(archive.getFile()));
+                    this.fileSystem.noticesOnly(contents(archive));
             for (final File file : noticeDocuments) {
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
 
@@ -345,7 +345,9 @@ public class Main {
         try {
             final ZipInputStream zip = this.ioSystem.unzip(archive);
 
-            final File contents = contents(archive);
+            final File contents =
+                    contents(new Archive(archive, this.fileSystem,
+                            this.localRootDirectory, this.repository));
 
             try {
                 ZipEntry entry = null;
@@ -410,7 +412,7 @@ public class Main {
         }
 
         public Set<URI> locations(final Archive archive) {
-            final URI contents = contents(archive.getFile()).toURI();
+            final URI contents = contents(archive).toURI();
             final Set<URI> locations = new HashSet<URI>();
             for (final File file : this.locations) {
                 final URI uri = file.toURI();
@@ -476,7 +478,7 @@ public class Main {
         }
 
         public Set<URI> locations(final Archive archive) {
-            final URI contents = contents(archive.getFile()).toURI();
+            final URI contents = contents(archive).toURI();
             final Set<URI> locations = new HashSet<URI>();
             for (final File file : this.locations) {
                 final URI uri = file.toURI();
@@ -518,9 +520,10 @@ public class Main {
 
     }
 
-    private File contents(final File archive) {
+    private File contents(final Archive archive) {
+        final File archiveDocument = archive.getFile();
         String path =
-                archive.getAbsolutePath().substring(
+                archiveDocument.getAbsolutePath().substring(
                         this.localRootDirectory.getAbsolutePath().length() + 1);
 
         if (path.startsWith("repo/")) {
@@ -530,7 +533,7 @@ public class Main {
             path = path.substring("content/".length());
         }
 
-        final File contents = new File(this.content, path + ".contents");
+        final File contents = new File(this.contentRootDirectory, path + ".contents");
         this.fileSystem.mkdirs(contents);
         return contents;
     }
@@ -650,7 +653,7 @@ public class Main {
         }
 
         private File contents() {
-            return Main.this.contents(this.file);
+            return Main.this.contents(this);
         }
     }
 
