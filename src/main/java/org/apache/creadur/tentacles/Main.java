@@ -609,11 +609,16 @@ public class Main {
         }
 
         private Map<URI, URI> mapOther() {
-            final File jarContents = contents(this.file);
+            final File jarContents = contents();
             final List<File> legal =
                     Main.this.fileSystem
                             .legalDocumentsUndeclaredIn(jarContents);
 
+            return buildMapFrom(jarContents, legal);
+        }
+
+        private Map<URI, URI> buildMapFrom(final File jarContents,
+                final List<File> legal) {
             final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
             for (final File file : legal) {
                 final URI name = jarContents.toURI().relativize(file.toURI());
@@ -626,19 +631,15 @@ public class Main {
         }
 
         private Map<URI, URI> map() {
-            final File jarContents = contents(this.file);
+            final File jarContents = contents();
             final List<File> legal =
                     Main.this.fileSystem.legalDocumentsDeclaredIn(jarContents);
 
-            final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
-            for (final File file : legal) {
-                final URI name = jarContents.toURI().relativize(file.toURI());
-                final URI link =
-                        Main.this.local.toURI().relativize(file.toURI());
+            return buildMapFrom(jarContents, legal);
+        }
 
-                map.put(name, link);
-            }
-            return map;
+        private File contents() {
+            return Main.this.contents(this.file);
         }
     }
 
