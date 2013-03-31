@@ -56,13 +56,10 @@ public class Main {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
             .getLogger(Main.class);
 
-    private final File localRootDirectory;
-    private final File output;
-    private final File repository;
-    private final File contentRootDirectory;
     private final Reports reports;
     private final Map<String, String> licenses;
 
+    private final Layout layout;
     private final Platform platform;
     private final Configuration configuration;
     private final FileSystem fileSystem;
@@ -76,38 +73,28 @@ public class Main {
 
     public Main(final Configuration configuration, final Platform platform)
             throws Exception {
-        this(configuration, platform, new Templates(platform));
+        this(configuration, platform, new Templates(platform), new Layout(
+                platform, configuration));
     }
 
     public Main(final Configuration configuration, final Platform platform,
-            final Templates templates) throws Exception {
+            final Templates templates, final Layout layout) throws Exception {
         this.platform = platform;
         this.configuration = configuration;
+        this.layout = layout;
         this.fileSystem = platform.getFileSystem();
         this.ioSystem = platform.getIoSystem();
         this.tentaclesResources = platform.getTentaclesResources();
         this.templates = templates;
 
-        this.localRootDirectory =
-                new File(this.configuration.getRootDirectoryForLocalOutput());
-
-        this.fileSystem.mkdirs(this.localRootDirectory);
-
-        this.repository = new File(this.localRootDirectory, "repo");
-        this.contentRootDirectory = new File(this.localRootDirectory, "content");
-        this.output = this.localRootDirectory;
-
-        this.fileSystem.mkdirs(this.repository);
-        this.fileSystem.mkdirs(this.contentRootDirectory);
+        this.reports = new Reports();
 
         log.info("Remote repository: "
                 + this.configuration.getStagingRepositoryURI());
-        log.info("Local root directory: " + this.localRootDirectory);
+        log.info("Local root directory: " + this.layout.getLocalRootDirectory());
 
-        this.reports = new Reports();
-
-        this.tentaclesResources.copyTo("legal/style.css", new File(this.output,
-                "style.css"));
+        this.tentaclesResources.copyTo("legal/style.css",
+                new File(this.layout.getOutputDirectory(), "style.css"));
 
         this.licenses = loadLicensesFrom(this.tentaclesResources);
     }
@@ -120,7 +107,7 @@ public class Main {
 
         unpackContents(mirrorRepositoryFrom(this.configuration));
 
-        reportOn(archivesIn(this.repository));
+        reportOn(archivesIn(this.layout.getRepositoryDirectory()));
     }
 
     private List<Archive> archivesIn(final File repository) {
@@ -129,17 +116,19 @@ public class Main {
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
             final Archive archive =
-                    new Archive(file, this.fileSystem, this.localRootDirectory,
-                            repository);
+                    new Archive(file, this.fileSystem, this.layout);
             archives.add(archive);
         }
         return archives;
     }
 
     private void reportOn(final List<Archive> archives) throws IOException {
-        this.templates.template("legal/archives.vm").add("archives", archives)
+        this.templates
+                .template("legal/archives.vm")
+                .add("archives", archives)
                 .add("reports", this.reports)
-                .write(new File(this.output, "archives.html"));
+                .write(new File(this.layout.getOutputDirectory(),
+                        "archives.html"));
 
         reportLicenses(archives);
         reportNotices(archives);
@@ -151,10 +140,12 @@ public class Main {
             throws IOException {
         initLicenses(archives);
 
-        this.templates.template("legal/licenses.vm")
+        this.templates
+                .template("legal/licenses.vm")
                 .add("licenses", getLicenses(archives))
                 .add("reports", this.reports)
-                .write(new File(this.output, "licenses.html"));
+                .write(new File(this.layout.getOutputDirectory(),
+                        "licenses.html"));
     }
 
     private void initLicenses(final List<Archive> archives) throws IOException {
@@ -200,7 +191,8 @@ public class Main {
                     .template("legal/archive-licenses.vm")
                     .add("archive", archive)
                     .add("reports", this.reports)
-                    .write(new File(this.output, this.reports.licenses(archive)));
+                    .write(new File(this.layout.getOutputDirectory(),
+                            this.reports.licenses(archive)));
         }
 
     }
@@ -276,7 +268,8 @@ public class Main {
                     .template("legal/archive-notices.vm")
                     .add("archive", archive)
                     .add("reports", this.reports)
-                    .write(new File(this.output, this.reports.notices(archive)));
+                    .write(new File(this.layout.getOutputDirectory(),
+                            this.reports.notices(archive)));
         }
     }
 
@@ -301,9 +294,12 @@ public class Main {
             }
         }
 
-        this.templates.template("legal/notices.vm")
-                .add("notices", notices.values()).add("reports", this.reports)
-                .write(new File(this.output, "notices.html"));
+        this.templates
+                .template("legal/notices.vm")
+                .add("notices", notices.values())
+                .add("reports", this.reports)
+                .write(new File(this.layout.getOutputDirectory(),
+                        "notices.html"));
     }
 
     private void unpackContents(final Set<File> files) throws IOException {
@@ -346,8 +342,7 @@ public class Main {
             final ZipInputStream zip = this.ioSystem.unzip(archive);
 
             final File contents =
-                    contents(new Archive(archive, this.fileSystem,
-                            this.localRootDirectory, this.repository));
+                    contents(new Archive(archive, this.fileSystem, this.layout));
 
             try {
                 ZipEntry entry = null;
@@ -524,7 +519,8 @@ public class Main {
         final File archiveDocument = archive.getFile();
         String path =
                 archiveDocument.getAbsolutePath().substring(
-                        this.localRootDirectory.getAbsolutePath().length() + 1);
+                        this.layout.getLocalRootDirectory().getAbsolutePath()
+                                .length() + 1);
 
         if (path.startsWith("repo/")) {
             path = path.substring("repo/".length());
@@ -533,7 +529,9 @@ public class Main {
             path = path.substring("content/".length());
         }
 
-        final File contents = new File(this.contentRootDirectory, path + ".contents");
+        final File contents =
+                new File(this.layout.getContentRootDirectory(), path
+                        + ".contents");
         this.fileSystem.mkdirs(contents);
         return contents;
     }
@@ -554,7 +552,7 @@ public class Main {
 
     public class Archive {
 
-        private final File localRootDirectory;
+        private final Layout layout;
         private final FileSystem fileSystem;
         private final URI uri;
         private final File file;
@@ -571,10 +569,12 @@ public class Main {
         private Map<URI, URI> others;
 
         public Archive(final File file, final FileSystem fileSystem,
-                final File localRootDirectory, final File repository) {
+                final Layout layout) {
             this.fileSystem = fileSystem;
-            this.localRootDirectory = localRootDirectory;
-            this.uri = repository.toURI().relativize(file.toURI());
+            this.layout = layout;
+            this.uri =
+                    layout.getRepositoryDirectory().toURI()
+                            .relativize(file.toURI());
             this.file = file;
             this.map = map();
         }
@@ -636,7 +636,7 @@ public class Main {
             for (final File file : legal) {
                 final URI name = jarContents.toURI().relativize(file.toURI());
                 final URI link =
-                        this.localRootDirectory.toURI()
+                        this.layout.getLocalRootDirectory().toURI()
                                 .relativize(file.toURI());
 
                 map.put(name, link);
@@ -663,7 +663,7 @@ public class Main {
                         .replace(
                                 this.configuration.getStagingRepositoryURI()
                                         .toString(), "").replaceFirst("^/", "");
-        return new File(this.repository, name);
+        return new File(this.layout.getRepositoryDirectory(), name);
     }
 
 }
