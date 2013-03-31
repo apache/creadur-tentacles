@@ -16,6 +16,7 @@
  */
 package org.apache.creadur.tentacles;
 
+import static org.apache.creadur.tentacles.LicenseType.loadLicensesFrom;
 import static org.apache.creadur.tentacles.RepositoryType.HTTP;
 import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
 
@@ -60,7 +61,7 @@ public class Main {
     private final File repository;
     private final File content;
     private final Reports reports;
-    private final Map<String, String> licenses = new HashMap<String, String>();
+    private final Map<String, String> licenses;
     private final NexusClient client;
 
     private final Configuration configuration;
@@ -109,14 +110,7 @@ public class Main {
         this.tentaclesResources.copyTo("legal/style.css", new File(this.local,
                 "style.css"));
 
-        licenses("asl-2.0");
-        licenses("cpl-1.0");
-        licenses("cddl-1.0");
-    }
-
-    private void licenses(final String name) throws IOException {
-        final String path = "licenses/" + name + ".txt";
-        this.licenses.put(name, this.tentaclesResources.readText(path).trim());
+        this.licenses = loadLicensesFrom(this.tentaclesResources);
     }
 
     public static void main(final String[] args) throws Exception {
