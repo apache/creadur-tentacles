@@ -23,7 +23,6 @@ import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,16 +116,23 @@ public class Main {
 
     private void main() throws Exception {
 
-        prepare();
+        unpackContents(mirrorRepositoryFrom(this.configuration));
 
-        final List<File> jars = this.fileSystem.documentsFrom(this.repository);
+        reportOn(archivesIn(this.repository));
+    }
+
+    private List<Archive> archivesIn(final File repository) {
+        final List<File> jars = this.fileSystem.documentsFrom(repository);
 
         final List<Archive> archives = new ArrayList<Archive>();
         for (final File file : jars) {
             final Archive archive = new Archive(file);
             archives.add(archive);
         }
+        return archives;
+    }
 
+    private void reportOn(final List<Archive> archives) throws IOException {
         this.templates.template("legal/archives.vm").add("archives", archives)
                 .add("reports", this.reports)
                 .write(new File(this.local, "archives.html"));
@@ -294,13 +300,19 @@ public class Main {
                 .write(new File(this.local, "notices.html"));
     }
 
-    private void prepare() throws URISyntaxException, IOException {
-        final Set<File> files = new HashSet<File>();
+    private void unpackContents(final Set<File> files) throws IOException {
+        for (final File file : files) {
+            unpack(file);
+        }
+    }
 
-        if (HTTP.isRepositoryFor(this.configuration)) {
+    private Set<File> mirrorRepositoryFrom(final Configuration configuration)
+            throws IOException {
+        final Set<File> files = new HashSet<File>();
+        if (HTTP.isRepositoryFor(configuration)) {
             final NexusClient client = new NexusClient(this.platform);
             final Set<URI> resources =
-                    client.crawl(this.configuration.getStagingRepositoryURI());
+                    client.crawl(configuration.getStagingRepositoryURI());
 
             for (final URI uri : resources) {
                 if (!uri.getPath().matches(".*(war|jar|zip)")) {
@@ -308,21 +320,17 @@ public class Main {
                 }
                 files.add(client.download(uri, mirroredFrom(uri)));
             }
-        } else if (LOCAL_FILE_SYSTEM.isRepositoryFor(this.configuration)) {
-            final File file =
-                    new File(this.configuration.getStagingRepositoryURI());
+        } else if (LOCAL_FILE_SYSTEM.isRepositoryFor(configuration)) {
+            final File file = new File(configuration.getStagingRepositoryURI());
             final List<File> collect =
-                    this.fileSystem.archivesInPath(file, this.configuration
-                            .getFileRepositoryPathNameFilter());
+                    this.platform.getFileSystem().archivesInPath(file,
+                            configuration.getFileRepositoryPathNameFilter());
 
             for (final File f : collect) {
                 files.add(copyToMirror(f));
             }
         }
-
-        for (final File file : files) {
-            unpack(file);
-        }
+        return files;
     }
 
     private void unpack(final File archive) throws IOException {
