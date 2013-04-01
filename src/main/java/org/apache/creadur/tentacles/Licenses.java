@@ -18,19 +18,27 @@
  */
 package org.apache.creadur.tentacles;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
 public class Licenses {
 
+    private final IOSystem ioSystem;
     private final Map<String, String> licenses;
 
-    public Licenses(final Map<String, String> licenses) {
+    public Licenses(final Map<String, String> licenses, final Platform platform) {
         super();
+        this.ioSystem = platform.getIoSystem();
         this.licenses = Collections.unmodifiableMap(licenses);
     }
 
-    public License license(final String text) {
+    public License from(final File document) throws IOException {
+        return license(this.ioSystem.slurp(document));
+    }
+
+    private License license(final String text) {
         final String key = toKey(text);
         return new License(key, normalize(text));
     }

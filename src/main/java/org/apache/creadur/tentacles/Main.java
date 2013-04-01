@@ -95,7 +95,7 @@ public class Main {
         this.tentaclesResources.copyTo("legal/style.css",
                 new File(this.layout.getOutputDirectory(), "style.css"));
 
-        this.licenses = loadLicensesFrom(this.tentaclesResources);
+        this.licenses = loadLicensesFrom(platform);
     }
 
     public static void main(final String[] args) throws Exception {
@@ -154,8 +154,7 @@ public class Main {
             final List<File> files =
                     this.fileSystem.licensesFrom(archive.contentsDirectory());
             for (final File file : files) {
-                final License license =
-                        this.licenses.license(this.ioSystem.slurp(file));
+                final License license = this.licenses.from(file);
 
                 License existing = licenses.get(license);
                 if (existing == null) {
@@ -163,7 +162,7 @@ public class Main {
                     existing = license;
                 }
 
-                existing.locations.add(file);
+                existing.getLocations().add(file);
                 existing.getArchives().add(archive);
                 archive.getLicenses().add(existing);
             }
@@ -206,10 +205,7 @@ public class Main {
 
         for (final File file : files) {
 
-            final License license =
-                    this.licenses.license(this.ioSystem.slurp(file));
-
-            undeclared.remove(license);
+            undeclared.remove(this.licenses.from(file));
 
         }
 

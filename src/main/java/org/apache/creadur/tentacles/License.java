@@ -29,7 +29,7 @@ public class License {
     private final String text;
     private final String key;
     private final Set<Archive> archives = new HashSet<Archive>();
-    final List<File> locations = new ArrayList<File>();
+    private final List<File> locations = new ArrayList<File>();
 
     public License(final String key, final String text) {
         this.text = text;
@@ -46,6 +46,10 @@ public class License {
 
     public Set<Archive> getArchives() {
         return this.archives;
+    }
+
+    public List<File> getLocations() {
+        return this.locations;
     }
 
     public Set<URI> locations(final Archive archive) {
