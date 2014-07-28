@@ -12,5 +12,7 @@ public class ListOfFilesFilterTest {
 		assertTrue(toString.contains("a12"));
 		assertTrue(toString.contains("b23"));
 		assertTrue(toString.contains("c34"));
+		
+		assertEquals(3, filter.getListOfFiles().size());
 	}
 }
