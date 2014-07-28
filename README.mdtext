@@ -7,7 +7,7 @@ them and create a little report of what is there.
 
 Assertions must be enabled.
 
-The tool is not specific to maven and will simply recurssively walk
+The tool is not specific to maven and will simply recursively walk
 the provided URL and download all files matching the following
 pattern:
 
@@ -57,7 +57,7 @@ Will be unpacked at the following location:
     content/foo.zip.contents/README.txt
     content/foo.zip.contents/lib/bar.jar
 
-Unpacking is recurssive, so any binaries contained in foo.zip will
+Unpacking is recursive, so any binaries contained in foo.zip will
 also be unpacked.
 
     content/foo.zip.contents/lib/bar.jar
@@ -92,7 +92,7 @@ the binary.  There will be two sections **Declared** and
 **Undeclared**
 
 The Declared section lists the single LICENSE file that was supplied
-by the binary itself.  As the tool works recurssively, it will also
+by the binary itself.  As the tool works recursively, it will also
 collect any LICENSE file text from any binaries contained in the
 foo.zip.  Well call these "sub" LICENSES for simplicity.
 
