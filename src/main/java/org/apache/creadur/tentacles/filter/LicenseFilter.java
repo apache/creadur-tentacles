@@ -18,21 +18,8 @@
  */
 package org.apache.creadur.tentacles.filter;
 
-import java.io.File;
-import java.io.FileFilter;
-
-final class LicenseFilter implements FileFilter {
-    @Override
-    public boolean accept(final File pathname) {
-        final String name = pathname.getName().toLowerCase();
-
-        if (name.equals("license")) {
-            return true;
-        }
-        if (name.equals("license.txt")) {
-            return true;
-        }
-
-        return false;
-    }
+final class LicenseFilter extends ListOfFilesFilter {
+	LicenseFilter() {
+		super("license", "license.txt", "licence", "licence.txt");
+	}
 }

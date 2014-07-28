@@ -18,21 +18,8 @@
  */
 package org.apache.creadur.tentacles.filter;
 
-import java.io.File;
-import java.io.FileFilter;
-
-final class NoticeFilter implements FileFilter {
-    @Override
-    public boolean accept(final File pathname) {
-        final String name = pathname.getName().toLowerCase();
-
-        if (name.equals("notice")) {
-            return true;
-        }
-        if (name.equals("notice.txt")) {
-            return true;
-        }
-
-        return false;
-    }
+final class NoticeFilter extends ListOfFilesFilter {
+	public NoticeFilter() {
+		super("notice", "notice.txt");
+	}
 }
