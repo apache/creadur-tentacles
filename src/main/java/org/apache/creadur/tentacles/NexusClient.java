@@ -25,9 +25,10 @@ import java.util.Set;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.swizzle.stream.StreamLexer;
 
 public class NexusClient {
@@ -35,12 +36,12 @@ public class NexusClient {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
             .getLogger(NexusClient.class);
 
-    private final DefaultHttpClient client;
+    private final HttpClient client;
     private final FileSystem fileSystem;
     private final IOSystem ioSystem;
 
     public NexusClient(final Platform platform) {
-        this.client = new DefaultHttpClient();
+        this.client = HttpClientBuilder.create().build();
         this.fileSystem = platform.getFileSystem();
         this.ioSystem = platform.getIoSystem();
     }
