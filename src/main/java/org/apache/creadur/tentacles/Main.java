@@ -99,7 +99,16 @@ public class Main {
     }
 
     public static void main(final String[] args) throws Exception {
-        new Main(args).main();
+    	
+    	log.info("Launching Apache Tentacles ...");
+    	
+    	if(args == null || args.length < 1) {
+    		log.error("Error: Input parameter missing - you did not specify any component to run Apache Tentacles on.");
+    		log.error("Please launch Apache Tentacles with an URI to work on such as 'https://repository.apache.org/content/repositories/orgapachecreadur-1000/'.");
+    	} else {
+    		new Main(args).main();
+    	}
+    	
     }
 
     private void main() throws Exception {
