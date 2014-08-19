@@ -41,7 +41,7 @@ public class Deauthorize {
      * 
      * @param args
      *            a list of directories to scan and fix
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public static void main(final String[] args) throws Exception {
 
