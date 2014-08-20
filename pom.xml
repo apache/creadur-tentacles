@@ -217,11 +217,12 @@
                 </tags>
               </configuration>
             </plugin>
+            <!-- enable later with a findbugs version that works fine with JDK 1.6 
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>findbugs-maven-plugin</artifactId>
-              <version>3.0.0</version>
-            </plugin>
+              <version>2.5.5</version>
+            </plugin-->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-project-info-reports-plugin</artifactId>
