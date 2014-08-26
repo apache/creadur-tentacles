@@ -23,6 +23,7 @@ import java.io.FileFilter;
 
 final class IsArchiveInPathFilter implements FileFilter {
 
+    private static final String MATCH_PATTERN = ".*\\.(jar|zip|war|ear|rar|tar.gz)";
     private final String pathNameFilter;
 
     IsArchiveInPathFilter(final String pathNameFilter) {
@@ -37,6 +38,6 @@ final class IsArchiveInPathFilter implements FileFilter {
     }
 
     private boolean isValidArchive(final String path) {
-        return path.matches(".*\\.(jar|zip|war|ear|tar.gz)");
+        return path.matches(MATCH_PATTERN);
     }
 }

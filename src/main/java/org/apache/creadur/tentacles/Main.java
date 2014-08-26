@@ -54,6 +54,7 @@ public class Main {
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
             .getLogger(Main.class);
+    private static final String CRAWL_PATTERN = ".*\\.(jar|zip|war|ear|rar|tar.gz)";
 
     private final Reports reports;
     private final Licenses licenses;
@@ -323,7 +324,7 @@ public class Main {
                     client.crawl(configuration.getStagingRepositoryURI());
 
             for (final URI uri : resources) {
-                if (!uri.getPath().matches(".*(war|jar|zip)")) {
+                if (!uri.getPath().matches(CRAWL_PATTERN)) {
                     continue;
                 }
                 files.add(client.download(uri, mirroredFrom(uri)));

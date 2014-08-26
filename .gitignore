@@ -14,3 +14,4 @@
 */*.iws
 .idea/*
 */.idea
+/target/
