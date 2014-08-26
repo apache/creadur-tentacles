@@ -11,7 +11,7 @@ The tool is not specific to maven and will simply recursively walk
 the provided URL and download all files matching the following
 pattern:
 
-    .*\.(jar|zip|war|ear|tar.gz)
+    .*\.(jar|zip|war|ear|rar|tar.gz)
 
 Tar.gz files are downloaded though there is currently no support for
 unpacking them.

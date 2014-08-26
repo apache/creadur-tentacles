@@ -1,0 +1,13 @@
+Tentacles 0.1 SNAPSHOT
+======================
+
+ * Compiler level is 1.6.
+ * Enhanced javadoc to avoid errors with jdk8.
+ * Issues resolved (see http://issues.apache.org/jira):
+   Bug
+    * [TENTACLES-?] - nothing yet
+  Improvement
+    * [TENTACLES-7] - scan archives in EAR and RAR files
+    * [TENTACLES-3] - provide help text if runtime parameters are missing
+    * [TENTACLES-2] - use proper escaping in Velocity template files.
+    * [TENTACLES-1] - allow filtering of directories in LicenseFilter
