@@ -34,10 +34,13 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
 
+import org.apache.log4j.Logger;
+
 /**
  * @version $Rev$ $Date$
  */
 public class IOSystem {
+    private static final Logger LOG = Logger.getLogger(IOSystem.class);
 
     public String slurp(final File file) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -114,10 +117,12 @@ public class IOSystem {
                 ((Flushable) closeable).flush();
             }
         } catch (final IOException e) {
+        	LOG.error("Error when trying to flush before closing " + closeable, e);
         }
         try {
             closeable.close();
         } catch (final IOException e) {
+        	LOG.error("Error when trying to close " + closeable, e);
         }
     }
 

@@ -1,0 +1,60 @@
+<project name="apache-tentacles">
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.3.1</version>
+  </skin>
+
+  <custom>
+    <fluidoSkin>
+<googleSearch>
+        <sitesearch/>
+      </googleSearch>
+      <topBarEnabled>true</topBarEnabled>
+      <sideBarEnabled>true</sideBarEnabled>
+    </fluidoSkin>
+  </custom>
+
+<body>
+    <menu name="The Apache Software Foundation" inherit="bottom">
+        <item name='About the Foundation'
+            href="http://www.apache.org/foundation"/>
+        <item name='The projects'
+            href="http://projects.apache.org"/>
+        <item name='The people'
+            href="http://people.apache.org"/>
+        <item name='How we work'
+            href='http://www.apache.org/foundation/how-it-works.html'/>
+        <item name='Our history'
+            href='http://www.apache.org/foundation/how-it-works.html#history'/>
+        <item name='News'
+            href='http://blogs.apache.org/foundation/'/>
+    </menu>
+
+    <menu name="Contribute" inherit="bottom">
+      <item name="Get Involved" href='http://www.apache.org/foundation/getinvolved.html'/>
+    </menu>
+
+    <menu name="Committer Info" inherit="bottom">
+      <item name="Publish this site" href="site-publish.html"/>
+      <item name="Committers' FAQ" href='http://www.apache.org/dev/committers.html'/>
+      <item name='New Committers Guide' href='http://www.apache.org/dev/new-committers-guide.html'/>
+      <item name='Plant Apache' href='http://planet.apache.org/committers/'/>
+      <item name='Community' href='http://community.apache.org/'/>
+      <item name='Legal' href='http://www.apache.org/legal/'/>
+      <item name='Branding' href='http://www.apache.org/foundation/marks/'/>
+      <item name='Media Relations' href='http://www.apache.org/press/'/>
+    </menu>
+
+    <menu ref="modules"/>
+    <menu ref="reports"/>
+
+    <footer>Copyright &#169; 2014 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
+      Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
+      of The Apache Software Foundation.
+      Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+      All other marks mentioned may be trademarks or registered trademarks of their respective owners.</footer>
+
+</body>
+
+</project>

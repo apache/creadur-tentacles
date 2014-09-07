@@ -49,7 +49,7 @@ public class NexusClient {
     public File download(final URI uri, final File file) throws IOException {
         if (file.exists()) {
 
-            final long length = getConentLength(uri);
+            final long length = getContentLength(uri);
 
             if (file.length() == length) {
                 log.info("Exists " + uri);
@@ -72,14 +72,13 @@ public class NexusClient {
         return file;
     }
 
-    private long getConentLength(final URI uri) throws IOException {
+    private long getContentLength(final URI uri) throws IOException {
         final HttpResponse head = head(uri);
         final Header[] headers = head.getHeaders("Content-Length");
 
-        for (final Header header : headers) {
-            return new Long(header.getValue());
+        if(headers != null && headers.length >= 1) {
+        	return Long.valueOf(headers[0].getValue());
         }
-
         return -1;
     }
 

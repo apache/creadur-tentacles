@@ -112,7 +112,7 @@ public class Deauthorize {
             final String text = io.slurp(file);
 
             // You really can't trust text to be in the native line ending
-            final String eol = (text.contains("\r\n")) ? "\r\n" : "\n";
+            final String eol = text.contains("\r\n") ? "\r\n" : "\n";
             final String startComment = eol + "/*";
             final String endComment = "*/" + eol;
 
