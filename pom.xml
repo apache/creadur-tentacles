@@ -45,11 +45,6 @@
       <version>${httpClientVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>${httpClientVersion}</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-jaxb-annotations</artifactId>
       <version>2.4.2</version>
@@ -79,7 +74,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.6</javaVersion>
-    <httpClientVersion>4.3.2</httpClientVersion>
+    <httpClientVersion>4.3.5</httpClientVersion>
     <apacheRatVersion>0.11</apacheRatVersion>
   </properties>
   <issueManagement>
@@ -111,7 +106,7 @@
     </mailingList>
   </mailingLists>
   <build>
-    <defaultGoal>install</defaultGoal>
+    <defaultGoal>clean install</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

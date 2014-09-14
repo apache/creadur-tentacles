@@ -24,126 +24,144 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.log4j.Logger;
 import org.codehaus.swizzle.stream.StreamLexer;
 
 public class NexusClient {
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
-            .getLogger(NexusClient.class);
+	private static final Logger log = Logger.getLogger(NexusClient.class);
+	private static final String SLASH = "/";
+	private static final String ONE_UP = "../";
+	private static final String USER_AGENT_CONTENTS = "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13";
 
-    private final HttpClient client;
-    private final FileSystem fileSystem;
-    private final IOSystem ioSystem;
+	private final CloseableHttpClient client;
+	private final FileSystem fileSystem;
+	private final IOSystem ioSystem;
 
-    public NexusClient(final Platform platform) {
-        this.client = HttpClientBuilder.create().build();
-        this.fileSystem = platform.getFileSystem();
-        this.ioSystem = platform.getIoSystem();
-    }
+	public NexusClient(final Platform platform) {
 
-    public File download(final URI uri, final File file) throws IOException {
-        if (file.exists()) {
+		System.setProperty("http.keepAlive", "false");
+		System.setProperty("http.maxConnections", "50");
 
-            final long length = getContentLength(uri);
+		this.client = HttpClientBuilder.create().disableContentCompression()
+				.build();
+		this.fileSystem = platform.getFileSystem();
+		this.ioSystem = platform.getIoSystem();
+	}
 
-            if (file.length() == length) {
-                log.info("Exists " + uri);
-                return file;
-            } else {
-                log.info("Incomplete " + uri);
-            }
-        }
+	public File download(final URI uri, final File file) throws IOException {
+		if (file.exists()) {
 
-        log.info("Download " + uri);
+			final long length = getContentLength(uri);
 
-        final HttpResponse response = get(uri);
+			if (file.length() == length) {
+				log.info("Exists " + uri);
+				return file;
+			} else {
+				log.info("Incomplete " + uri);
+			}
+		}
 
-        final InputStream content = response.getEntity().getContent();
+		log.info("Download " + uri);
 
-        this.fileSystem.mkparent(file);
+		final CloseableHttpResponse response = get(uri);
 
-        this.ioSystem.copy(content, file);
+		InputStream content = null;
+		try {
+			content = response.getEntity().getContent();
 
-        return file;
-    }
+			this.fileSystem.mkparent(file);
 
-    private long getContentLength(final URI uri) throws IOException {
-        final HttpResponse head = head(uri);
-        final Header[] headers = head.getHeaders("Content-Length");
+			this.ioSystem.copy(content, file);
+		} finally {
+			if (content != null) {
+				content.close();
+			}
 
-        if(headers != null && headers.length >= 1) {
-        	return Long.valueOf(headers[0].getValue());
-        }
-        return -1;
-    }
+			response.close();
+		}
 
-    private HttpResponse get(final URI uri) throws IOException {
-        final HttpGet request = new HttpGet(uri);
-        request.setHeader(
-                "User-Agent",
-                "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
-        return this.client.execute(request);
-    }
+		return file;
+	}
 
-    private HttpResponse head(final URI uri) throws IOException {
-        final HttpHead request = new HttpHead(uri);
-        request.setHeader(
-                "User-Agent",
-                "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
-        return this.client.execute(request);
-    }
+	private Long getContentLength(final URI uri) throws IOException {
+		final CloseableHttpResponse head = head(uri);
+		final Header[] headers = head.getHeaders(HttpHeaders.CONTENT_LENGTH);
 
-    public Set<URI> crawl(final URI index) throws IOException {
-        log.info("Crawl " + index);
-        final Set<URI> resources = new LinkedHashSet<URI>();
+		if (headers != null && headers.length >= 1) {
+			return Long.valueOf(headers[0].getValue());
+		}
 
-        final HttpResponse response = get(index);
+		head.close();
 
-        final InputStream content = response.getEntity().getContent();
-        final StreamLexer lexer = new StreamLexer(content);
+		return Long.valueOf(-1);
+	}
 
-        final Set<URI> crawl = new LinkedHashSet<URI>();
+	private CloseableHttpResponse get(final URI uri) throws IOException {
+		final HttpGet request = new HttpGet(uri);
+		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_CONTENTS);
+		return this.client.execute(request);
+	}
 
-        // <a
-        // href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
-        while (lexer.readAndMark("<a ", "/a>")) {
+	private CloseableHttpResponse head(final URI uri) throws IOException {
+		final HttpHead request = new HttpHead(uri);
+		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_CONTENTS);
+		return this.client.execute(request);
+	}
 
-            try {
-                final String link = lexer.peek("href=\"", "\"");
-                final String name = lexer.peek(">", "<");
+	public Set<URI> crawl(final URI index) throws IOException {
+		log.info("Crawl " + index);
+		final Set<URI> resources = new LinkedHashSet<URI>();
 
-                final URI uri = index.resolve(link);
+		final CloseableHttpResponse response = get(index);
 
-                if (name.equals("../")) {
-                    continue;
-                }
-                if (link.equals("../")) {
-                    continue;
-                }
+		final InputStream content = response.getEntity().getContent();
+		final StreamLexer lexer = new StreamLexer(content);
 
-                if (name.endsWith("/")) {
-                    crawl.add(uri);
-                    continue;
-                }
+		final Set<URI> crawl = new LinkedHashSet<URI>();
 
-                resources.add(uri);
+		// <a
+		// href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
+		while (lexer.readAndMark("<a ", "/a>")) {
 
-            } finally {
-                lexer.unmark();
-            }
-        }
+			try {
+				final String link = lexer.peek("href=\"", "\"");
+				final String name = lexer.peek(">", "<");
 
-        content.close();
+				final URI uri = index.resolve(link);
 
-        for (final URI uri : crawl) {
-            resources.addAll(crawl(uri));
-        }
+				if (name.equals(ONE_UP)) {
+					continue;
+				}
+				if (link.equals(ONE_UP)) {
+					continue;
+				}
 
-        return resources;
-    }
+				if (name.endsWith(SLASH)) {
+					crawl.add(uri);
+					continue;
+				}
+
+				resources.add(uri);
+
+			} finally {
+				lexer.unmark();
+			}
+		}
+
+		content.close();
+		response.close();
+
+		for (final URI uri : crawl) {
+			resources.addAll(crawl(uri));
+		}
+
+		return resources;
+	}
 }
