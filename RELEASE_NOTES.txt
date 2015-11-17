@@ -11,3 +11,4 @@ Tentacles 0.1 SNAPSHOT
     * [TENTACLES-3] - provide help text if runtime parameters are missing
     * [TENTACLES-2] - use proper escaping in Velocity template files.
     * [TENTACLES-1] - allow filtering of directories in LicenseFilter
+    * [TENTACLES-9] - adding retry during crawl (thanks to Andy Gumbrecht)

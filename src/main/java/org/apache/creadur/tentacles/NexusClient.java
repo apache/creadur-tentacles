@@ -16,6 +16,17 @@
  */
 package org.apache.creadur.tentacles;
 
+import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.log4j.Logger;
+import org.codehaus.swizzle.stream.StreamLexer;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,145 +34,153 @@ import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.log4j.Logger;
-import org.codehaus.swizzle.stream.StreamLexer;
-
 public class NexusClient {
 
-	private static final Logger log = Logger.getLogger(NexusClient.class);
-	private static final String SLASH = "/";
-	private static final String ONE_UP = "../";
-	private static final String USER_AGENT_CONTENTS = "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13";
+    private static final Logger log = Logger.getLogger(NexusClient.class);
+    private static final String SLASH = "/";
+    private static final String ONE_UP = "../";
+    private static final String USER_AGENT_CONTENTS = "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13";
 
-	private final CloseableHttpClient client;
-	private final FileSystem fileSystem;
-	private final IOSystem ioSystem;
+    private final CloseableHttpClient client;
+    private final FileSystem fileSystem;
+    private final IOSystem ioSystem;
+    private final int retries;
 
-	public NexusClient(final Platform platform) {
+    public NexusClient(final Platform platform) {
 
-		System.setProperty("http.keepAlive", "false");
-		System.setProperty("http.maxConnections", "50");
+        System.setProperty("http.keepAlive", "false");
+        System.setProperty("http.maxConnections", "50");
 
-		this.client = HttpClientBuilder.create().disableContentCompression()
-				.build();
-		this.fileSystem = platform.getFileSystem();
-		this.ioSystem = platform.getIoSystem();
-	}
+        this.retries = Integer.parseInt(System.getProperty("NexusClient.retries", "5"));
 
-	public File download(final URI uri, final File file) throws IOException {
-		if (file.exists()) {
+        this.client = HttpClientBuilder.create().disableContentCompression()
+                .build();
+        this.fileSystem = platform.getFileSystem();
+        this.ioSystem = platform.getIoSystem();
+    }
 
-			final long length = getContentLength(uri);
+    public File download(final URI uri, final File file) throws IOException {
+        if (file.exists()) {
 
-			if (file.length() == length) {
-				log.info("Exists " + uri);
-				return file;
-			} else {
-				log.info("Incomplete " + uri);
-			}
-		}
+            final long length = getContentLength(uri);
 
-		log.info("Download " + uri);
+            if (file.length() == length) {
+                log.info("Exists " + uri);
+                return file;
+            } else {
+                log.info("Incomplete " + uri);
+            }
+        }
 
-		final CloseableHttpResponse response = get(uri);
+        log.info("Download " + uri);
 
-		InputStream content = null;
-		try {
-			content = response.getEntity().getContent();
+        final CloseableHttpResponse response = get(uri);
 
-			this.fileSystem.mkparent(file);
+        InputStream content = null;
+        try {
+            content = response.getEntity().getContent();
 
-			this.ioSystem.copy(content, file);
-		} finally {
-			if (content != null) {
-				content.close();
-			}
+            this.fileSystem.mkparent(file);
 
-			response.close();
-		}
+            this.ioSystem.copy(content, file);
+        } finally {
+            if (content != null) {
+                content.close();
+            }
 
-		return file;
-	}
+            response.close();
+        }
 
-	private Long getContentLength(final URI uri) throws IOException {
-		final CloseableHttpResponse head = head(uri);
-		final Header[] headers = head.getHeaders(HttpHeaders.CONTENT_LENGTH);
+        return file;
+    }
 
-		if (headers != null && headers.length >= 1) {
-			return Long.valueOf(headers[0].getValue());
-		}
+    private Long getContentLength(final URI uri) throws IOException {
+        final CloseableHttpResponse head = head(uri);
+        final Header[] headers = head.getHeaders(HttpHeaders.CONTENT_LENGTH);
 
-		head.close();
+        if (headers != null && headers.length >= 1) {
+            return Long.valueOf(headers[0].getValue());
+        }
 
-		return Long.valueOf(-1);
-	}
+        head.close();
 
-	private CloseableHttpResponse get(final URI uri) throws IOException {
-		final HttpGet request = new HttpGet(uri);
-		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_CONTENTS);
-		return this.client.execute(request);
-	}
+        return (long) -1;
+    }
 
-	private CloseableHttpResponse head(final URI uri) throws IOException {
-		final HttpHead request = new HttpHead(uri);
-		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_CONTENTS);
-		return this.client.execute(request);
-	}
+    private CloseableHttpResponse get(final URI uri) throws IOException {
+        return get(new HttpGet(uri), this.retries);
+    }
 
-	public Set<URI> crawl(final URI index) throws IOException {
-		log.info("Crawl " + index);
-		final Set<URI> resources = new LinkedHashSet<URI>();
+    private CloseableHttpResponse head(final URI uri) throws IOException {
+        return get(new HttpHead(uri), this.retries);
+    }
 
-		final CloseableHttpResponse response = get(index);
+    private CloseableHttpResponse get(final HttpUriRequest request, int tries) throws IOException {
+        try {
+            request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_CONTENTS);
+            return this.client.execute(request);
+        } catch (final IOException e) {
+            if (tries > 0) {
+                try {
+                    Thread.sleep(250);
+                } catch (final InterruptedException ie) {
+                    Thread.interrupted();
+                    throw new IOException("Interrupted", ie);
+                }
+                return get(request, tries--);
+            } else {
+                throw e;
+            }
+        }
+    }
 
-		final InputStream content = response.getEntity().getContent();
-		final StreamLexer lexer = new StreamLexer(content);
+    public Set<URI> crawl(final URI index) throws IOException {
+        log.info("Crawl " + index);
+        final Set<URI> resources = new LinkedHashSet<URI>();
 
-		final Set<URI> crawl = new LinkedHashSet<URI>();
+        final CloseableHttpResponse response = get(index);
 
-		// <a
-		// href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
-		while (lexer.readAndMark("<a ", "/a>")) {
+        final InputStream content = response.getEntity().getContent();
+        final StreamLexer lexer = new StreamLexer(content);
 
-			try {
-				final String link = lexer.peek("href=\"", "\"");
-				final String name = lexer.peek(">", "<");
+        final Set<URI> crawl = new LinkedHashSet<URI>();
 
-				final URI uri = index.resolve(link);
+        // <a
+        // href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
+        while (lexer.readAndMark("<a ", "/a>")) {
 
-				if (name.equals(ONE_UP)) {
-					continue;
-				}
-				if (link.equals(ONE_UP)) {
-					continue;
-				}
+            try {
+                final String link = lexer.peek("href=\"", "\"");
+                final String name = lexer.peek(">", "<");
 
-				if (name.endsWith(SLASH)) {
-					crawl.add(uri);
-					continue;
-				}
+                final URI uri = index.resolve(link);
 
-				resources.add(uri);
+                if (name.equals(ONE_UP)) {
+                    continue;
+                }
+                if (link.equals(ONE_UP)) {
+                    continue;
+                }
 
-			} finally {
-				lexer.unmark();
-			}
-		}
+                if (name.endsWith(SLASH)) {
+                    crawl.add(uri);
+                    continue;
+                }
 
-		content.close();
-		response.close();
+                resources.add(uri);
 
-		for (final URI uri : crawl) {
-			resources.addAll(crawl(uri));
-		}
+            } finally {
+                lexer.unmark();
+            }
+        }
 
-		return resources;
-	}
+        content.close();
+        response.close();
+
+        for (final URI uri : crawl) {
+            resources.addAll(crawl(uri));
+        }
+
+        return resources;
+    }
 }

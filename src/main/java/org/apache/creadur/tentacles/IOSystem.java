@@ -16,25 +16,11 @@
  */
 package org.apache.creadur.tentacles;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.log4j.Logger;
+
+import java.io.*;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
-
-import org.apache.log4j.Logger;
 
 /**
  * @version $Rev$ $Date$
@@ -117,12 +103,12 @@ public class IOSystem {
                 ((Flushable) closeable).flush();
             }
         } catch (final IOException e) {
-        	LOG.error("Error when trying to flush before closing " + closeable, e);
+        	LOG.trace("Error when trying to flush before closing " + closeable, e);
         }
         try {
             closeable.close();
         } catch (final IOException e) {
-        	LOG.error("Error when trying to close " + closeable, e);
+        	LOG.trace("Error when trying to close " + closeable, e);
         }
     }
 
