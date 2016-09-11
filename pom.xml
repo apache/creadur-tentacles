@@ -75,7 +75,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.6</javaVersion>
     <httpClientVersion>4.3.6</httpClientVersion>
-    <apacheRatVersion>0.11</apacheRatVersion>
+    <apacheRatVersion>0.12</apacheRatVersion>
   </properties>
   <issueManagement>
     <system>JIRA</system>
