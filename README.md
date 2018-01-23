@@ -1,3 +1,7 @@
+# Apache Creadur Tentacles
+
+[![Build Status](https://api.travis-ci.org/apache/creadur-tentacles.svg?branch=trunk)](https://travis-ci.org/apache/creadur-tentacles)
+
 # Running
 
 The tool will download all the archives from a staging repo, unpack
