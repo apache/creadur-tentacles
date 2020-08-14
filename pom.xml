@@ -147,7 +147,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.11</version>
+        <version>1.19</version>
         <executions>
           <execution>
             <!-- This checks the source code of our project -->
@@ -156,7 +156,7 @@
               be changed manually when we decide to move to a higher version of
               Java
             -->
-            <id>check-java-1.6-compat</id>
+            <id>check-java-1.8-compat</id>
             <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
@@ -164,7 +164,7 @@
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java16</artifactId>
+                <artifactId>java18</artifactId>
                 <version>1.0</version>
               </signature>
             </configuration>
