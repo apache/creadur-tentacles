@@ -334,9 +334,9 @@
     </pluginManagement>
   </build>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/creadur/tentacles/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/creadur/tentacles/trunk</developerConnection>
-    <url>http://svn.apache.org/repos/asf/creadur/tentacles/trunk</url>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-tentacles.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/creadur-tentacles.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=creadur-tentacles.git</url>
   </scm>
   <licenses>
     <license>
