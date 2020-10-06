@@ -1,6 +1,7 @@
 # Apache Creadur Tentacles
 
-[![Build Status](https://api.travis-ci.org/apache/creadur-tentacles.svg?branch=trunk)](https://travis-ci.org/apache/creadur-tentacles)
+[![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/badge/icon)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/)
+[![Travis Build Status](https://api.travis-ci.org/apache/creadur-tentacles.svg?branch=trunk)](https://travis-ci.org/apache/creadur-tentacles)
 
 # Running
 
