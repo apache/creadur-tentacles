@@ -111,7 +111,7 @@
     </mailingList>
   </mailingLists>
   <build>
-    <defaultGoal>clean install</defaultGoal>
+    <defaultGoal>clean versions:display-dependency-updates versions:display-plugin-updates enforcer:display-info install</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
