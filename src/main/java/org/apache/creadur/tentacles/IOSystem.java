@@ -16,117 +16,109 @@
  */
 package org.apache.creadur.tentacles;
 
-import org.apache.log4j.Logger;
-
+import org.apache.logging.log4j.*;
 import java.io.*;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
 
-/**
- * @version $Rev$ $Date$
- */
 public class IOSystem {
-    private static final Logger LOG = Logger.getLogger(IOSystem.class);
+	private static final Logger LOG = LogManager.getLogger(IOSystem.class);
 
-    public String slurp(final File file) throws IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(file, out);
-        return new String(out.toByteArray());
-    }
+	public String slurp(final File file) throws IOException {
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		copy(file, out);
+		return new String(out.toByteArray());
+	}
 
-    public String slurp(final URL url) throws IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(url.openStream(), out);
-        return new String(out.toByteArray());
-    }
+	public String slurp(final URL url) throws IOException {
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		copy(url.openStream(), out);
+		return new String(out.toByteArray());
+	}
 
-    public void writeString(final File file, final String string)
-            throws IOException {
-        final FileWriter out = new FileWriter(file);
-        try {
-            final BufferedWriter bufferedWriter = new BufferedWriter(out);
-            try {
-                bufferedWriter.write(string);
-                bufferedWriter.newLine();
-            } finally {
-                close(bufferedWriter);
-            }
-        } finally {
-            close(out);
-        }
-    }
+	public void writeString(final File file, final String string) throws IOException {
+		final FileWriter out = new FileWriter(file);
+		try {
+			final BufferedWriter bufferedWriter = new BufferedWriter(out);
+			try {
+				bufferedWriter.write(string);
+				bufferedWriter.newLine();
+			} finally {
+				close(bufferedWriter);
+			}
+		} finally {
+			close(out);
+		}
+	}
 
-    private void copy(final File from, final OutputStream to)
-            throws IOException {
-        final InputStream read = read(from);
-        try {
-            copy(read, to);
-        } finally {
-            close(read);
-        }
-    }
+	private void copy(final File from, final OutputStream to) throws IOException {
+		final InputStream read = read(from);
+		try {
+			copy(read, to);
+		} finally {
+			close(read);
+		}
+	}
 
-    public void copy(final InputStream from, final File to) throws IOException {
-        final OutputStream write = write(to);
-        try {
-            copy(from, write);
-        } finally {
-            close(write);
-        }
-    }
+	public void copy(final InputStream from, final File to) throws IOException {
+		final OutputStream write = write(to);
+		try {
+			copy(from, write);
+		} finally {
+			close(write);
+		}
+	}
 
-    private void copy(final InputStream from, final OutputStream to)
-            throws IOException {
-        final byte[] buffer = new byte[1024];
-        int length = 0;
-        while ((length = from.read(buffer)) != -1) {
-            to.write(buffer, 0, length);
-        }
-        to.flush();
-    }
+	private void copy(final InputStream from, final OutputStream to) throws IOException {
+		final byte[] buffer = new byte[1024];
+		int length = 0;
+		while ((length = from.read(buffer)) != -1) {
+			to.write(buffer, 0, length);
+		}
+		to.flush();
+	}
 
-    public void copy(final byte[] from, final File to) throws IOException {
-        copy(new ByteArrayInputStream(from), to);
-    }
+	public void copy(final byte[] from, final File to) throws IOException {
+		copy(new ByteArrayInputStream(from), to);
+	}
 
-    public ZipInputStream unzip(final File file) throws IOException {
-        final InputStream read = read(file);
-        return new ZipInputStream(read);
-    }
+	public ZipInputStream unzip(final File file) throws IOException {
+		final InputStream read = read(file);
+		return new ZipInputStream(read);
+	}
 
-    public void close(final Closeable closeable) throws IOException {
-        if (closeable == null) {
-            return;
-        }
-        try {
-            if (closeable instanceof Flushable) {
-                ((Flushable) closeable).flush();
-            }
-        } catch (final IOException e) {
-        	LOG.trace("Error when trying to flush before closing " + closeable, e);
-        }
-        try {
-            closeable.close();
-        } catch (final IOException e) {
-        	LOG.trace("Error when trying to close " + closeable, e);
-        }
-    }
+	public void close(final Closeable closeable) throws IOException {
+		if (closeable == null) {
+			return;
+		}
+		try {
+			if (closeable instanceof Flushable) {
+				((Flushable) closeable).flush();
+			}
+		} catch (final IOException e) {
+			LOG.trace("Error when trying to flush before closing " + closeable, e);
+		}
+		try {
+			closeable.close();
+		} catch (final IOException e) {
+			LOG.trace("Error when trying to close " + closeable, e);
+		}
+	}
 
-    public OutputStream write(final File destination)
-            throws FileNotFoundException {
-        final OutputStream out = new FileOutputStream(destination);
-        return new BufferedOutputStream(out, 32768);
-    }
+	public OutputStream write(final File destination) throws FileNotFoundException {
+		final OutputStream out = new FileOutputStream(destination);
+		return new BufferedOutputStream(out, 32768);
+	}
 
-    public InputStream read(final File source) throws FileNotFoundException {
-        final InputStream in = new FileInputStream(source);
-        return new BufferedInputStream(in, 32768);
-    }
+	public InputStream read(final File source) throws FileNotFoundException {
+		final InputStream in = new FileInputStream(source);
+		return new BufferedInputStream(in, 32768);
+	}
 
-    public byte[] read(final InputStream in) throws IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(in, out);
-        out.close();
-        return out.toByteArray();
-    }
+	public byte[] read(final InputStream in) throws IOException {
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		copy(in, out);
+		out.close();
+		return out.toByteArray();
+	}
 }
