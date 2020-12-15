@@ -3,7 +3,7 @@
 [![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/badge/icon)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/)
 [![Travis Build Status](https://api.travis-ci.com/apache/creadur-tentacles.svg?branch=master)](https://travis-ci.com/apache/creadur-tentacles)
 
-# Running with JDK9
+# Running with >=JDK9
 
 The tool will download all the archives from a staging repo, unpack
 them and create a little report of what is there. 
