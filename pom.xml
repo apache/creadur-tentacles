@@ -50,9 +50,14 @@
       <version>2.4.2</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.14.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
@@ -73,7 +78,7 @@
   </dependencies>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javaVersion>1.8</javaVersion>
+    <javaVersion>9</javaVersion>
     <httpClientVersion>4.3.6</httpClientVersion>
     <apacheRatVersion>0.13</apacheRatVersion>
   </properties>
@@ -106,6 +111,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <configuration>
           <source>${javaVersion}</source>
           <target>${javaVersion}</target>
@@ -114,6 +120,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M3</version>
         <executions>
           <execution>
             <!-- This checks the bytecode version of the dependencies transitively -->
@@ -126,6 +133,9 @@
                 <enforceBytecodeVersion>
                   <maxJdkVersion>${javaVersion}</maxJdkVersion>
                 </enforceBytecodeVersion>
+                <requireMavenVersion>
+                  <version>3.0.5</version>
+                </requireMavenVersion>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -151,7 +161,7 @@
               be changed manually when we decide to move to a higher version of
               Java
             -->
-            <id>check-java-1.8-compat</id>
+            <id>check-java-1.9-compat</id>
             <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
@@ -159,7 +169,7 @@
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java18</artifactId>
+                <artifactId>java9</artifactId>
                 <version>1.0</version>
               </signature>
             </configuration>
