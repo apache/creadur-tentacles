@@ -74,7 +74,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.8</javaVersion>
-    <httpClientVersion>4.3.6</httpClientVersion>
+    <httpClientVersion>4.5.13</httpClientVersion>
     <apacheRatVersion>0.13</apacheRatVersion>
   </properties>
   <issueManagement>
