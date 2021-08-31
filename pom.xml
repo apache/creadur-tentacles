@@ -94,7 +94,7 @@
       <archive>http://mail-archives.apache.org/mod_mbox/creadur-dev/</archive>
     </mailingList>
     <mailingList>
-      <name>WHisker Commits (Apache Creadur project)</name>
+      <name>Whisker Commits (Apache Creadur project)</name>
       <subscribe>commits-subscribe@creadur.apache.org</subscribe>
       <unsubscribe>commits-unsubscribe@creadur.apache.org</unsubscribe>
       <archive>http://mail-archives.apache.org/mod_mbox/creadur-commits/</archive>
