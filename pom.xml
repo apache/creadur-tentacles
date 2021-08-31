@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>20</version>
+    <version>24</version>
   </parent>
   <groupId>org.apache.creadur.tentacles</groupId>
   <artifactId>apache-tentacles</artifactId>
@@ -76,6 +76,7 @@
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.13</httpClientVersion>
     <apacheRatVersion>0.13</apacheRatVersion>
+    <project.build.outputTimestamp>1</project.build.outputTimestamp>
   </properties>
   <issueManagement>
     <system>JIRA</system>
