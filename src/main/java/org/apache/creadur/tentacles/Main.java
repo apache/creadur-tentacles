@@ -34,25 +34,20 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.apache.logging.log4j.*;
 
-/**
- * @version $Rev$ $Date$
- */
 public class Main {
 
     static {
-        final Logger root = Logger.getRootLogger();
-
+/* TENTACLES-12: disabled root logger configuration       
+        final Logger root = LogManager.getRootLogger();
         root.addAppender(new ConsoleAppender(new PatternLayout(
                 PatternLayout.TTCC_CONVERSION_PATTERN)));
         root.setLevel(Level.INFO);
+        */
     }
 
-    private static final Logger log = Logger.getLogger(Main.class);
+    private static final Logger log = LogManager.getLogger(Main.class);
     private static final String CRAWL_PATTERN = ".*\\.(jar|zip|war|ear|rar|tar.gz)";
 
     private final Reports reports;

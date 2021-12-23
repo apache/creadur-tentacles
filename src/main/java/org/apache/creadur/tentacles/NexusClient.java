@@ -24,7 +24,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.codehaus.swizzle.stream.StreamLexer;
 
 import java.io.File;
@@ -36,7 +36,7 @@ import java.util.Set;
 
 public class NexusClient {
 
-    private static final Logger log = Logger.getLogger(NexusClient.class);
+    private static final Logger log = LogManager.getLogger(NexusClient.class);
     private static final String SLASH = "/";
     private static final String ONE_UP = "../";
     private static final String USER_AGENT_CONTENTS = "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13";
