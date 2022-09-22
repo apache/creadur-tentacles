@@ -85,7 +85,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.13</httpClientVersion>
-    <loggerVersion>2.18.0</loggerVersion>
+    <loggerVersion>2.19.0</loggerVersion>
     <apacheRatVersion>0.15</apacheRatVersion>
     <project.build.outputTimestamp>1</project.build.outputTimestamp>
   </properties>
