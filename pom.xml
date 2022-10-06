@@ -25,7 +25,7 @@
   <groupId>org.apache.creadur.tentacles</groupId>
   <artifactId>apache-tentacles</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>Apache Tentacles</name>
   <description>Utility to download binaries from a remote repository and scan them for LICENSE and NOTICE files</description>
   <dependencies>
@@ -337,7 +337,7 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/creadur-tentacles.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/creadur-tentacles.git</developerConnection>
     <url>https://git-wip-us.apache.org/repos/asf?p=creadur-tentacles.git</url>
-    <tag>HEAD</tag>
+    <tag>apache-tentacles-0.1</tag>
   </scm>
   <licenses>
     <license>
