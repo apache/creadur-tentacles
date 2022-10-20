@@ -89,6 +89,12 @@
     <apacheRatVersion>0.15</apacheRatVersion>
     <project.build.outputTimestamp>1</project.build.outputTimestamp>
   </properties>
+  <distributionManagement>
+    <site>
+      <id>staging</id>
+      <url>file:bogus</url>
+    </site>
+  </distributionManagement>
   <issueManagement>
     <system>JIRA</system>
     <url>https://issues.apache.org/jira/browse/TENTACLES</url>
