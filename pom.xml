@@ -329,7 +329,6 @@
           <version>${apacheRatVersion}</version>
           <configuration>
             <excludes>
-              <exclude>.travis.yml</exclude>
               <exclude>README*</exclude>
               <exclude>src/main/resources/licenses/*</exclude>
             </excludes>

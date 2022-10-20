@@ -1,7 +1,6 @@
 # Apache Creadur Tentacles
 
 [![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/badge/icon)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/)
-[![Travis Build Status](https://app.travis-ci.com/apache/creadur-tentacles.svg?branch=master)](https://app.travis-ci.com/apache/creadur-tentacles)
 
 # Running with at least JDK8
 
