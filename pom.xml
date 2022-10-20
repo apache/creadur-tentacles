@@ -214,110 +214,6 @@
           <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
           <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
           <relativizeDecorationLinks>false</relativizeDecorationLinks>
-          <!-- reporting plugins are configured according to new mvn3 standard -->
-          <!-- Until Maven finds a way to allow inheritance, duplicated in plugin4maven -->
-          <reportPlugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-checkstyle-plugin</artifactId>
-              <version>2.12.1</version>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <version>2.10.4</version>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jxr-plugin</artifactId>
-              <version>2.4</version>
-              <configuration>
-                <aggregate>true</aggregate>
-                <linkJavadoc>true</linkJavadoc>
-              </configuration>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-report-plugin</artifactId>
-              <version>2.17</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-pmd-plugin</artifactId>
-              <!-- Later versions require Java 1.6+ -->
-              <version>3.1</version>
-              <configuration>
-                <linkXRef>true</linkXRef>
-                <sourceEncoding>utf-8</sourceEncoding>
-                <minimumTokens>100</minimumTokens>
-                <targetJdk>${target.jdk}</targetJdk>
-                <excludes>
-                  <exclude>**/generated/**/*.java</exclude>
-                  <exclude>**/target/clover/**/*.java</exclude>
-                </excludes>
-              </configuration>
-            </plugin>
-            <!-- read changes.xml -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-changes-plugin</artifactId>
-              <version>2.10</version>
-              <reportSets>
-                <reportSet>
-                  <reports>
-                    <report>changes-report</report>
-                  </reports>
-                </reportSet>
-              </reportSets>
-            </plugin>
-            <!-- jdepend plugin -->
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>jdepend-maven-plugin</artifactId>
-              <version>2.0</version>
-            </plugin>
-            <!-- cobertura plugin -->
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>cobertura-maven-plugin</artifactId>
-              <version>2.6</version>
-            </plugin>
-            <!-- catch code tags -->
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>taglist-maven-plugin</artifactId>
-              <version>2.4</version>
-              <configuration>
-                <tags>
-                  <tag>TODO</tag>
-                  <tag>todo</tag>
-                  <tag>FIXME</tag>
-                  <tag>fixme</tag>
-                  <tag>REFACTOR</tag>
-                  <tag>refactor</tag>
-                  <tag>REVIEW</tag>
-                  <tag>review</tag>
-                  <tag>@todo</tag>
-                  <tag>@deprecated</tag>
-                </tags>
-              </configuration>
-            </plugin>
-            <!-- enable later with a findbugs version that works fine with JDK 1.6
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>findbugs-maven-plugin</artifactId>
-              <version>2.5.5</version>
-            </plugin-->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-project-info-reports-plugin</artifactId>
-              <version>2.7</version>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.rat</groupId>
-              <artifactId>apache-rat-plugin</artifactId>
-              <version>${apacheRatVersion}</version>
-            </plugin>
-          </reportPlugins>
         </configuration>
       </plugin>
     </plugins>
@@ -333,17 +229,117 @@
               <exclude>src/main/resources/licenses/*</exclude>
             </excludes>
           </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
+  <reporting>
+    <!-- reporting plugins are configured according to new mvn3 standard -->
+    <!-- Until Maven finds a way to allow inheritance, duplicated in plugin4maven -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.12.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.4</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <linkJavadoc>true</linkJavadoc>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.17</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <!-- Later versions require Java 1.6+ -->
+        <version>3.1</version>
+        <configuration>
+          <linkXRef>true</linkXRef>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <minimumTokens>100</minimumTokens>
+          <targetJdk>${target.jdk}</targetJdk>
+          <excludes>
+            <exclude>**/generated/**/*.java</exclude>
+            <exclude>**/target/clover/**/*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <!-- read changes.xml -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.10</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+              <report>jira-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <!-- jdepend plugin -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
+      <!-- cobertura plugin - disable due to errors on modern JDK
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.6</version>
+      </plugin -->
+      <!-- catch code tags -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <tags>
+            <tag>TODO</tag>
+            <tag>todo</tag>
+            <tag>FIXME</tag>
+            <tag>fixme</tag>
+            <tag>REFACTOR</tag>
+            <tag>refactor</tag>
+            <tag>REVIEW</tag>
+            <tag>review</tag>
+            <tag>@todo</tag>
+            <tag>@deprecated</tag>
+          </tags>
+        </configuration>
+      </plugin>
+      <!-- enable later with a findbugs version that works fine with JDK 1.6
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.5.5</version>
+      </plugin-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.7</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>${apacheRatVersion}</version>
+      </plugin>
+    </plugins>
+  </reporting>
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-tentacles.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/creadur-tentacles.git</developerConnection>
