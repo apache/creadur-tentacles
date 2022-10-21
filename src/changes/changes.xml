@@ -61,6 +61,12 @@ The <action> type attribute can be add,update,fix,remove.
     -->
     <release version="0.1" date="2022-10-??" description="Initial release of Tentacles.">
       <action issue="TENTACLES-16" type="add" dev="pottlinger">
+        Updated multiple dependencies and modernized build pipeline when site build was configured.
+      </action>
+      <action issue="TENTACLES-16" type="add" dev="pottlinger">
+        Initial infrastructure for builds with Github Action added.
+      </action>
+      <action issue="TENTACLES-16" type="add" dev="pottlinger">
         Initial infrastructure for changelogs added.
       </action>
     </release>
