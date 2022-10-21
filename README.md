@@ -1,6 +1,6 @@
 # Apache Creadur Tentacles
 
-[![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/badge/icon)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/)
+ASF Jenkins: [![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/badge/icon)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/)
 
 GA: [![Github Action master branch status](https://github.com/apache/creadur-tentacles/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-tentacles/actions)
 
