@@ -2,10 +2,12 @@
 
 [![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/badge/icon)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Tentacles/)
 
+GA: [![Github Action master branch status](https://github.com/apache/creadur-tentacles/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-tentacles/actions)
+
 # Running with at least JDK8
 
 The tool will download all the archives from a staging repo, unpack
-them and create a little report of what is there. 
+them and create a little report of what is there.
 
     java -ea -jar apache-tentacles-0.1-SNAPSHOT.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
 
