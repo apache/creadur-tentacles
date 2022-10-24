@@ -231,6 +231,7 @@
           <version>${apacheRatVersion}</version>
           <configuration>
             <excludes>
+              <exclude>.asf.yaml</exclude>
               <exclude>README*</exclude>
               <exclude>src/main/resources/licenses/*</exclude>
             </excludes>
