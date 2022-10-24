@@ -1,0 +1,11 @@
+github:
+  description: "Apache Creadur Tentacles"
+  homepage: https://creadur.apache.org/tentacles
+  labels:
+    - maven
+    - java
+    - cli
+    - licensechecker 
+    - apache
+    - creadur
+    - tentacles 
