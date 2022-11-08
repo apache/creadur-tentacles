@@ -55,7 +55,7 @@ The <action> type attribute can be add,update,fix,remove.
   <body>
     <!--release version="0.2-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="TENTACLES-xxx" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
+        TODO: collect all dependabot updates for release 0.2.
       </action>
     </release>
     -->
