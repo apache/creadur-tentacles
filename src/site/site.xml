@@ -50,9 +50,9 @@
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
 
-    <menu name="Running Tentacles" inherit="bottom">
-      <item name="tbd: From The Command Line" href="apache-rat/index.html"/>
-    </menu>
+    <!-- menu name="Running Tentacles" inherit="bottom">
+      <item name="tbd: Introduction" href="index.html"/>
+    </menu-->
 
     <menu name="Apache Creadur&#8482;" inherit="bottom">
       <item name='Creadur Project Home' href="https://creadur.apache.org"/>
