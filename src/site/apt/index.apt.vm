@@ -14,104 +14,126 @@
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+~~ https://maven.apache.org/doxia/references/apt-format.html
                    --------------------------
                    Introduction
                    --------------------------
 
-About Apache Tentacles&#8482;
+Introduction to Apache Tentacles&#8482;
 
-https://maven.apache.org/doxia/references/apt-format.html
+* Running
 
-TBD: Copy over from current site! Rat audits software distributions, with a special interest in headers.
- If this isn't quite what you're looking for then take a look at the
- other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
- including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
- and generates legal (for example <<<LICENSE>>>) documents for
- complex software distributions.
-
-* Running from the Command Line
-
- Run from the command line with:
+ Apache Tentacles&#8482; will download all the archives from a staging repo, unpack them and create a little report of what is there.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${project.version}.jar --help
+java -ea -jar apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
 +------------------------------------------+
 
- This will output a help message detailing the command line
- options available to you.
+ Assertions must be enabled.
 
-* Adding license headers
-
- Rat can be used to automatically add license headers to
- files that do not currently have them. Only files that
- are not excluded by the Rat configurations will be affected.
-
- To add license headers use a command such as:
+ The tool is not specific to maven and will simply recursively walk the provided URL and download all files matching the following pattern:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${project.version}.jar --addlicense
-  --copyright "Copyright 2008 Foo" --force
-  /path/to/project
+.*\.(jar|zip|war|ear|tar.gz)
 +------------------------------------------+
 
- This command will add the license header directly to the
- source files. If you prefer to see which files will be
- changed and how then remove the "--force" option.
+ Tar.gz files are downloaded though there is currently no support for unpacking them.
 
-* Using multiple excludes from a file
+* Output
 
-  It is common to use the Rat with the Maven or Ant plugins and specify
-  a series of files to exclude (such as a README or version control
-  files).  If you are using the Rat application instead of a plugin you
-  can specify a series of regex excludes in a file and specify that with
-  the -E option.
+ Once the tool has run, the following files directories will exist:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${project.version}.jar
- -E /path/to/project/.rat-excludes
- -d /path/to/project
+repo/
+content/
+archives.html
+licenses.html
+notices.html
+style.css
+org.apache.openejb.openejb-core.3.0.4.openejb-core-3.0.4.jar.licenses.html
+org.apache.openejb.openejb-core.3.0.4.openejb-core-3.0.4.jar.notices.html
+org.apache.openejb.openejb-standalone.3.0.4.openejb-standalone-3.0.4.zip.licenses.html
+org.apache.openejb.openejb-standalone.3.0.4.openejb-standalone-3.0.4.zip.notices.html
+org.apache.openejb.openejb-tomcat-webapp.3.0.4.openejb-tomcat-webapp-3.0.4.war.licenses.html
+org.apache.openejb.openejb-tomcat-webapp.3.0.4.openejb-tomcat-webapp-3.0.4.war.notices.html
+...
 +------------------------------------------+
 
-* Command Line Options
+** Folder repo
 
+ The repo directory will contain the full set of binaries, unmodified. Theoretically, this tool could also download and check signatures though it does not do that now.
+
+** Folder content
+
+ The content directory will contain the unpacked version of the downloaded binaries
+
+ So this file for example:
 
 +------------------------------------------+
-usage: java -jar apache-rat/target/apache-rat-${project.version}.jar
- [options] [DIR|TARBALL]
-
-Available options
- -A,--addLicense                Add the default license header to any file
-                                with an unknown license that is not in the
-                                exclusion list. By default new files will
-                                be created with the license header, to
-                                force the modification of existing files
-                                use the --force option.
- -a,--addlicense                Add the default license header to any file
-                                with an unknown license that is not in the
-                                exclusion list. By default new files will
-                                be created with the license header, to
-                                force the modification of existing files
-                                use the --force option.
- -c,--copyright <arg>           The copyright message to use in the
-                                license headers, usually in the form of
-                                "Copyright 2008 Foo"
- -d,--dir                       Used to indicate source when using
-                                --exclude
- -E,--exclude-file <fileName>   Excludes files matching regular expression
-                                in <file> Note that --dir is required when
-                                using this parameter.
- -e,--exclude <expression>      Excludes files matching wildcard
-                                <expression>. Note that --dir is required
-                                when using this parameter. Allows multiple
-                                arguments.
- -f,--force                     Forces any changes in files to be written
-                                directly to the source files (i.e. new
-                                files are not created)
- -h,--help                      Print help for the Rat command line
-                                interface and exit
- -s,--stylesheet <arg>          XSLT stylesheet to use when creating the
-                                report.  Not compatible with -x
- -x,--xml                       Output the report in raw XML format.  Not
-                                compatible with -s
+repo/foo.zip
 +------------------------------------------+
+
+ Will be unpacked at the following location:
+
++------------------------------------------+
+content/foo.zip.contents/
+content/foo.zip.contents/LICENSE
+content/foo.zip.contents/NOTICE
+content/foo.zip.contents/README.txt
+content/foo.zip.contents/lib/bar.jar
++------------------------------------------+
+
+ Unpacking is recursive, so any binaries contained in foo.zip will also be unpacked.
+
++------------------------------------------+
+content/foo.zip.contents/lib/bar.jar
+content/foo.zip.contents/lib/bar.jar.contents/
+content/foo.zip.contents/lib/bar.jar.contents/LICENSE
+content/foo.zip.contents/lib/bar.jar.contents/NOTICE
+content/foo.zip.contents/lib/bar.jar.contents/README.txt
+content/foo.zip.contents/lib/bar.jar.contents/org/
+content/foo.zip.contents/lib/bar.jar.contents/org/bar/
+content/foo.zip.contents/lib/bar.jar.contents/org/bar/Some.class
++------------------------------------------+
+
+* Reports
+
+ The "main" report is currently called archives.html and will list all of the top-level binaires, their LICENSE and NOTICE files and any LICENSE and NOTICE files of any binaries they may contain.
+
+ Validation of the output at this point is all still manual. One of the first improvements would be to automatically flag any binaries that:
+
+ * contain no LICENSE and NOTICE files
+
+ * contain more than one LICENSE or NOTICE file
+
+[]
+
+ In this report, each binary will have three links listed after its name '(licenses, notices, contents)'
+
+** foo.zip.licenses.html
+
+ This page will display the full text of the LICENSE files included in the binary. There will be two sections <<Declared>> and <<Undeclared>>
+
+ The Declared section lists the single LICENSE file that was supplied by the binary itself. As the tool works recursively, it will also collect any LICENSE file text from any binaries contained in the foo.zip. Well call these "sub" LICENSES for simplicity.
+
+ Some attempt is made to figure out if the text from sub LICENSE files are contained in the declared LICENSE file. If the sub license text is contained in the declared LICENSE file it is not listed as Undeclared.
+
+ The matching is not complete or perfect, but does help in more quickly seeing where there might be a missing LICENSE text that should be declared.
+
+** foo.zip.notices.html
+
+ Functions identical to the previously described LICENSE page with identical matching.
+
+ Note on the code, this all could probably be abstracted. We probably don't need separate License and Notice classes.
+
+** foo.zip.contents
+
+ The unpacked contents of the foo.zip as described above. Can be nice to be able to browse around the zip and look for any jars that might have LICENSE or NOTICE requirements but were overlooked.
+
+* Future work
+
+ Overall it would be great if this tool could perform some validation:
+
+ * Existence of LICENSE/NOTICE files: - flag binaries that contain no LICENSE or NOTICE files - flag binaries that contain too many LICENSE or NOTICE files
+
+ * Contents of LICENSE/NOTICE files: - better matching of missing license/notice text - look false license/notice text, text that applied to "sub" binaries once included in a binary, but are no longer present
