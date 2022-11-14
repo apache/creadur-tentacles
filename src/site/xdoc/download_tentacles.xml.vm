@@ -69,35 +69,24 @@ limitations under the License.
         <table>
           <tr>
             <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2">apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2</a>
+              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies.jar">apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies.jar</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2.sha512">sha512</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies.jar.sha512">sha512</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2.asc">pgp</a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.gz">apache-tentacles-${previousTentaclesVersion}-bin.tar.gz</a>
-            </td>
-            <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.gz.sha512">sha512</a>
-            </td>
-            <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.gz.asc">pgp</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies.jar.asc">pgp</a>
             </td>
           </tr>
           <tr>
             <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.zip">apache-tentacles-${previousTentaclesVersion}-bin.zip</a>
+              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}.jar">apache-tentacles-${previousTentaclesVersion}.jar</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.zip.sha512">sha512</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}.jar.sha512">sha512</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.zip.asc">pgp</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}.jar.asc">pgp</a>
             </td>
           </tr>
         </table>
@@ -106,35 +95,24 @@ limitations under the License.
         <table>
           <tr>
             <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.tar.bz2">apache-tentacles-${previousTentaclesVersion}-src.tar.bz2</a>
+              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-sources.jar">apache-tentacles-${previousTentaclesVersion}-sources.jar</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.tar.bz2.sha512">sha512</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-sources.jar.sha512">sha512</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.tar.bz2.asc">pgp</a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.tar.gz">apache-tentacles-${previousTentaclesVersion}-src.tar.gz</a>
-            </td>
-            <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.tar.gz.sha512">sha512</a>
-            </td>
-            <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.tar.gz.asc">pgp</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-sources.jar.asc">pgp</a>
             </td>
           </tr>
           <tr>
             <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.zip">apache-tentacles-${previousTentaclesVersion}-src.zip</a>
+              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-source-release.zip">apache-tentacles-${previousTentaclesVersion}-source-release.zip</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.zip.sha512">sha512</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-source-release.zip.sha512">sha512</a>
             </td>
             <td>
-              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-src.zip.asc">pgp</a>
+              <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-source-release.zip.asc">pgp</a>
             </td>
           </tr>
         </table>
