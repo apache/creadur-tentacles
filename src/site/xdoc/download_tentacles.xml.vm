@@ -69,7 +69,7 @@ limitations under the License.
         <table>
           <tr>
             <td>
-              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2">apache-rat-${previousTentaclesVersion}-bin.tar.bz2</a>
+              <a href="[preferred]/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2">apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2</a>
             </td>
             <td>
               <a href="https://www.apache.org/dist/creadur/apache-tentacles-${previousTentaclesVersion}/apache-tentacles-${previousTentaclesVersion}-bin.tar.bz2.sha512">sha512</a>
