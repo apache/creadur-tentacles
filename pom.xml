@@ -25,7 +25,7 @@
   <groupId>org.apache.creadur.tentacles</groupId>
   <artifactId>apache-tentacles</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.2-SNAPSHOT</version>
   <name>Apache Tentacles</name>
   <description>Utility to download binaries from a remote repository and scan them for LICENSE and NOTICE files</description>
   <dependencies>
