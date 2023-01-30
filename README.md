@@ -9,7 +9,7 @@ GA: [![Github Action master branch status](https://github.com/apache/creadur-ten
 The tool will download all the archives from a staging repo, unpack
 them and create a little report of what is there.
 
-    java -ea -jar apache-tentacles-0.1-SNAPSHOT.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
+    java -ea -jar apache-tentacles-0.2-SNAPSHOT.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
 
 Assertions must be enabled.
 
