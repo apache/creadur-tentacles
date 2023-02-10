@@ -54,12 +54,12 @@ The <action> type attribute can be add,update,fix,remove.
 
   <body>
     <!--release version="0.2-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="TENTACLES-xxx" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.2.
+      <action issue="TENTACLES-16" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: TENTACLES-16: collect all dependabot updates for release 0.2.
       </action>
     </release>
     -->
-    <release version="0.1" date="2022-10-??" description="Initial release of Tentacles.">
+    <release version="0.1" date="2022-10-22" description="Initial release of Tentacles.">
       <action issue="TENTACLES-16" type="add" dev="pottlinger">
         Updated multiple dependencies and modernized build pipeline when site build was configured.
       </action>
