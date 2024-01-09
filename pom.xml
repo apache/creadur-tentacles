@@ -84,7 +84,7 @@
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.14</httpClientVersion>
     <loggerVersion>2.22.1</loggerVersion>
-    <apacheRatVersion>0.15</apacheRatVersion>
+    <apacheRatVersion>0.16</apacheRatVersion>
     <project.build.outputTimestamp>1</project.build.outputTimestamp>
   </properties>
   <distributionManagement>
