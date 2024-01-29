@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.2-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="TENTACLES-17" type="add" dev="pottlinger">
+        Update webpage to not load fonts from GoogleFonts and include privacy link in main menu.
+      </action>
       <action issue="TENTACLES-16" type="update" dev="pottlinger" due-to="dependabot">
         TODO: before releasing TENTACLES-16: collect all dependabot updates for release 0.2.
       </action>

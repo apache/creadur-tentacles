@@ -250,6 +250,7 @@
               <exclude>.asf.yaml</exclude>
               <exclude>README*</exclude>
               <exclude>src/main/resources/licenses/*</exclude>
+              <exclude>**/src/site/javadocFont/**</exclude>
             </excludes>
           </configuration>
         </plugin>
