@@ -9,3 +9,5 @@ github:
     - apache
     - creadur
     - tentacles 
+notifications:
+  commits: commits@creadur.apache.org
