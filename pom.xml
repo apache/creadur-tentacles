@@ -379,4 +379,20 @@
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org</url>
   </organization>
+  <profiles>
+    <profile>
+      <id>maven.compiler.release</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <!--
+          Note that this cannot use our ${javaVersion} property, so it must
+          be changed manually when we decide to move to a higher version of
+          Java
+        -->
+        <maven.compiler.release>8</maven.compiler.release>
+      </properties>
+    </profile>
+  </profiles>
 </project>
