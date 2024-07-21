@@ -33,6 +33,7 @@ jobs:
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }}-JDK${{ matrix.java }}
 
     steps:
       - name: Checkout
