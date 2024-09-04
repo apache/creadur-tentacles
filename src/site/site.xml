@@ -27,8 +27,8 @@
     <version>2.0.0-M10</version>
   </skin>
 
-  <bannerLeft name="The Apache Software Foundation" href="https://www.apache.org/">
-    <image src="https://www.apache.org/img/asf_logo.png" />
+  <bannerLeft name="Apache Tentacles" href="https://www.apache.org/">
+    <image src="https://www.apache.org/img/asf_logo.png" alt="The Apache Software Foundation"/>
   </bannerLeft>
 
   <poweredBy>
