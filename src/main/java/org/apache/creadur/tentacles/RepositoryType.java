@@ -26,7 +26,7 @@ public enum RepositoryType {
 
     private final String prefix;
 
-    private RepositoryType(final String prefix) {
+    RepositoryType(final String prefix) {
         this.prefix = prefix;
     }
 

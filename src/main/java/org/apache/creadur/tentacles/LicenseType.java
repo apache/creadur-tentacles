@@ -30,7 +30,7 @@ public enum LicenseType {
             throws IOException {
         final Map<String, String> licenses =
                 new ConcurrentHashMap<String, String>();
-        for (final LicenseType type : LicenseType.values()) {
+        for (final LicenseType type : values()) {
             type.putTextInto(licenses, platform.getTentaclesResources());
         }
         return new Licenses(licenses, platform);
@@ -39,7 +39,7 @@ public enum LicenseType {
     private final String resourceName;
     private final String resourcePath;
 
-    private LicenseType(final String resourceName) {
+    LicenseType(final String resourceName) {
         this.resourceName = resourceName;
         this.resourcePath = "licenses/" + getResourceName() + ".txt";
     }
