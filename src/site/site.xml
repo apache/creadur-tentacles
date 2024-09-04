@@ -15,21 +15,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/DECORATION/1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
-         name="Apache Tentacles&amp;trade;">
-  <bannerLeft>
-    <title>The Apache Software Foundation</title>
-    <name>The Apache Software Foundation</name>
-    <src>https://www.apache.org/img/asf_logo.png</src>
-    <href>https://www.apache.org/</href>
+<site
+  xmlns="http://maven.apache.org/SITE/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
+  name="Apache Tentacles&amp;trade;">
+
+  <skin>
+    <groupId>io.github.olamy.maven.skins</groupId>
+    <artifactId>reflow-maven-skin</artifactId>
+    <version>2.0.0</version>
+  </skin>
+
+  <bannerLeft name="The Apache Software Foundation" href="https://www.apache.org/">
+    <image src="https://www.apache.org/img/asf_logo.png" />
   </bannerLeft>
 
   <poweredBy>
       <logo name="Maven"
-            href="https://maven.apache.org/"
-            img="https://maven.apache.org/images/logos/maven-feather.png"/>
-
+            href="https://maven.apache.org/">
+            <image src="https://maven.apache.org/images/logos/maven-feather.png" />
+      </logo>
   </poweredBy>
 
   <body>
@@ -49,10 +55,6 @@
       <item name="Downloads" href="/download_tentacles.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
-
-    <!-- menu name="Running Tentacles" inherit="bottom">
-      <item name="tbd: Introduction" href="index.html"/>
-    </menu-->
 
     <menu name="Apache Creadur&#8482;" inherit="bottom">
       <item name='Creadur Project Home' href="https://creadur.apache.org"/>
@@ -104,4 +106,4 @@
       Oracle and Java are registered trademarks of Oracle and/or its affiliates.
       All other marks mentioned may be trademarks or registered trademarks of their respective owners.</footer>
   </body>
-</project>
+</site>
