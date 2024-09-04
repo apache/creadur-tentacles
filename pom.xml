@@ -233,7 +233,7 @@
         <configuration>
           <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
           <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-          <relativizeDecorationLinks>false</relativizeDecorationLinks>
+          <relativizeSiteLinks>false</relativizeSiteLinks>
         </configuration>
       </plugin>
     </plugins>
