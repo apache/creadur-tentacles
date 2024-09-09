@@ -88,7 +88,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.14</httpClientVersion>
-    <loggerVersion>2.23.1</loggerVersion>
+    <loggerVersion>2.24.0</loggerVersion>
     <apacheRatVersion>0.16.1</apacheRatVersion>
     <project.build.outputTimestamp>1</project.build.outputTimestamp>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
