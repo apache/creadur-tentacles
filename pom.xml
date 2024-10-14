@@ -90,7 +90,8 @@
     <httpClientVersion>4.5.14</httpClientVersion>
     <loggerVersion>2.24.1</loggerVersion>
     <apacheRatVersion>0.16.1</apacheRatVersion>
-    <project.build.outputTimestamp>1</project.build.outputTimestamp>
+    <!-- MSITE-1018, TENTACLES-20: nil out timestamp in order to get current build timestamp -->
+    <project.build.outputTimestamp>a</project.build.outputTimestamp>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
   </properties>
