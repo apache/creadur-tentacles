@@ -58,6 +58,7 @@
 
     <menu name="Apache Creadur&#8482;" inherit="bottom">
       <item name='Creadur Project Home' href="https://creadur.apache.org"/>
+      <item name='Apache RAT' href="https://creadur.apache.org/rat"/>
       <item name='Apache Tentacles' href="https://creadur.apache.org/tentacles"/>
       <item name='Apache Whisker' href="https://creadur.apache.org/whisker"/>
       <item name='Security' href='https://www.apache.org/security/'/>
