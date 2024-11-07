@@ -38,14 +38,14 @@ import org.apache.logging.log4j.*;
 
 public class Main {
 
-    static {
 /* TENTACLES-12: disabled root logger configuration       
+    static {
         final Logger root = LogManager.getRootLogger();
         root.addAppender(new ConsoleAppender(new PatternLayout(
                 PatternLayout.TTCC_CONVERSION_PATTERN)));
         root.setLevel(Level.INFO);
-        */
     }
+        */
 
     private static final Logger log = LogManager.getLogger(Main.class);
     private static final String CRAWL_PATTERN = ".*\\.(jar|zip|war|ear|rar|tar.gz)";
