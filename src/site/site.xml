@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,92 +15,76 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<site
-  xmlns="http://maven.apache.org/SITE/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
-  name="Apache Tentacles&amp;trade;">
-
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd" name="Apache Tentacles&amp;trade;">
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
     <!-- version is managed in pom.xml in order to be grabbed by dependabot -->
   </skin>
-
   <bannerLeft name="Apache Tentacles" href="https://www.apache.org/">
     <image src="https://www.apache.org/img/asf_logo.png" alt="The Apache Software Foundation"/>
   </bannerLeft>
-
   <poweredBy>
-      <logo name="Maven"
-            href="https://maven.apache.org/">
-            <image src="https://maven.apache.org/images/logos/maven-feather.png" />
-      </logo>
+    <logo name="Maven" href="https://maven.apache.org/">
+      <image src="https://maven.apache.org/images/logos/maven-feather.png"/>
+    </logo>
   </poweredBy>
-
-  <body>
-    <head>
-      <![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]>
-    </head>
-
+  <custom>
+    <fluidoSkin>
+      <gitHub>
+        <projectId>apache/${project.artifactId}</projectId>
+        <ribbonOrientation>right</ribbonOrientation>
+        <ribbonColor>blue</ribbonColor>
+      </gitHub>
+    </fluidoSkin>
+  </custom>
+    <body>
+    <head><![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]></head>
     <breadcrumbs>
       <item name="Apache" href="https://www.apache.org/"/>
       <item name="Creadur" href="https://creadur.apache.org/"/>
       <item name="Tentacles" href="https://creadur.apache.org/tentacles/"/>
     </breadcrumbs>
-
-    <menu name="Apache Tentacles&#8482;" inherit="bottom">
+    <menu name="Apache Tentacles&#x2122;" inherit="bottom">
       <item name="Introducing Tentacles" href="/index.html"/>
       <item name="Javadocs" href="/apidocs/index.html"/>
       <item name="Downloads" href="/download_tentacles.cgi"/>
       <item name="Changes" href="/RELEASE_NOTES.txt"/>
     </menu>
-
-    <menu name="Apache Creadur&#8482;" inherit="bottom">
-      <item name='Creadur Project Home' href="https://creadur.apache.org"/>
-      <item name='Apache RAT' href="https://creadur.apache.org/rat"/>
-      <item name='Apache Tentacles' href="https://creadur.apache.org/tentacles"/>
-      <item name='Apache Whisker' href="https://creadur.apache.org/whisker"/>
-      <item name='Security' href='https://www.apache.org/security/'/>
-      <item name='License' href='https://www.apache.org/licenses/'/>
-      <item name='Privacy' href='https://privacy.apache.org/policies/privacy-policy-public.html'/>
-      <item name='Sponsorship' href='https://www.apache.org/foundation/sponsorship.html'/>
-      <item name='Thanks' href='https://www.apache.org/foundation/thanks.html'/>
+    <menu name="Apache Creadur&#x2122;" inherit="bottom">
+      <item name="Creadur Project Home" href="https://creadur.apache.org"/>
+      <item name="Apache RAT" href="https://creadur.apache.org/rat"/>
+      <item name="Apache Tentacles" href="https://creadur.apache.org/tentacles"/>
+      <item name="Apache Whisker" href="https://creadur.apache.org/whisker"/>
+      <item name="Security" href="https://www.apache.org/security/"/>
+      <item name="License" href="https://www.apache.org/licenses/"/>
+      <item name="Privacy" href="https://privacy.apache.org/policies/privacy-policy-public.html"/>
+      <item name="Sponsorship" href="https://www.apache.org/foundation/sponsorship.html"/>
+      <item name="Thanks" href="https://www.apache.org/foundation/thanks.html"/>
     </menu>
-
     <menu name="The Apache Software Foundation" inherit="bottom">
-        <item name='About the Foundation'
-            href="https://www.apache.org/foundation"/>
-        <item name='The projects'
-            href="https://projects.apache.org"/>
-        <item name='The people'
-            href="https://people.apache.org"/>
-        <item name='How we work'
-            href='https://www.apache.org/foundation/how-it-works.html'/>
-        <item name='Our history'
-            href='https://www.apache.org/foundation/how-it-works.html#history'/>
-        <item name='News'
-            href='https://blogs.apache.org/foundation/'/>
+      <item name="About the Foundation" href="https://www.apache.org/foundation"/>
+      <item name="The projects" href="https://projects.apache.org"/>
+      <item name="The people" href="https://people.apache.org"/>
+      <item name="How we work" href="https://www.apache.org/foundation/how-it-works.html"/>
+      <item name="Our history" href="https://www.apache.org/foundation/how-it-works.html#history"/>
+      <item name="News" href="https://blogs.apache.org/foundation/"/>
     </menu>
-
     <menu name="Contribute" inherit="bottom">
-      <item name="Get Involved" href='https://www.apache.org/foundation/getinvolved.html'/>
+      <item name="Get Involved" href="https://www.apache.org/foundation/getinvolved.html"/>
     </menu>
-
     <menu name="Committer Info" inherit="bottom">
-      <item name="ASF Committers' FAQ" href='https://www.apache.org/dev/committers.html'/>
-      <item name='New Committers Guide' href='https://www.apache.org/dev/new-committers-guide.html'/>
+      <item name="ASF Committers' FAQ" href="https://www.apache.org/dev/committers.html"/>
+      <item name="New Committers Guide" href="https://www.apache.org/dev/new-committers-guide.html"/>
       <item name="Howto publish this site" href="site-publish.html"/>
-      <item name='Plant Apache' href='https://planet.apache.org/committers/'/>
-      <item name='Community' href='https://community.apache.org/'/>
-      <item name='Legal' href='https://www.apache.org/legal/'/>
-      <item name='Branding' href='https://www.apache.org/foundation/marks/'/>
-      <item name='Media Relations' href='https://www.apache.org/press/'/>
+      <item name="Plant Apache" href="https://planet.apache.org/committers/"/>
+      <item name="Community" href="https://community.apache.org/"/>
+      <item name="Legal" href="https://www.apache.org/legal/"/>
+      <item name="Branding" href="https://www.apache.org/foundation/marks/"/>
+      <item name="Media Relations" href="https://www.apache.org/press/"/>
     </menu>
-
     <menu ref="modules"/>
     <menu ref="reports"/>
-
     <footer>Copyright &amp;copy; 2014-2024 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
       Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
       of The Apache Software Foundation.
