@@ -32,7 +32,7 @@
   <custom>
     <fluidoSkin>
       <gitHub>
-        <projectId>apache/${project.artifactId}</projectId>
+        <projectId>apache/creadur-tentacles</projectId>
         <ribbonOrientation>right</ribbonOrientation>
         <ribbonColor>blue</ribbonColor>
       </gitHub>
