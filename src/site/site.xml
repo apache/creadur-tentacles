@@ -49,7 +49,7 @@
       <item name="Introducing Tentacles" href="/index.html"/>
       <item name="Javadocs" href="/apidocs/index.html"/>
       <item name="Downloads" href="/download_tentacles.cgi"/>
-      <item name="Changes" href="/RELEASE_NOTES.txt"/>
+      <item name="Changes" href="/changes.html"/>
     </menu>
     <menu name="Apache Creadur&#x2122;" inherit="bottom">
       <item name="Creadur Project Home" href="https://creadur.apache.org"/>
