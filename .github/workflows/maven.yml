@@ -55,4 +55,4 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: ./mvnw -e -B -V -ntp clean package site
+        run: ./mvnw -e -B -V -ntp clean install site
