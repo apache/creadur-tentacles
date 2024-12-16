@@ -127,11 +127,10 @@ public class Deauthorize {
 			in = new DelimitedTokenReplacementInputStream(in, startComment,
 					endComment, new StringTokenHandler() {
 						@Override
-						public String handleToken(final String commentBlock)
-								throws IOException {
+						public String handleToken(final String commentBlock) {
 
 							// Yank if empty
-							if (commentBlock.replaceAll("[\\s*]", "").length() == 0) {
+							if (commentBlock.replaceAll("[\\s*]", "").isEmpty()) {
 								return eol;
 							}
 

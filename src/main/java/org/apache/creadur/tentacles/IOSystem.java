@@ -19,6 +19,7 @@ package org.apache.creadur.tentacles;
 import org.apache.logging.log4j.*;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.zip.ZipInputStream;
 
 public class IOSystem {
@@ -27,13 +28,13 @@ public class IOSystem {
 	public String slurp(final File file) throws IOException {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		copy(file, out);
-		return new String(out.toByteArray());
+		return out.toString();
 	}
 
 	public String slurp(final URL url) throws IOException {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		copy(url.openStream(), out);
-		return new String(out.toByteArray());
+		return out.toString();
 	}
 
 	public void writeString(final File file, final String string) throws IOException {
@@ -87,7 +88,7 @@ public class IOSystem {
 		return new ZipInputStream(read);
 	}
 
-	public void close(final Closeable closeable) throws IOException {
+	public void close(final Closeable closeable) {
 		if (closeable == null) {
 			return;
 		}
@@ -106,12 +107,12 @@ public class IOSystem {
 	}
 
 	public OutputStream write(final File destination) throws FileNotFoundException {
-		final OutputStream out = new FileOutputStream(destination);
+		final OutputStream out = Files.newOutputStream(destination.toPath());
 		return new BufferedOutputStream(out, 32768);
 	}
 
 	public InputStream read(final File source) throws FileNotFoundException {
-		final InputStream in = new FileInputStream(source);
+		final InputStream in = Files.newInputStream(source.toPath());
 		return new BufferedInputStream(in, 32768);
 	}
 

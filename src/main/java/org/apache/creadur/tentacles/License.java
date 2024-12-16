@@ -77,11 +77,7 @@ public class License {
 
         final License license = (License) o;
 
-        if (!this.key.equals(license.key)) {
-            return false;
-        }
-
-        return true;
+        return this.key.equals(license.key);
     }
 
     @Override

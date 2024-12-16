@@ -77,11 +77,7 @@ public class Notice {
 
         final Notice notice = (Notice) o;
 
-        if (!this.key.equals(notice.key)) {
-            return false;
-        }
-
-        return true;
+        return this.key.equals(notice.key);
     }
 
     @Override

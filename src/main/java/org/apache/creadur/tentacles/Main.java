@@ -335,7 +335,7 @@ public class Main {
         return files;
     }
 
-    private void unpack(final File archive) throws IOException {
+    private void unpack(final File archive) {
         log.info("Unpack {}", archive);
 
         try {

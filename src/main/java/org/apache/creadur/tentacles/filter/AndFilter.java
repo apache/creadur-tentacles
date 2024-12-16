@@ -21,16 +21,15 @@ package org.apache.creadur.tentacles.filter;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 final class AndFilter implements FileFilter {
 
-    List<FileFilter> filters = new ArrayList<>();
+    final List<FileFilter> filters = new ArrayList<>();
 
     AndFilter(final FileFilter... filters) {
-        for (final FileFilter filter : filters) {
-            this.filters.add(filter);
-        }
+        this.filters.addAll(Arrays.asList(filters));
     }
 
     @Override

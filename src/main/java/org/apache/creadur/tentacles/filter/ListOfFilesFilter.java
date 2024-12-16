@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ListOfFilesFilter implements FileFilter {
 
-	private List<String> listOfFiles;
+	private final List<String> listOfFiles;
 
 	ListOfFilesFilter(String... files) {
 		listOfFiles = Arrays.asList(files);
