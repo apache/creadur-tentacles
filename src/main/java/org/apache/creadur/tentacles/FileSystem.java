@@ -47,16 +47,11 @@ public class FileSystem {
     }
 
     private List<File> collect(final File dir, final Pattern pattern) {
-        return collect(dir, new FileFilter() {
-            @Override
-            public boolean accept(final File file) {
-                return pattern.matcher(file.getAbsolutePath()).matches();
-            }
-        });
+        return collect(dir, file -> pattern.matcher(file.getAbsolutePath()).matches());
     }
 
     public List<File> collect(final File dir, final FileFilter filter) {
-        final List<File> accepted = new ArrayList<File>();
+        final List<File> accepted = new ArrayList<>();
         if (filter.accept(dir)) {
             accepted.add(dir);
         }

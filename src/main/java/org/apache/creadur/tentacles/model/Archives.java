@@ -27,7 +27,7 @@ import java.util.List;
 @XmlRootElement
 public class Archives {
 
-    private final List<Item> archives = new ArrayList<Item>();
+    private final List<Item> archives = new ArrayList<>();
 
     /**
      * Required for JAXB

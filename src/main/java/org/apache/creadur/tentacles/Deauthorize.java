@@ -51,7 +51,7 @@ public class Deauthorize {
 					"At least one directory must be specified");
 		}
 
-		final List<File> dirs = new ArrayList<File>();
+		final List<File> dirs = new ArrayList<>();
 
 		// Check the input args upfront
 		for (final String arg : args) {

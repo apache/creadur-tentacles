@@ -35,14 +35,14 @@ public class Archive {
     private final File file;
     private final Map<URI, URI> map;
 
-    private final Set<License> licenses = new HashSet<License>();
-    private final Set<Notice> notices = new HashSet<Notice>();
+    private final Set<License> licenses = new HashSet<>();
+    private final Set<Notice> notices = new HashSet<>();
 
-    private final Set<License> declaredLicenses = new HashSet<License>();
-    private final Set<Notice> declaredNotices = new HashSet<Notice>();
+    private final Set<License> declaredLicenses = new HashSet<>();
+    private final Set<Notice> declaredNotices = new HashSet<>();
 
-    private final Set<License> otherLicenses = new HashSet<License>();
-    private final Set<Notice> otherNotices = new HashSet<Notice>();
+    private final Set<License> otherLicenses = new HashSet<>();
+    private final Set<Notice> otherNotices = new HashSet<>();
     private Map<URI, URI> others;
 
     public Archive(final File file, final FileSystem fileSystem,
@@ -109,7 +109,7 @@ public class Archive {
 
     private Map<URI, URI> buildMapFrom(final File jarContents,
             final List<File> legal) {
-        final Map<URI, URI> map = new LinkedHashMap<URI, URI>();
+        final Map<URI, URI> map = new LinkedHashMap<>();
         for (final File file : legal) {
             final URI name = jarContents.toURI().relativize(file.toURI());
             final URI link =

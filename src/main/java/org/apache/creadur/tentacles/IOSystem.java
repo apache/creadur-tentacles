@@ -96,12 +96,12 @@ public class IOSystem {
 				((Flushable) closeable).flush();
 			}
 		} catch (final IOException e) {
-			LOG.trace("Error when trying to flush before closing " + closeable, e);
+            LOG.trace("Error when trying to flush before closing {}", closeable, e);
 		}
 		try {
 			closeable.close();
 		} catch (final IOException e) {
-			LOG.trace("Error when trying to close " + closeable, e);
+            LOG.trace("Error when trying to close {}", closeable, e);
 		}
 	}
 

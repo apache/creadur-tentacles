@@ -65,30 +65,20 @@ public class NexusClient {
             final long length = getContentLength(uri);
 
             if (file.length() == length) {
-                log.info("Exists " + uri);
+                log.info("Exists {}", uri);
                 return file;
             } else {
-                log.info("Incomplete " + uri);
+                log.info("Incomplete {}", uri);
             }
         }
 
-        log.info("Download " + uri);
+        log.info("Download {}", uri);
 
-        final CloseableHttpResponse response = get(uri);
-
-        InputStream content = null;
-        try {
-            content = response.getEntity().getContent();
+        try (CloseableHttpResponse response = get(uri); InputStream content = response.getEntity().getContent()) {
 
             this.fileSystem.mkparent(file);
 
             this.ioSystem.copy(content, file);
-        } finally {
-            if (content != null) {
-                content.close();
-            }
-
-            response.close();
         }
 
         return file;
@@ -135,15 +125,15 @@ public class NexusClient {
     }
 
     public Set<URI> crawl(final URI index) throws IOException {
-        log.info("Crawl " + index);
-        final Set<URI> resources = new LinkedHashSet<URI>();
+        log.info("Crawl {}", index);
+        final Set<URI> resources = new LinkedHashSet<>();
 
         final CloseableHttpResponse response = get(index);
 
         final InputStream content = response.getEntity().getContent();
         final StreamLexer lexer = new StreamLexer(content);
 
-        final Set<URI> crawl = new LinkedHashSet<URI>();
+        final Set<URI> crawl = new LinkedHashSet<>();
 
         // <a
         // href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>

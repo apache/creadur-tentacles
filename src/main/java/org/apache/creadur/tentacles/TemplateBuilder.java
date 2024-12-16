@@ -37,7 +37,7 @@ public class TemplateBuilder {
     private final IOSystem ioSystem;
     private final String templateName;
     private final Map<String, Object> templateContextMap =
-            new ConcurrentHashMap<String, Object>();
+            new ConcurrentHashMap<>();
 
     public TemplateBuilder(final String template, final IOSystem ioSystem,
             final VelocityEngine engine,

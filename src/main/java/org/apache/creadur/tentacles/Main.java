@@ -83,9 +83,8 @@ public class Main {
 
         this.reports = new Reports();
 
-        log.info("Remote repository: "
-                + this.configuration.getStagingRepositoryURI());
-        log.info("Local root directory: " + this.layout.getLocalRootDirectory());
+        log.info("Remote repository: {}", this.configuration.getStagingRepositoryURI());
+        log.info("Local root directory: {}", this.layout.getLocalRootDirectory());
 
         this.tentaclesResources.copyTo("legal/style.css",
                 new File(this.layout.getOutputDirectory(), "style.css"));
@@ -116,7 +115,7 @@ public class Main {
     private List<Archive> archivesIn(final File repository) {
         final List<File> jars = this.fileSystem.documentsFrom(repository);
 
-        final List<Archive> archives = new ArrayList<Archive>();
+        final List<Archive> archives = new ArrayList<>();
         for (final File file : jars) {
             final Archive archive =
                     new Archive(file, this.fileSystem, this.layout);
@@ -152,7 +151,7 @@ public class Main {
     }
 
     private void initLicenses(final List<Archive> archives) throws IOException {
-        final Map<License, License> licenses = new HashMap<License, License>();
+        final Map<License, License> licenses = new HashMap<>();
 
         for (final Archive archive : archives) {
             final List<File> files =
@@ -174,7 +173,7 @@ public class Main {
     }
 
     private Collection<License> getLicenses(final List<Archive> archives) {
-        final Set<License> licenses = new LinkedHashSet<License>();
+        final Set<License> licenses = new LinkedHashSet<>();
         for (final Archive archive : archives) {
             licenses.addAll(archive.getLicenses());
         }
@@ -202,7 +201,7 @@ public class Main {
 
     private void classifyLicenses(final Archive archive) throws IOException {
         final Set<License> undeclared =
-                new HashSet<License>(archive.getLicenses());
+                new HashSet<>(archive.getLicenses());
 
         final File contents = archive.contentsDirectory();
         final List<File> files = this.fileSystem.licensesDeclaredIn(contents);
@@ -216,7 +215,7 @@ public class Main {
         archive.getOtherLicenses().addAll(undeclared);
 
         final Set<License> declared =
-                new HashSet<License>(archive.getLicenses());
+                new HashSet<>(archive.getLicenses());
         declared.removeAll(undeclared);
         archive.getDeclaredLicenses().addAll(declared);
 
@@ -236,7 +235,7 @@ public class Main {
         for (final Archive archive : archives) {
 
             final Set<Notice> undeclared =
-                    new HashSet<Notice>(archive.getNotices());
+                    new HashSet<>(archive.getNotices());
 
             final File contents = archive.contentsDirectory();
             final List<File> files =
@@ -252,7 +251,7 @@ public class Main {
             archive.getOtherNotices().addAll(undeclared);
 
             final Set<Notice> declared =
-                    new HashSet<Notice>(archive.getNotices());
+                    new HashSet<>(archive.getNotices());
             declared.removeAll(undeclared);
             archive.getDeclaredNotices().addAll(declared);
 
@@ -275,7 +274,7 @@ public class Main {
     }
 
     private void reportNotices(final List<Archive> archives) throws IOException {
-        final Map<Notice, Notice> notices = new HashMap<Notice, Notice>();
+        final Map<Notice, Notice> notices = new HashMap<>();
 
         for (final Archive archive : archives) {
             final List<File> noticeDocuments =
@@ -311,7 +310,7 @@ public class Main {
 
     private Set<File> mirrorRepositoryFrom(final Configuration configuration)
             throws IOException {
-        final Set<File> files = new HashSet<File>();
+        final Set<File> files = new HashSet<>();
         if (HTTP.isRepositoryFor(configuration)) {
             final NexusClient client = new NexusClient(this.platform);
             final Set<URI> resources =
@@ -337,7 +336,7 @@ public class Main {
     }
 
     private void unpack(final File archive) throws IOException {
-        log.info("Unpack " + archive);
+        log.info("Unpack {}", archive);
 
         try {
             final ZipInputStream zip = this.ioSystem.unzip(archive);
@@ -373,7 +372,7 @@ public class Main {
                 this.ioSystem.close(zip);
             }
         } catch (final IOException e) {
-            log.error("Not a zip " + archive);
+            log.error("Not a zip {}", archive);
         }
     }
 
@@ -382,7 +381,7 @@ public class Main {
 
         final File file = mirroredFrom(uri);
 
-        log.info("Copy " + uri);
+        log.info("Copy {}", uri);
 
         this.fileSystem.mkparent(file);
 

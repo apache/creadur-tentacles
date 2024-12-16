@@ -25,7 +25,7 @@ import java.util.List;
 
 final class AndFilter implements FileFilter {
 
-    List<FileFilter> filters = new ArrayList<FileFilter>();
+    List<FileFilter> filters = new ArrayList<>();
 
     AndFilter(final FileFilter... filters) {
         for (final FileFilter filter : filters) {

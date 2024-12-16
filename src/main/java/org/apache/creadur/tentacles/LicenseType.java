@@ -29,7 +29,7 @@ public enum LicenseType {
     public static Licenses loadLicensesFrom(final Platform platform)
             throws IOException {
         final Map<String, String> licenses =
-                new ConcurrentHashMap<String, String>();
+                new ConcurrentHashMap<>();
         for (final LicenseType type : values()) {
             type.putTextInto(licenses, platform.getTentaclesResources());
         }

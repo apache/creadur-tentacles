@@ -28,8 +28,8 @@ import java.util.Set;
 public class License {
     private final String text;
     private final String key;
-    private final Set<Archive> archives = new HashSet<Archive>();
-    private final List<File> locations = new ArrayList<File>();
+    private final Set<Archive> archives = new HashSet<>();
+    private final List<File> locations = new ArrayList<>();
 
     public License(final String key, final String text) {
         this.text = text;
@@ -54,7 +54,7 @@ public class License {
 
     public Set<URI> locations(final Archive archive) {
         final URI contents = archive.contentsURI();
-        final Set<URI> locations = new HashSet<URI>();
+        final Set<URI> locations = new HashSet<>();
         for (final File file : this.locations) {
             final URI uri = file.toURI();
             final URI relativize = contents.relativize(uri);
