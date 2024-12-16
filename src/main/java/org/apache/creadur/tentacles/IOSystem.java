@@ -106,12 +106,12 @@ public class IOSystem {
 		}
 	}
 
-	public OutputStream write(final File destination) throws FileNotFoundException {
+	public OutputStream write(final File destination) throws IOException {
 		final OutputStream out = Files.newOutputStream(destination.toPath());
 		return new BufferedOutputStream(out, 32768);
 	}
 
-	public InputStream read(final File source) throws FileNotFoundException {
+	public InputStream read(final File source) throws IOException {
 		final InputStream in = Files.newInputStream(source.toPath());
 		return new BufferedInputStream(in, 32768);
 	}
