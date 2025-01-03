@@ -60,8 +60,11 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.2-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="TENTACLES-20" type="add" dev="pottlinger">
+        Update reporting plugins and reporting configuration to work properly with doxia 2.x and new reporting plugin versions.
+      </action>
       <action issue="TENTACLES-19" type="add" dev="pottlinger">
-        Update template engine to Velocity 2.x.
+        Update internal templating engine to velocity 2.x to get rid of CVE-2020-13936.
       </action>
       <action issue="TENTACLES-17" type="add" dev="pottlinger">
         Update webpage to not load fonts from GoogleFonts and include privacy link in main menu.
