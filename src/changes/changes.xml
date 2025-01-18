@@ -60,6 +60,9 @@ The <action> type attribute can be add,update,fix,remove.
     </release>
     -->
     <release version="0.2-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="TENTACLES-22" type="add" dev="pottlinger" due-to="clayjohnson">
+        Integrate Creadur Tentacles into the updated develocity.apache.org instance.
+      </action>
       <action issue="TENTACLES-20" type="add" dev="pottlinger">
         Update reporting plugins and reporting configuration to work properly with doxia 2.x and new reporting plugin versions.
       </action>

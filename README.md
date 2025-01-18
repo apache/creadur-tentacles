@@ -4,7 +4,7 @@ ASF Jenkins: [![ASF Build Status](https://ci-builds.apache.org/job/Creadur/job/C
 
 GA: [![Github Action master branch status](https://github.com/apache/creadur-tentacles/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-tentacles/actions)
 
-[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.apache.org/scans?search.buildToolType=maven&search.rootProjectNames=Apache%20Tentacles&search.timeZoneId=Europe%2FBerlin)
+[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://develocity.apache.org/scans?search.buildToolType=maven&search.rootProjectNames=Apache%20Tentacles&search.timeZoneId=Europe%2FBerlin)
 
 # Running with at least JDK8
 
