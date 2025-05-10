@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-for siteDesc in `find . -name \site.xml` 
+for pom in `find . -name \pom.xml` 
 do
-	xmllint --format $siteDesc > /tmp/w 
-  	mv /tmp/w $siteDesc 
+	xmllint --format $pom > /tmp/w 
+  	mv /tmp/w $pom 
 done
