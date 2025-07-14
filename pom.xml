@@ -88,7 +88,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.14</httpClientVersion>
-    <loggerVersion>2.25.0</loggerVersion>
+    <loggerVersion>2.25.1</loggerVersion>
     <apacheRatVersion>0.16.1</apacheRatVersion>
     <!-- MSITE-1018, TENTACLES-20: nil out timestamp in order to get current build timestamp -->
     <project.build.outputTimestamp>a</project.build.outputTimestamp>
