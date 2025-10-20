@@ -35,11 +35,6 @@
       <version>2.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.rat</groupId>
-      <artifactId>apache-rat-plugin</artifactId>
-      <version>${apacheRatVersion}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${httpClientVersion}</version>
@@ -80,6 +75,11 @@
       <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-plugin</artifactId>
+      <version>${apacheRatVersion}</version>
+    </dependency>
   </dependencies>
   <properties>
     <!-- needs to be adapted during release in order to properly generate download pages -->
@@ -89,7 +89,7 @@
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.14</httpClientVersion>
     <loggerVersion>2.25.2</loggerVersion>
-    <apacheRatVersion>0.16.1</apacheRatVersion>
+    <apacheRatVersion>0.17</apacheRatVersion>
     <!-- MSITE-1018, TENTACLES-20: nil out timestamp in order to get current build timestamp -->
     <project.build.outputTimestamp>a</project.build.outputTimestamp>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
@@ -242,6 +242,10 @@
           <relativizeSiteLinks>false</relativizeSiteLinks>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -250,13 +254,21 @@
           <artifactId>apache-rat-plugin</artifactId>
           <version>${apacheRatVersion}</version>
           <configuration>
-            <excludes>
+            <inputExcludes>
               <exclude>.asf.yaml</exclude>
               <exclude>README*</exclude>
-              <exclude>src/main/resources/licenses/*</exclude>
-              <exclude>**/src/site/javadocFont/**</exclude>
-            </excludes>
+              <exclude>src/main/resources/licenses/</exclude>
+              <exclude>**/src/site/javadocFont</exclude>
+            </inputExcludes>
           </configuration>
+          <executions>
+            <execution>
+              <phase>verify</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -318,7 +330,7 @@
           </reportSet>
         </reportSets>
       </plugin>
-<!-- Disabled until https://github.com/apache/maven-changelog-plugin/issues/200 is fixed
+      <!-- Disabled until https://github.com/apache/maven-changelog-plugin/issues/200 is fixed
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
