@@ -93,6 +93,13 @@ pipeline {
                 sh './mvnw site:site'
             }
         }
+
+        stage('Print available updates') {
+            steps {
+                echo 'Show available plugin and dependency updates'
+                sh './mvnw versions:display-dependency-updates versions:display-plugin-updates -U -B'
+            }
+        }
     }
 
     // Send out notifications on unsuccessful builds.
