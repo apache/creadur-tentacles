@@ -89,7 +89,7 @@
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.14</httpClientVersion>
     <loggerVersion>2.25.3</loggerVersion>
-    <apacheRatVersion>0.18</apacheRatVersion>
+    <apacheRatVersion>0.17</apacheRatVersion>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html, updated by maven-release-plugin -->
     <project.build.outputTimestamp>2022-10-22T23:25:45Z</project.build.outputTimestamp>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
