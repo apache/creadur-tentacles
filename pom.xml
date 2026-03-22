@@ -242,7 +242,6 @@
           <relativizeSiteLinks>false</relativizeSiteLinks>
           <!-- TENTACLES-24 keep site generation timestamp instead of release timestamp -->
           <outputTimestamp>x</outputTimestamp>
-          </configuration>
         </configuration>
       </plugin>
       <plugin>
