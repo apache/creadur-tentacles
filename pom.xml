@@ -88,7 +88,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>1.8</javaVersion>
     <httpClientVersion>4.5.14</httpClientVersion>
-    <loggerVersion>2.25.3</loggerVersion>
+    <loggerVersion>2.25.4</loggerVersion>
     <apacheRatVersion>0.17</apacheRatVersion>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html, updated by maven-release-plugin -->
     <project.build.outputTimestamp>2022-10-22T23:25:45Z</project.build.outputTimestamp>
