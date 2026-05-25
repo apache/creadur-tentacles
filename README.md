@@ -6,7 +6,7 @@ GA: [![Github Action master branch status](https://github.com/apache/creadur-ten
 
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://develocity.apache.org/scans?search.buildToolType=maven&search.rootProjectNames=Apache%20Tentacles&search.timeZoneId=Europe%2FBerlin)
 
-# Running with at least JDK8
+# Running with at least JDK17
 
 The tool will download all the archives from a staging repo, unpack
 them and create a little report of what is there.
