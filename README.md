@@ -6,7 +6,7 @@ GA: [![Github Action master branch status](https://github.com/apache/creadur-ten
 
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://develocity.apache.org/scans?search.buildToolType=maven&search.rootProjectNames=Apache%20Tentacles&search.timeZoneId=Europe%2FBerlin)
 
-# Running with at least JDK8
+# Running with at least JDK 17
 
 The tool will download all the archives from a staging repo, unpack
 them and create a little report of what is there.
@@ -80,10 +80,10 @@ also be unpacked.
 ## Reports
 
 The "main" report is currently called `archives.html` and will list
-all of the top-level binaires, their LICENSE and NOTICE files and any
+all of the top-level binaries, their LICENSE and NOTICE files and any
 LICENSE and NOTICE files of any binaries they may contain.
 
-Validation of the output at this point is all still manual.  One of
+Validation of the output at this point is all still manual. One of
 the first improvements would be to automatically flag any binaries
 that:
 
@@ -105,7 +105,7 @@ collect any LICENSE file text from any binaries contained in the
 foo.zip.  Well call these "sub" LICENSES for simplicity.
 
 Some attempt is made to figure out if the text from sub LICENSE files
-are contained in the declared LICENSE file.  If the sub license text
+are contained in the declared LICENSE file. If the sublicense text
 is contained in the declared LICENSE file it is not listed as
 Undeclared.
 
@@ -118,12 +118,12 @@ declared.
 Functions identical to the previously described LICENSE page with
 identical matching.
 
-Note on the code, this all could probably be abstracted.  We probably
+Note on the code, this all could probably be abstracted. We probably
 don't need separate License and Notice classes.
 
 ### foo.zip.contents
 
-The unpacked contents of the foo.zip as described above.  Can be nice
+The unpacked contents of the foo.zip as described above. Can be nice
 to be able to browse around the zip and look for any jars that might
 have LICENSE or NOTICE requirements but were overlooked.
 

@@ -16,13 +16,11 @@
  */
 package org.apache.creadur.tentacles;
 
+import org.apache.velocity.app.VelocityEngine;
+
 import java.util.Properties;
 
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.log.CommonsLogLogChute;
-
 public final class Templates {
-
     private final IOSystem ioSystem;
     private final VelocityEngine engine;
     private final TentaclesResources tentaclesResources;
@@ -31,16 +29,14 @@ public final class Templates {
         this.ioSystem = platform.getIoSystem();
         this.tentaclesResources = platform.getTentaclesResources();
         final Properties properties = new Properties();
-        properties.setProperty("file.resource.loader.cache", "true");
-        properties.setProperty("resource.loader", "file, class");
-        properties.setProperty("class.resource.loader.description",
+        properties.setProperty("resource.loader.class.cache", "true");
+        properties.setProperty("resource.loaders", "class");
+        properties.setProperty("resource.loader.class.description",
                 "Velocity Classpath Resource Loader");
         properties
-                .setProperty("class.resource.loader.class",
+                .setProperty("resource.loader.class.class",
                         "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        properties.setProperty("runtime.log.logsystem.class",
-                CommonsLogLogChute.class.getName());
-        properties.setProperty("runtime.log.logsystem.commons.logging.name",
+        properties.setProperty("runtime.log.name",
                 Templates.class.getName());
 
         this.engine = new VelocityEngine();
