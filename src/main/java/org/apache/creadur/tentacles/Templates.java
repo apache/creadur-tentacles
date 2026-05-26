@@ -29,12 +29,12 @@ public final class Templates {
         this.ioSystem = platform.getIoSystem();
         this.tentaclesResources = platform.getTentaclesResources();
         final Properties properties = new Properties();
-        properties.setProperty("file.resource.loader.cache", "true");
-        properties.setProperty("resource.loader", "file, class");
-        properties.setProperty("class.resource.loader.description",
+        properties.setProperty("resource.loader.class.cache", "true");
+        properties.setProperty("resource.loaders", "class");
+        properties.setProperty("resource.loader.class.description",
                 "Velocity Classpath Resource Loader");
         properties
-                .setProperty("class.resource.loader.class",
+                .setProperty("resource.loader.class.class",
                         "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         properties.setProperty("runtime.log.name",
                 Templates.class.getName());
