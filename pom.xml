@@ -55,6 +55,11 @@
       <version>${loggerVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>${loggerVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity-engine-core</artifactId>
       <version>2.4.1</version>
@@ -310,13 +315,11 @@
       </plugin>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
-        <!-- Later versions require Java 1.6+ -->
         <version>3.28.0</version>
         <configuration>
           <linkXRef>true</linkXRef>
-          <sourceEncoding>utf-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
-          <targetJdk>${target.jdk}</targetJdk>
+          <targetJdk>${javaVersion}</targetJdk>
           <excludes>
             <exclude>**/generated/**/*.java</exclude>
             <exclude>**/target/clover/**/*.java</exclude>
@@ -337,12 +340,11 @@
           </reportSet>
         </reportSets>
       </plugin>
-      <!-- Disabled until https://github.com/apache/maven-changelog-plugin/issues/200 is fixed
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.3</version>
-      </plugin-->
+        <version>3.0.0-M2</version>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
@@ -432,7 +434,7 @@
   <licenses>
     <license>
       <name>Apache License, Version 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
       <comments>An OSI approved open source license.</comments>
     </license>
@@ -441,20 +443,4 @@
     <name>Apache Software Foundation</name>
     <url>https://www.apache.org</url>
   </organization>
-  <profiles>
-    <profile>
-      <id>maven.compiler.release</id>
-      <activation>
-        <jdk>[9,)</jdk>
-      </activation>
-      <properties>
-        <!--
-          Note that this cannot use our ${javaVersion} property, so it must
-          be changed manually when we decide to move to a higher version of
-          Java
-        -->
-        <maven.compiler.release>8</maven.compiler.release>
-      </properties>
-    </profile>
-  </profiles>
 </project>
