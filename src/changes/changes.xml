@@ -61,7 +61,7 @@ The <action> type attribute can be add,update,fix,remove.
     -->
     <release version="0.2-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="TENTACLES-15" type="add" dev="pottlinger">
-        Integrate Tentacles with SonarCloud.
+        Integrate Tentacles with SonarCloud and test coverage configuration.
       </action>
       <action issue="TENTACLES-25" type="add" dev="pottlinger">
         Migrated to JDK 17 and updated the RAT plugin to version 0.18. Support for JDK 8 has been dropped.

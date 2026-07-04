@@ -87,6 +87,8 @@
     </dependency>
   </dependencies>
   <properties>
+    <sonar.organization>apache</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <!-- needs to be adapted during release in order to properly generate download pages -->
     <currentSnapshotTentaclesVersion>0.2-SNAPSHOT</currentSnapshotTentaclesVersion>
     <previousTentaclesVersion>0.1</previousTentaclesVersion>
@@ -132,6 +134,10 @@
   <build>
     <defaultGoal>clean versions:display-dependency-updates versions:display-plugin-updates install</defaultGoal>
     <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -282,6 +288,38 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.15</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>3.6.0</version>
+          <configuration>
+            <linkJavadoc>true</linkJavadoc>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>5.7.0.6970</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -289,6 +327,30 @@
     <!-- reporting plugins are configured according to new mvn3 standard -->
     <!-- Until Maven finds a way to allow inheritance, duplicated in plugin4maven -->
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>jxr-no-fork</report>
+              <report>test-jxr-no-fork</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <!-- select non-aggregate reports -->
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -302,11 +364,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.6.0</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <linkJavadoc>true</linkJavadoc>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
