@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,6 +19,7 @@
 package org.apache.creadur.tentacles;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ public class License {
         return this.locations;
     }
 
-    public Set<URI> locations(final Archive archive) {
+    public Set<URI> locations(final Archive archive) throws IOException {
         final URI contents = archive.contentsURI();
         final Set<URI> locations = new HashSet<>();
         for (final File file : this.locations) {

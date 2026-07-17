@@ -23,6 +23,7 @@ import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -100,19 +101,17 @@ public class Main {
     		log.error("Error: Input parameter missing - you did not specify any component to run Apache Tentacles on.");
     		log.error("Please launch Apache Tentacles with an URI to work on such as 'https://repository.apache.org/content/repositories/orgapachecreadur-1000/'.");
     	} else {
-    		new Main(args).main();
+            new Main(args).run();
     	}
     	
     }
 
-    private void main() throws Exception {
-
+    private void run() throws Exception {
         unpackContents(mirrorRepositoryFrom(this.configuration));
-
         reportOn(archivesIn(this.layout.getRepositoryDirectory()));
     }
 
-    private List<Archive> archivesIn(final File repository) {
+    private List<Archive> archivesIn(final File repository) throws IOException {
         final List<File> jars = this.fileSystem.documentsFrom(repository);
 
         final List<Archive> archives = new ArrayList<>();
@@ -207,9 +206,7 @@ public class Main {
         final List<File> files = this.fileSystem.licensesDeclaredIn(contents);
 
         for (final File file : files) {
-
             undeclared.remove(this.licenses.from(file));
-
         }
 
         archive.getOtherLicenses().addAll(undeclared);
@@ -220,7 +217,6 @@ public class Main {
         archive.getDeclaredLicenses().addAll(declared);
 
         for (final License license : undeclared) {
-
             for (final License declare : declared) {
                 if (license.implies(declare)) {
                     archive.getOtherLicenses().remove(license);
@@ -233,7 +229,6 @@ public class Main {
             throws IOException {
 
         for (final Archive archive : archives) {
-
             final Set<Notice> undeclared =
                     new HashSet<>(archive.getNotices());
 
@@ -356,12 +351,18 @@ public class Main {
 
                     final String path = entry.getName();
 
-                    final File fileEntry = new File(contents, path);
+                    // check if entry has suspicious path traversal elements
+                    Path target = contents.toPath().toAbsolutePath().normalize();
+                    Path resolved = target.resolve(path).normalize();
 
+                    if(!resolved.startsWith(target)) {
+                        throw new IOException("Invalid archive entry: " + path);
+                    }
+
+                    final File fileEntry = new File(contents, path); // NOSONAR
                     this.fileSystem.mkparent(fileEntry);
 
                     // Open the output file
-
                     this.ioSystem.copy(zip, fileEntry);
 
                     if (fileEntry.getName().endsWith(".jar")) {
