@@ -35,8 +35,8 @@
       <version>2.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
       <version>${httpClientVersion}</version>
     </dependency>
     <dependency>
@@ -94,7 +94,7 @@
     <previousTentaclesVersion>0.1</previousTentaclesVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaVersion>17</javaVersion>
-    <httpClientVersion>4.5.14</httpClientVersion>
+    <httpClientVersion>5.6.2</httpClientVersion>
     <loggerVersion>2.26.1</loggerVersion>
     <apacheRatVersion>0.18</apacheRatVersion>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html, updated by maven-release-plugin -->

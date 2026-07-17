@@ -16,15 +16,17 @@
  */
 package org.apache.creadur.tentacles;
 
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.logging.log4j.*;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.codehaus.swizzle.stream.StreamLexer;
 
 import java.io.File;
@@ -74,7 +76,7 @@ public class NexusClient {
 
         log.info("Download {}", uri);
 
-        try (CloseableHttpResponse response = get(uri); InputStream content = response.getEntity().getContent()) {
+        try (ClassicHttpResponse response = get(uri); InputStream content = response.getEntity().getContent()) {
 
             this.fileSystem.mkparent(file);
 
@@ -85,7 +87,7 @@ public class NexusClient {
     }
 
     private Long getContentLength(final URI uri) throws IOException {
-        final CloseableHttpResponse head = head(uri);
+        final ClassicHttpResponse head = head(uri);
         final Header[] headers = head.getHeaders(HttpHeaders.CONTENT_LENGTH);
 
         if (headers != null && headers.length >= 1) {
@@ -97,15 +99,15 @@ public class NexusClient {
         return (long) -1;
     }
 
-    private CloseableHttpResponse get(final URI uri) throws IOException {
+    private ClassicHttpResponse get(final URI uri) throws IOException {
         return get(new HttpGet(uri), this.retries);
     }
 
-    private CloseableHttpResponse head(final URI uri) throws IOException {
+    private ClassicHttpResponse head(final URI uri) throws IOException {
         return get(new HttpHead(uri), this.retries);
     }
 
-    private CloseableHttpResponse get(final HttpUriRequest request, int tries) throws IOException {
+    private ClassicHttpResponse get(final HttpUriRequest request, int tries) throws IOException {
         try {
             request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_CONTENTS);
             return this.client.execute(request);
@@ -128,7 +130,7 @@ public class NexusClient {
         log.info("Crawl {}", index);
         final Set<URI> resources = new LinkedHashSet<>();
 
-        final CloseableHttpResponse response = get(index);
+        final ClassicHttpResponse response = get(index);
 
         final InputStream content = response.getEntity().getContent();
         final StreamLexer lexer = new StreamLexer(content);
