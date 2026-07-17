@@ -31,7 +31,7 @@ public enum LicenseType {
         final Map<String, String> licenses =
                 new ConcurrentHashMap<>();
         for (final LicenseType type : values()) {
-            type.putTextInto(licenses, platform.getTentaclesResources());
+            type.putTextInto(licenses, platform.tentaclesResources());
         }
         return new Licenses(licenses, platform);
     }

@@ -77,9 +77,9 @@ public class Main {
         this.platform = platform;
         this.configuration = configuration;
         this.layout = layout;
-        this.fileSystem = platform.getFileSystem();
-        this.ioSystem = platform.getIoSystem();
-        this.tentaclesResources = platform.getTentaclesResources();
+        this.fileSystem = platform.fileSystem();
+        this.ioSystem = platform.ioSystem();
+        this.tentaclesResources = platform.tentaclesResources();
         this.templates = templates;
 
         this.reports = new Reports();
@@ -320,7 +320,7 @@ public class Main {
         } else if (LOCAL_FILE_SYSTEM.isRepositoryFor(configuration)) {
             final File file = new File(configuration.getStagingRepositoryURI());
             final List<File> collect =
-                    this.platform.getFileSystem().archivesInPath(file,
+                    this.platform.fileSystem().archivesInPath(file,
                             configuration.getFileRepositoryPathNameFilter());
 
             for (final File f : collect) {
@@ -349,11 +349,10 @@ public class Main {
                         continue;
                     }
 
-                    final String path = entry.getName();
-
                     // check if entry has suspicious path traversal elements
-                    Path target = contents.toPath().toAbsolutePath().normalize();
-                    Path resolved = target.resolve(path).normalize();
+                    final String path = entry.getName();
+                    final Path target = contents.toPath().toAbsolutePath().normalize();
+                    final Path resolved = target.resolve(path).normalize();
 
                     if(!resolved.startsWith(target)) {
                         throw new IOException("Invalid archive entry: " + path);

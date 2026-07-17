@@ -26,8 +26,8 @@ public final class Templates {
     private final TentaclesResources tentaclesResources;
 
     public Templates(final Platform platform) {
-        this.ioSystem = platform.getIoSystem();
-        this.tentaclesResources = platform.getTentaclesResources();
+        this.ioSystem = platform.ioSystem();
+        this.tentaclesResources = platform.tentaclesResources();
         final Properties properties = new Properties();
         properties.setProperty("resource.loader.class.cache", "true");
         properties.setProperty("resource.loaders", "class");

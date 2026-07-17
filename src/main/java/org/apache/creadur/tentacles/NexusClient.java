@@ -57,8 +57,8 @@ public class NexusClient {
 
         this.client = HttpClientBuilder.create().disableContentCompression()
                 .build();
-        this.fileSystem = platform.getFileSystem();
-        this.ioSystem = platform.getIoSystem();
+        this.fileSystem = platform.fileSystem();
+        this.ioSystem = platform.ioSystem();
     }
 
     public File download(final URI uri, final File file) throws IOException {

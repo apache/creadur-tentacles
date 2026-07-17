@@ -30,7 +30,7 @@ public class Licenses {
 
     public Licenses(final Map<String, String> licenses, final Platform platform) {
         super();
-        this.ioSystem = platform.getIoSystem();
+        this.ioSystem = platform.ioSystem();
         this.licenses = Collections.unmodifiableMap(licenses);
     }
 

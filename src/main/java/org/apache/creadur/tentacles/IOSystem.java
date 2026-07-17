@@ -106,7 +106,7 @@ public class IOSystem {
 		}
 	}
 
-	public OutputStream write(final File destination) throws IOException {
+	private OutputStream write(final File destination) throws IOException {
 		final OutputStream out = Files.newOutputStream(destination.toPath());
 		return new BufferedOutputStream(out, 32768);
 	}
