@@ -16,6 +16,7 @@
  */
 package org.apache.creadur.tentacles;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.*;
 import java.io.*;
 import java.net.URL;
@@ -71,12 +72,7 @@ public class IOSystem {
 	}
 
 	private void copy(final InputStream from, final OutputStream to) throws IOException {
-		final byte[] buffer = new byte[1024];
-		int length = 0;
-		while ((length = from.read(buffer)) != -1) {
-			to.write(buffer, 0, length);
-		}
-		to.flush();
+		IOUtils.copy(from, to);
 	}
 
 	public void copy(final byte[] from, final File to) throws IOException {

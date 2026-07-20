@@ -62,26 +62,21 @@ public class NexusClient {
     }
 
     public File download(final URI uri, final File file) throws IOException {
+        final long length = getContentLength(uri);
+
         if (file.exists()) {
-
-            final long length = getContentLength(uri);
-
             if (file.length() == length) {
-                log.info("Exists {}", uri);
+                log.info("Skipping download as file exists already: {}", uri);
                 return file;
             } else {
-                log.info("Incomplete {}", uri);
-                log.info("Download {} ({} bytes)", uri, length);
+                log.info("Incomplete - Continue downloading {} ({} bytes)", uri, length);
             }
         } else {
-            log.info("Download {}", uri);
+            log.info("Downloading {} bytes from {}", length, uri);
         }
 
-
         try (ClassicHttpResponse response = get(uri); InputStream content = response.getEntity().getContent()) {
-
             this.fileSystem.mkparent(file);
-
             this.ioSystem.copy(content, file);
         }
 
@@ -89,16 +84,15 @@ public class NexusClient {
     }
 
     private Long getContentLength(final URI uri) throws IOException {
-        final ClassicHttpResponse head = head(uri);
-        final Header[] headers = head.getHeaders(HttpHeaders.CONTENT_LENGTH);
+        try (final ClassicHttpResponse head = head(uri)) {
+            final Header[] headers = head.getHeaders(HttpHeaders.CONTENT_LENGTH);
 
-        if (headers != null && headers.length >= 1) {
-            return Long.valueOf(headers[0].getValue());
+            if (headers != null && headers.length >= 1) {
+                return Long.valueOf(headers[0].getValue());
+            }
+
+            return (long) -1;
         }
-
-        head.close();
-
-        return (long) -1;
     }
 
     private ClassicHttpResponse get(final URI uri) throws IOException {
@@ -132,49 +126,45 @@ public class NexusClient {
         log.info("Crawl {}", index);
         final Set<URI> resources = new LinkedHashSet<>();
 
-        final ClassicHttpResponse response = get(index);
+        try (final ClassicHttpResponse response = get(index);
+             final InputStream content = response.getEntity().getContent()) {
 
-        final InputStream content = response.getEntity().getContent();
-        final StreamLexer lexer = new StreamLexer(content);
+            final StreamLexer lexer = new StreamLexer(content);
+            final Set<URI> crawl = new LinkedHashSet<>();
 
-        final Set<URI> crawl = new LinkedHashSet<>();
+            // <a
+            // href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
+            while (lexer.readAndMark("<a ", "/a>")) {
+                try {
+                    final String link = lexer.peek("href=\"", "\"");
+                    final String name = lexer.peek(">", "<");
 
-        // <a
-        // href="https://repository.apache.org/content/repositories/orgapacheopenejb-094/archetype-catalog.xml">archetype-catalog.xml</a>
-        while (lexer.readAndMark("<a ", "/a>")) {
+                    final URI uri = index.resolve(link);
 
-            try {
-                final String link = lexer.peek("href=\"", "\"");
-                final String name = lexer.peek(">", "<");
+                    if (name.equals(ONE_UP)) {
+                        continue;
+                    }
+                    if (link.equals(ONE_UP)) {
+                        continue;
+                    }
 
-                final URI uri = index.resolve(link);
+                    if (name.endsWith(SLASH)) {
+                        crawl.add(uri);
+                        continue;
+                    }
 
-                if (name.equals(ONE_UP)) {
-                    continue;
+                    resources.add(uri);
+
+                } finally {
+                    lexer.unmark();
                 }
-                if (link.equals(ONE_UP)) {
-                    continue;
-                }
-
-                if (name.endsWith(SLASH)) {
-                    crawl.add(uri);
-                    continue;
-                }
-
-                resources.add(uri);
-
-            } finally {
-                lexer.unmark();
             }
+
+            for (final URI uri : crawl) {
+                resources.addAll(crawl(uri));
+            }
+
+            return resources;
         }
-
-        content.close();
-        response.close();
-
-        for (final URI uri : crawl) {
-            resources.addAll(crawl(uri));
-        }
-
-        return resources;
     }
 }
