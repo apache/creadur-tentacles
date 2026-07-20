@@ -71,10 +71,12 @@ public class NexusClient {
                 return file;
             } else {
                 log.info("Incomplete {}", uri);
+                log.info("Download {} ({} bytes)", uri, length);
             }
+        } else {
+            log.info("Download {}", uri);
         }
 
-        log.info("Download {}", uri);
 
         try (ClassicHttpResponse response = get(uri); InputStream content = response.getEntity().getContent()) {
 
