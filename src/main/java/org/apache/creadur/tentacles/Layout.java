@@ -32,13 +32,14 @@ public class Layout {
         this.localRootDirectory =
                 new File(configuration.getRootDirectoryForLocalOutput());
 
-        final FileSystem fileSystem = platform.getFileSystem();
+        final FileSystem fileSystem = platform.fileSystem();
         fileSystem.mkdirs(this.localRootDirectory);
+
+        this.output = this.localRootDirectory;
 
         this.repository = new File(this.localRootDirectory, "repo");
         this.contentRootDirectory =
                 new File(this.localRootDirectory, "content");
-        this.output = this.localRootDirectory;
 
         fileSystem.mkdirs(this.repository);
         fileSystem.mkdirs(this.contentRootDirectory);

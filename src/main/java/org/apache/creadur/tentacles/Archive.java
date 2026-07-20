@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  *  with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,7 +19,9 @@
 package org.apache.creadur.tentacles;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,7 +48,7 @@ public class Archive {
     private Map<URI, URI> others;
 
     public Archive(final File file, final FileSystem fileSystem,
-            final Layout layout) {
+            final Layout layout) throws IOException {
         this.fileSystem = fileSystem;
         this.layout = layout;
         this.uri =
@@ -92,14 +94,14 @@ public class Archive {
         return this.map;
     }
 
-    public Map<URI, URI> getOtherLegal() {
+    public Map<URI, URI> getOtherLegal() throws IOException {
         if (this.others == null) {
             this.others = mapOther();
         }
         return this.others;
     }
 
-    private Map<URI, URI> mapOther() {
+    private Map<URI, URI> mapOther() throws IOException {
         final File jarContents = contentsDirectory();
         final List<File> legal =
                 this.fileSystem.legalDocumentsUndeclaredIn(jarContents);
@@ -121,7 +123,7 @@ public class Archive {
         return map;
     }
 
-    private Map<URI, URI> map() {
+    private Map<URI, URI> map() throws IOException {
         final File jarContents = contentsDirectory();
         final List<File> legal =
                 this.fileSystem.legalDocumentsDeclaredIn(jarContents);
@@ -129,7 +131,7 @@ public class Archive {
         return buildMapFrom(jarContents, legal);
     }
 
-    public File contentsDirectory() {
+    public File contentsDirectory() throws IOException {
         final File archiveDocument = getFile();
         String path =
                 archiveDocument.getAbsolutePath().substring(
@@ -146,11 +148,18 @@ public class Archive {
         final File contents =
                 new File(this.layout.getContentRootDirectory(), path
                         + ".contents");
+
+        Path targetDir = this.layout.getContentRootDirectory().toPath().toAbsolutePath().normalize();
+        Path resolved = targetDir.resolve(path + ".contents").normalize();
+        if(!resolved.startsWith(targetDir)) {
+            throw new IOException("Invalid content directory: " + path + ".contents");
+        }
+
         this.fileSystem.mkdirs(contents);
         return contents;
     }
 
-    public URI contentsURI() {
+    public URI contentsURI() throws IOException {
         return contentsDirectory().toURI();
     }
 }

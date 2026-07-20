@@ -10,14 +10,15 @@ GA: [![Github Action master branch status](https://github.com/apache/creadur-ten
 
 # Running with at least JDK 17
 
-The tool will download all the archives from a staging repo, unpack
+The tool will download all the archives from a nexus/staging repo, unpack
 them and create a little report of what is there.
 
-    java -ea -jar apache-tentacles-0.2-SNAPSHOT.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
+    java -ea -jar apache-tentacles-0.2-SNAPSHOT-jar-with-dependencies.jar https://repository.apache.org/content/repositories/orgapacheflink-1935/
+    java -ea -jar apache-tentacles-0.2-SNAPSHOT-jar-with-dependencies.jar https://repository.apache.org/content/repositories/releases/org/apache/creadur/tentacles/
 
 Assertions must be enabled.
 
-The tool is not specific to maven and will simply recursively walk
+The tool is not specific to Maven and will simply recursively walk
 the provided URL and download all files matching the following
 pattern:
 
@@ -82,7 +83,7 @@ also be unpacked.
 ## Reports
 
 The "main" report is currently called `archives.html` and will list
-all of the top-level binaries, their LICENSE and NOTICE files and any
+all the top-level binaries, their LICENSE and NOTICE files and any
 LICENSE and NOTICE files of any binaries they may contain.
 
 Validation of the output at this point is all still manual. One of

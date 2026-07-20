@@ -23,7 +23,7 @@ Introduction to Apache Tentacles&#8482;
 
 * Running
 
- Apache Tentacles&#8482; will download all the archives from a staging repo, unpack them and create a little report of what is there.
+ Apache Tentacles&#8482; will download all the archives from a nexus/staging repo, unpack them and create a little report of what is there.
 
 +------------------------------------------+
 java -ea -jar apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies.jar https://repository.apache.org/content/repositories/orgapacheopenejb-090
@@ -31,7 +31,7 @@ java -ea -jar apache-tentacles-${previousTentaclesVersion}-jar-with-dependencies
 
  Assertions must be enabled.
 
- The tool is not specific to maven and will simply recursively walk the provided URL and download all files matching the following pattern:
+ The tool is not specific to Maven and will simply recursively walk the provided URL and download all files matching the following pattern:
 
 +------------------------------------------+
 .*\.(jar|zip|war|ear|tar.gz)
@@ -98,7 +98,7 @@ content/foo.zip.contents/lib/bar.jar.contents/org/bar/Some.class
 
 * Reports
 
- The "main" report is currently called archives.html and will list all of the top-level binaires, their LICENSE and NOTICE files and any LICENSE and NOTICE files of any binaries they may contain.
+ The "main" report is currently called archives.html and will list all the top-level binaries, their LICENSE and NOTICE files and any LICENSE and NOTICE files of any binaries they may contain.
 
  Validation of the output at this point is all still manual. One of the first improvements would be to automatically flag any binaries that:
 
@@ -116,7 +116,7 @@ content/foo.zip.contents/lib/bar.jar.contents/org/bar/Some.class
 
  The Declared section lists the single LICENSE file that was supplied by the binary itself. As the tool works recursively, it will also collect any LICENSE file text from any binaries contained in the foo.zip. Well call these "sub" LICENSES for simplicity.
 
- Some attempt is made to figure out if the text from sub LICENSE files are contained in the declared LICENSE file. If the sub license text is contained in the declared LICENSE file it is not listed as Undeclared.
+ Some attempt is made to figure out if the text from sub LICENSE files are contained in the declared LICENSE file. If the sublicense text is contained in the declared LICENSE file it is not listed as Undeclared.
 
  The matching is not complete or perfect, but does help in more quickly seeing where there might be a missing LICENSE text that should be declared.
 
