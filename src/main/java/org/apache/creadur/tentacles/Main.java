@@ -23,6 +23,7 @@ import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,18 +63,18 @@ public class Main {
     private final TentaclesResources tentaclesResources;
     private final Templates templates;
 
-    public Main(final String... args) throws Exception {
+    public Main(final String... args) throws IOException, URISyntaxException {
         this(new Configuration(args), Platform.aPlatform());
     }
 
     public Main(final Configuration configuration, final Platform platform)
-            throws Exception {
+            throws IOException {
         this(configuration, platform, new Templates(platform), new Layout(
                 platform, configuration));
     }
 
     public Main(final Configuration configuration, final Platform platform,
-            final Templates templates, final Layout layout) throws Exception {
+            final Templates templates, final Layout layout) throws IOException {
         this.platform = platform;
         this.configuration = configuration;
         this.layout = layout;
@@ -157,12 +158,7 @@ public class Main {
                     this.fileSystem.licensesFrom(archive.contentsDirectory());
             for (final File file : files) {
                 final License license = this.licenses.from(file);
-
-                License existing = licenses.get(license);
-                if (existing == null) {
-                    licenses.put(license, license);
-                    existing = license;
-                }
+                License existing = licenses.computeIfAbsent(license, key -> key);
 
                 existing.getLocations().add(file);
                 existing.getArchives().add(archive);
@@ -237,9 +233,7 @@ public class Main {
                     this.fileSystem.noticesDeclaredIn(contents);
 
             for (final File file : files) {
-
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
-
                 undeclared.remove(notice);
             }
 
@@ -251,10 +245,9 @@ public class Main {
             archive.getDeclaredNotices().addAll(declared);
 
             for (final Notice notice : undeclared) {
-
                 for (final Notice declare : declared) {
                     if (notice.implies(declare)) {
-                        archive.getOtherLicenses().remove(notice);
+                        archive.getOtherLicenses().remove(notice); // NOSONAR
                     }
                 }
             }
@@ -276,12 +269,7 @@ public class Main {
                     this.fileSystem.noticesOnly(archive.contentsDirectory());
             for (final File file : noticeDocuments) {
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
-
-                Notice existing = notices.get(notice);
-                if (existing == null) {
-                    notices.put(notice, notice);
-                    existing = notice;
-                }
+                Notice existing = notices.computeIfAbsent(notice, key -> key);
 
                 existing.getLocations().add(file);
                 existing.getArchives().add(archive);
@@ -297,7 +285,7 @@ public class Main {
                         "notices.html"));
     }
 
-    private void unpackContents(final Set<File> files) throws IOException {
+    private void unpackContents(final Set<File> files) {
         for (final File file : files) {
             unpack(file);
         }
@@ -341,7 +329,7 @@ public class Main {
                             .contentsDirectory();
 
             try {
-                ZipEntry entry = null;
+                ZipEntry entry;
 
                 while ((entry = zip.getNextEntry()) != null) {
 

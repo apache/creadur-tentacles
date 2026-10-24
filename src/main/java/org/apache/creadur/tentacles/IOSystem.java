@@ -39,17 +39,10 @@ public class IOSystem {
 	}
 
 	public void writeString(final File file, final String string) throws IOException {
-		final FileWriter out = new FileWriter(file);
-		try {
-			final BufferedWriter bufferedWriter = new BufferedWriter(out);
-			try {
+		try (FileWriter out = new FileWriter(file);
+			 final BufferedWriter bufferedWriter = new BufferedWriter(out)) {
 				bufferedWriter.write(string);
 				bufferedWriter.newLine();
-			} finally {
-				close(bufferedWriter);
-			}
-		} finally {
-			close(out);
 		}
 	}
 
@@ -89,8 +82,8 @@ public class IOSystem {
 			return;
 		}
 		try {
-			if (closeable instanceof Flushable) {
-				((Flushable) closeable).flush();
+			if (closeable instanceof Flushable flushable) {
+				flushable.flush();
 			}
 		} catch (final IOException e) {
             LOG.trace("Error when trying to flush before closing {}", closeable, e);
