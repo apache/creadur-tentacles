@@ -82,8 +82,8 @@ public class IOSystem {
 			return;
 		}
 		try {
-			if (closeable instanceof Flushable) {
-				((Flushable) closeable).flush();
+			if (closeable instanceof Flushable flushable) {
+				flushable.flush();
 			}
 		} catch (final IOException e) {
             LOG.trace("Error when trying to flush before closing {}", closeable, e);
