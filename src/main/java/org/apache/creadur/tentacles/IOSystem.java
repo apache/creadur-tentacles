@@ -39,17 +39,10 @@ public class IOSystem {
 	}
 
 	public void writeString(final File file, final String string) throws IOException {
-		final FileWriter out = new FileWriter(file);
-		try {
-			final BufferedWriter bufferedWriter = new BufferedWriter(out);
-			try {
+		try (FileWriter out = new FileWriter(file);
+			 final BufferedWriter bufferedWriter = new BufferedWriter(out)) {
 				bufferedWriter.write(string);
 				bufferedWriter.newLine();
-			} finally {
-				close(bufferedWriter);
-			}
-		} finally {
-			close(out);
 		}
 	}
 

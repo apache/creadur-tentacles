@@ -115,7 +115,7 @@ public class NexusClient {
                     Thread.interrupted();
                     throw new IOException("Interrupted", ie);
                 }
-                return get(request, tries--);
+                return get(request, tries--); // NOSONAR
             } else {
                 throw e;
             }

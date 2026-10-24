@@ -73,7 +73,7 @@ public class Main {
     }
 
     public Main(final Configuration configuration, final Platform platform,
-            final Templates templates, final Layout layout) throws Exception {
+            final Templates templates, final Layout layout) throws IOException {
         this.platform = platform;
         this.configuration = configuration;
         this.layout = layout;
@@ -254,7 +254,7 @@ public class Main {
 
                 for (final Notice declare : declared) {
                     if (notice.implies(declare)) {
-                        archive.getOtherLicenses().remove(notice);
+                        archive.getOtherLicenses().remove(notice); // NOSONAR
                     }
                 }
             }
@@ -297,7 +297,7 @@ public class Main {
                         "notices.html"));
     }
 
-    private void unpackContents(final Set<File> files) throws IOException {
+    private void unpackContents(final Set<File> files) {
         for (final File file : files) {
             unpack(file);
         }
@@ -341,7 +341,7 @@ public class Main {
                             .contentsDirectory();
 
             try {
-                ZipEntry entry = null;
+                ZipEntry entry;
 
                 while ((entry = zip.getNextEntry()) != null) {
 
