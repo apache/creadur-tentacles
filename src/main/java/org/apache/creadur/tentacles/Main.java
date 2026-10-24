@@ -157,12 +157,7 @@ public class Main {
                     this.fileSystem.licensesFrom(archive.contentsDirectory());
             for (final File file : files) {
                 final License license = this.licenses.from(file);
-
-                License existing = licenses.get(license);
-                if (existing == null) {
-                    licenses.put(license, license);
-                    existing = license;
-                }
+                License existing = licenses.computeIfAbsent(license, key -> key);
 
                 existing.getLocations().add(file);
                 existing.getArchives().add(archive);
@@ -237,9 +232,7 @@ public class Main {
                     this.fileSystem.noticesDeclaredIn(contents);
 
             for (final File file : files) {
-
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
-
                 undeclared.remove(notice);
             }
 
@@ -251,7 +244,6 @@ public class Main {
             archive.getDeclaredNotices().addAll(declared);
 
             for (final Notice notice : undeclared) {
-
                 for (final Notice declare : declared) {
                     if (notice.implies(declare)) {
                         archive.getOtherLicenses().remove(notice); // NOSONAR
@@ -276,12 +268,7 @@ public class Main {
                     this.fileSystem.noticesOnly(archive.contentsDirectory());
             for (final File file : noticeDocuments) {
                 final Notice notice = new Notice(this.ioSystem.slurp(file));
-
-                Notice existing = notices.get(notice);
-                if (existing == null) {
-                    notices.put(notice, notice);
-                    existing = notice;
-                }
+                Notice existing = notices.computeIfAbsent(notice, key -> key);
 
                 existing.getLocations().add(file);
                 existing.getArchives().add(archive);
