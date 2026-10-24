@@ -23,6 +23,7 @@ import static org.apache.creadur.tentacles.RepositoryType.LOCAL_FILE_SYSTEM;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,12 +63,12 @@ public class Main {
     private final TentaclesResources tentaclesResources;
     private final Templates templates;
 
-    public Main(final String... args) throws Exception {
+    public Main(final String... args) throws IOException, URISyntaxException {
         this(new Configuration(args), Platform.aPlatform());
     }
 
     public Main(final Configuration configuration, final Platform platform)
-            throws Exception {
+            throws IOException {
         this(configuration, platform, new Templates(platform), new Layout(
                 platform, configuration));
     }
